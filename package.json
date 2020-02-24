@@ -1,0 +1,10 @@
+{
+  "name": "rl-stats",
+  "version": "1.0.0",
+  "description": "stats management for rocket league games",
+  "private": true,
+  "devDependencies": {
+    "serverless-python-requirements": "^5.1.0"
+  },
+  "dependencies": {}
+}
