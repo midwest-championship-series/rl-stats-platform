@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "stats management for rocket league games",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "start": "serverless offline start --port 4200"
+  },
   "devDependencies": {
-    "serverless-python-requirements": "^5.1.0",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "serverless-offline": "^5.12.1",
+    "serverless-python-requirements": "^5.1.0"
   },
   "dependencies": {
     "axios": "^0.19.0",

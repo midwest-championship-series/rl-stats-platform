@@ -2,6 +2,7 @@ service: rl-stats
 
 plugins:
   - serverless-python-requirements
+  - serverless-offline
 
 package:
   exclude:
@@ -19,8 +20,8 @@ custom:
   pythonRequirements:
     dockerizePip: true
     usePipenv: true
-    useDownloadCache: false
-    useStaticCache: false
+    # useDownloadCache: false
+    # useStaticCache: false
 
 provider:
   name: aws
@@ -28,6 +29,10 @@ provider:
   profile: personal
   region: us-east-1
   stage: dev
+  environment:
+    SERVERLESS_REGION: ${opt:region,self:provider.region}
+    SERVERLESS_STAGE: ${self:provider.stage}
+    BALLCHASING_KEY: ${ssm:BALLCHASING_KEY}
 
 functions:
   process-game:
@@ -51,3 +56,11 @@ functions:
               path:
                 platform: true
                 platformId: true
+  fetch-games:
+    handler: lambdas/fetch-games.handler
+    runtime: nodejs10.x
+    events:
+      - http:
+          path: /games
+          method: get
+          cors: true
