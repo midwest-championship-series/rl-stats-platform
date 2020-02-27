@@ -39,10 +39,6 @@ functions:
     handler: lambdas/process-game.handler
     memorySize: 3008
     timeout: 10
-    events:
-      - http:
-          path: /games/{gameId}
-          method: get
   fetch-ranks:
     handler: lambdas/fetch-ranks.handler
     runtime: nodejs10.x
