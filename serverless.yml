@@ -36,5 +36,18 @@ functions:
     timeout: 10
     events:
       - http:
-          path: /
+          path: /games/{gameId}
           method: get
+  fetch-ranks:
+    handler: lambdas/fetch-ranks.handler
+    runtime: nodejs10.x
+    events:
+      - http:
+          path: /ranks/{platform}/{platformId}
+          method: get
+          cors: true
+          request:
+            parameters:
+              path:
+                platform: true
+                platformId: true
