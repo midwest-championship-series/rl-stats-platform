@@ -1,5 +1,6 @@
-// const createModel = require('./create-model')
+const { registerModel, tables } = require('../services/google')
 
-// module.exports = {
-//   Teams:
-// }
+registerModel('teams', '1167027768')
+registerModel('players', '1992851802')
+
+module.exports = tables

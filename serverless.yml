@@ -71,10 +71,16 @@ functions:
           method: get
           cors: true
 
-  fetch-schedule:
-    handler: lambdas/fetch-schedule.handler
-    name: ${self:service}-fetch-schedule-${self:provider.stage}
+  fetch-data:
+    handler: lambdas/fetch-data.handler
+    name: ${self:service}-fetch-data-${self:provider.stage}
     runtime: nodejs10.x
+    events:
+      - http:
+          path: /api/{table}
+          method: get
+          cors: true
+
 # stepFunctions:
 #   stateMachines:
 #     MatchReader:

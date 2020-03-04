@@ -15,7 +15,40 @@ const getSheet = async id => {
   return doc.sheetsById[id]
 }
 
+class Table {
+  constructor(name, sheetId) {
+    this.name = name
+    this.sheetId = sheetId
+    this.sheet = undefined
+  }
+
+  async getSheet() {
+    return getSheet(this.sheetId)
+  }
+
+  async get(criteria = {}) {
+    const sheet = await this.getSheet()
+    const rows = await sheet.getRows()
+    return rows
+      .filter(r => {
+        return Object.keys(criteria).every(p => r[p] === criteria[p])
+      })
+      .map(r => r._rawData)
+  }
+
+  async add(rows) {
+    const sheet = await this.getSheet()
+    return sheet.addRows(rows)
+  }
+}
+
+const tables = {}
+
+const registerModel = (name, sheetId) => {
+  tables[name] = new Table(name, sheetId)
+}
+
 module.exports = {
-  connect,
-  getSheet,
+  registerModel,
+  tables,
 }
