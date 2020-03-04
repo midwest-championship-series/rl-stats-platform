@@ -23,7 +23,10 @@ class Table {
   }
 
   async getSheet() {
-    return getSheet(this.sheetId)
+    if (!this.sheet) {
+      this.sheet = await getSheet(this.sheetId)
+    }
+    return this.sheet
   }
 
   async get(criteria = {}) {
