@@ -2,6 +2,7 @@ service: rl-stats
 
 plugins:
   - serverless-python-requirements
+  - serverless-step-functions
   - serverless-offline
 
 package:
@@ -33,14 +34,21 @@ provider:
     SERVERLESS_REGION: ${opt:region,self:provider.region}
     SERVERLESS_STAGE: ${self:provider.stage}
     BALLCHASING_KEY: ${ssm:BALLCHASING_KEY}
+    STAT_SHEET_ID: 1vwzN0gugBZRhjErFAN20dXC1QGA8Y8itzS2rYaH95mY
 
 functions:
+
+  # analyzes a replay file and produces its stats
   process-game:
     handler: lambdas/process-game.handler
+    name: ${self:service}-process-game-${self:provider.stage}
     memorySize: 3008
     timeout: 10
+
+  # fetches a player's ranks via https://rocketleague.tracker.network/
   fetch-ranks:
     handler: lambdas/fetch-ranks.handler
+    name: ${self:service}-fetch-ranks-${self:provider.stage}
     runtime: nodejs10.x
     events:
       - http:
@@ -52,11 +60,45 @@ functions:
               path:
                 platform: true
                 platformId: true
+
+  # see query parameter options here https://ballchasing.com/doc/api#replays
   fetch-games:
     handler: lambdas/fetch-games.handler
+    name: ${self:service}-fetch-games-${self:provider.stage}
     runtime: nodejs10.x
     events:
       - http:
           path: /games
           method: get
           cors: true
+
+  fetch-schedule:
+    handler: lambdas/fetch-schedule.handler
+    name: ${self:service}-fetch-schedule-${self:provider.stage}
+    runtime: nodejs10.x
+
+# stepFunctions:
+#   stateMachines:
+#     MatchReader:
+#       name: MatchReader-${self:provider.stage}
+#       definition:
+#         StartAt: read-match-results
+#         States:
+#           retrieve-match-results:
+#             Type: Task
+#             Next: is-match-closed
+#             End: true
+#             Resource:
+#               Fn::Join:
+#                 - ":"
+#                 - - arn:aws:lambda
+#                   - Ref: 'AWS::Region'
+#                   - Ref: 'AWS::AccountId'
+#                   - function:${self:service}-fetch-games-${self:provider.stage}
+#             TimeoutSeconds: 300
+#           is-match-closed:
+#             Type: Choice
+#             Choices:
+#               - Variable: $.closed
+#                   NumericGreaterThan: 0
+#                   Next: save-match-results
