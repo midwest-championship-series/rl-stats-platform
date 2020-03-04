@@ -5,7 +5,7 @@ const handler = async (event, context) => {
   const ranks = await fetchRanks(platform, platformId)
   return {
     statusCode: 200,
-    body: JSON.stringify(ranks)
+    body: JSON.stringify(ranks),
   }
 }
 

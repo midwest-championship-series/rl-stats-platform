@@ -17,5 +17,5 @@ const getSheet = async id => {
 
 module.exports = {
   connect,
-  getSheet
+  getSheet,
 }

@@ -4,7 +4,7 @@ const handler = async (event, context) => {
   const ranks = await fetchGames(event.queryStringParameters)
   return {
     statusCode: 200,
-    body: JSON.stringify(ranks)
+    body: JSON.stringify(ranks),
   }
 }
 

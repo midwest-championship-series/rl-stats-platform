@@ -37,7 +37,6 @@ provider:
     STAT_SHEET_ID: 1vwzN0gugBZRhjErFAN20dXC1QGA8Y8itzS2rYaH95mY
 
 functions:
-
   # analyzes a replay file and produces its stats
   process-game:
     handler: lambdas/process-game.handler
@@ -76,7 +75,6 @@ functions:
     handler: lambdas/fetch-schedule.handler
     name: ${self:service}-fetch-schedule-${self:provider.stage}
     runtime: nodejs10.x
-
 # stepFunctions:
 #   stateMachines:
 #     MatchReader:

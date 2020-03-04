@@ -9,6 +9,7 @@ This service exists to provide the Minnesota Rocket League community with the ab
 You'll need both node an python in order to run these services. I'd recommend getting [nvm](https://github.com/nvm-sh/nvm) and [pyenv](https://github.com/pyenv/pyenv) to manage versions, which are specified in [serverless.yml](./serverless.yml).
 
 Also get `yarn` for node package management
+
 ```bash
 brew install yarn
 ```
@@ -24,6 +25,7 @@ After deps are installed, `yarn install` and `pipenv install` in order to get th
 This service only lives on CloudFormation, and everything is managed via the Serverless framework.
 
 Command:
+
 ```bash
 sls deploy
 ```

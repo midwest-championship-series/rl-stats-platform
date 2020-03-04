@@ -1,5 +1,5 @@
 const ballchasing = require('./services/ballchasing')
 
-module.exports = (query) => {
+module.exports = query => {
   return ballchasing.getReplays(query)
 }

@@ -1,9 +1,9 @@
-const {list} = require('../src/model/team')
+const { list } = require('../src/model/team')
 
 const handler = async () => {
   try {
     return list()
-  } catch(err) {
+  } catch (err) {
     console.error(err)
   }
 }
