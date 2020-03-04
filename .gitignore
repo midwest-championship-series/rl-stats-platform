@@ -17,9 +17,13 @@ var/
 .installed.cfg
 *.egg
 node_modules
+.DS_Store
 
 # Serverless directories
 .serverless
 
 # python
 **/__pycache__
+
+# credentials
+*.creds.*
