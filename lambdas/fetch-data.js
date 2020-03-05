@@ -4,7 +4,10 @@ const handler = async (event, context) => {
   const { table } = event.pathParameters
   try {
     const data = await tables[table].get()
-    return data
+    return {
+      statusCode: 200,
+      body: JSON.stringify(data),
+    }
   } catch (err) {
     console.error(err)
   }
