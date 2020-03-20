@@ -29,14 +29,14 @@ class Table {
     return this.sheet
   }
 
-  async get(criteria = {}) {
+  async get(criteria = {}, options = {}) {
     const sheet = await this.getSheet()
     const rows = await sheet.getRows()
     return rows
       .filter(r => {
         return Object.keys(criteria).every(p => r[p] === criteria[p])
       })
-      .map(r => r._rawData)
+      .map(r => (options.json ? r._rawData : r))
   }
 
   async add(rows) {
