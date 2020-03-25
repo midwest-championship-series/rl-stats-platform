@@ -34,7 +34,8 @@ provider:
     SERVERLESS_REGION: ${opt:region,self:provider.region}
     SERVERLESS_STAGE: ${self:provider.stage}
     BALLCHASING_KEY: ${ssm:BALLCHASING_KEY}
-    STAT_SHEET_ID: ${ssm:MNCS_STAT_SHEET_ID}
+    MNCS_STAT_SHEET_ID: ${ssm:MNCS_STAT_SHEET_ID}
+    MNRL_SHEET_ID: ${ssm:MNRL_SHEET_ID}
     MATCH_STATE_MACHINE_ARN: ${self:resources.Outputs.MatchPollerArn.Value}
   iamRoleStatements:
     - Effect: Allow
@@ -76,6 +77,16 @@ functions:
     events:
       - http:
           path: /games
+          method: get
+          cors: true
+
+  fetch-players:
+    handler: lambdas/fetch-players.handler
+    name: ${self:service}-fetch-players-${self:provider.stage}
+    runtime: nodejs10.x
+    events:
+      - http:
+          path: /players
           method: get
           cors: true
 

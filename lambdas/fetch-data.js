@@ -3,7 +3,7 @@ const tables = require('../src/model')
 const handler = async (event, context) => {
   const { table } = event.pathParameters
   try {
-    const data = await tables[table].get()
+    const data = await tables[table].get({ json: true })
     return {
       statusCode: 200,
       body: JSON.stringify(data),

@@ -4,7 +4,7 @@ const processMatch = require('./producers')
 
 module.exports = async ({ game_ids, reporter }) => {
   const knownGames = (await games.get()).map(g => g.game_id)
-  const [reportPlayerId] = (await players.get(reporter)).map(r => r.id)
+  const [reportPlayerId] = (await players.get({ criteria: reporter })).map(r => r.id)
   if (!reportPlayerId) throw new Error('no player exists with that id - link steam account')
   reporter.id = reportPlayerId
   const query = {
