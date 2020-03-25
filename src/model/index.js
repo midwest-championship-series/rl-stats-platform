@@ -14,22 +14,6 @@ const MNRL = {
   members: '427844088',
 }
 
-console.log(
-  {
-    spreadsheetId: process.env.MNCS_STAT_SHEET_ID,
-    teams: '1167027768',
-    players: '494574480',
-    games: '628902249',
-    teamGames: '966495728',
-    playerGames: '1992851802',
-  },
-
-  {
-    spreadsheetId: process.env.MNRL_SHEET_ID,
-    members: '427844088',
-  },
-)
-
 registerModel('teams', MNCS)
 registerModel('players', MNCS)
 registerModel('games', MNCS)

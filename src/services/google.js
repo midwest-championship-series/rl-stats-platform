@@ -3,7 +3,6 @@ const { GoogleSpreadsheet } = require('google-spreadsheet')
 const path = require('path')
 
 const connect = async spreadsheetId => {
-  console.log('using spreadsheet', spreadsheetId)
   const doc = new GoogleSpreadsheet(spreadsheetId)
   await doc.useServiceAccountAuth(require(path.join(__dirname, '..', '..', '.google.creds.json')))
   await doc.loadInfo()

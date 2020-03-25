@@ -80,16 +80,6 @@ functions:
           method: get
           cors: true
 
-  fetch-players:
-    handler: lambdas/fetch-players.handler
-    name: ${self:service}-fetch-players-${self:provider.stage}
-    runtime: nodejs10.x
-    events:
-      - http:
-          path: /players
-          method: get
-          cors: true
-
   report-games:
     handler: lambdas/report-games.handler
     name: ${self:service}-report-games-${self:provider.stage}
