@@ -90,14 +90,18 @@ functions:
           method: post
           cors: true
 
-  fetch-data:
-    handler: lambdas/fetch-data.handler
-    name: ${self:service}-fetch-data-${self:provider.stage}
+  rest-api:
+    handler: lambdas/rest-api.handler
+    name: ${self:service}-rest-api-${self:provider.stage}
     runtime: nodejs10.x
     events:
       - http:
           path: /api/{table}
           method: get
+          cors: true
+      - http:
+          path: /api/{table}
+          method: put
           cors: true
   
   init-step-function:

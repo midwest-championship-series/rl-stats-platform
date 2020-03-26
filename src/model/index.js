@@ -12,6 +12,7 @@ const MNCS = {
 const MNRL = {
   spreadsheetId: process.env.MNRL_SHEET_ID,
   members: '427844088',
+  apiKeys: '1197702560',
 }
 
 registerModel('teams', MNCS)

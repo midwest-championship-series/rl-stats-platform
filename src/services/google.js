@@ -45,9 +45,10 @@ class Table {
       .map(r => (json ? rowToJSON(sheet.headerValues, r._rawData) : r))
   }
 
-  async add(rows) {
+  async add({ data, json }) {
     const sheet = await this.getSheet()
-    return sheet.addRows(rows)
+    const rows = await sheet.addRows(data)
+    return rows.map(r => (json ? rowToJSON(sheet.headerValues, r._rawData) : r))
   }
 }
 
