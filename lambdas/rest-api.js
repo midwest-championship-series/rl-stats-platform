@@ -1,21 +1,27 @@
 const tables = require('../src/model')
 
 const api = {
-  GET: table => tables[table].get({ json: true }),
-  PUT: (table, body) => {
+  GET: ({ table, queryStringParameters }) => tables[table].get({ criteria: queryStringParameters, json: true }),
+  PUT: ({ table, body }) => {
     return tables[table].add({ data: body[table], json: true })
   },
 }
 
 const handler = async (event, context) => {
+  try {
+    event.body = JSON.parse(event.body)
+  } catch (err) {
+    // some requests won't have bodies and that's ok
+  }
   const {
     requestContext: { httpMethod },
     pathParameters: { table },
+    queryStringParameters,
     body,
   } = event
   try {
-    const data = await api[httpMethod](table, JSON.parse(body))
-    console.log('data', data)
+    // const data = await api[httpMethod](table, JSON.parse(body), queryStringParameters)
+    const data = await api[httpMethod]({ table, body, queryStringParameters })
     return {
       statusCode: 200,
       body: JSON.stringify(data),
