@@ -15,9 +15,9 @@ const getSheet = async (spreadsheetId, sheetId) => {
   return doc.sheetsById[sheetId]
 }
 
-const rowToJSON = (headerValues, rowData) => {
-  return headerValues.reduce((memo, column, i) => {
-    return { ...memo, [column]: rowData[i] }
+const rowToJSON = row => {
+  return row._sheet.headerValues.reduce((memo, column, i) => {
+    return { ...memo, [column]: row._rawData[i] }
   }, {})
 }
 
@@ -40,15 +40,13 @@ class Table {
     if (!criteria) criteria = {}
     const sheet = await this.getSheet()
     const rows = await sheet.getRows()
-    return rows
-      .filter(r => Object.keys(criteria).every(p => r[p] === criteria[p]))
-      .map(r => (json ? rowToJSON(sheet.headerValues, r._rawData) : r))
+    return rows.filter(r => Object.keys(criteria).every(p => r[p] === criteria[p])).map(r => (json ? rowToJSON(r) : r))
   }
 
   async add({ data, json }) {
     const sheet = await this.getSheet()
     const rows = await sheet.addRows(data)
-    return rows.map(r => (json ? rowToJSON(sheet.headerValues, r._rawData) : r))
+    return rows.map(r => (json ? rowToJSON(r) : r))
   }
 }
 
