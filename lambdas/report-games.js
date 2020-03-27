@@ -8,9 +8,10 @@ const handler = async (event, context) => {
       body: JSON.stringify(games),
     }
   } catch (err) {
+    console.error(err)
     return {
       statusCode: 500,
-      body: JSON.stringify(err),
+      body: JSON.stringify({ error: err.message }),
     }
   }
 }

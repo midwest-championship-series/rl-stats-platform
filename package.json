@@ -4,9 +4,11 @@
   "description": "stats management for rocket league games",
   "private": true,
   "scripts": {
-    "start": "nodemon -L --exec serverless offline start --port 4200"
+    "start": "nodemon -L --exec serverless offline start --port 4200",
+    "test": "jest"
   },
   "devDependencies": {
+    "@types/jest": "^25.1.4",
     "@types/request": "^2.48.4",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
