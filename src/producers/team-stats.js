@@ -1,7 +1,7 @@
 const processTeam = (game, color) => {
   const opponentColor = color === 'blue' ? 'orange' : 'blue'
   const own = game[color].stats.core
-  const opponent = game[opponentColor].stats.core
+  const opponentStats = game[opponentColor].stats.core
   return {
     team_id: game[color].team_id,
     opponent_team_id: game[opponentColor].team_id,
@@ -13,11 +13,11 @@ const processTeam = (game, color) => {
     goals: own.goals,
     opponent_goals: own.goals_against,
     saves: own.saves,
-    opponent_saves: opponent.saves,
+    opponent_saves: opponentStats.saves,
     assists: own.assists,
-    opponent_assists: opponent.assists,
+    opponent_assists: opponentStats.assists,
     score: own.score,
-    opponent_score: opponent.score,
+    opponent_score: opponentStats.score,
   }
 }
 
