@@ -5,8 +5,11 @@ const MNCS = {
   teams: '1167027768',
   players: '494574480',
   games: '628902249',
+  schedule: '1647203076',
   teamGames: '966495728',
   playerGames: '1992851802',
+  matchGames: '1364518865',
+  seasons: '465615763',
 }
 
 const MNRL = {
@@ -20,6 +23,9 @@ registerModel('players', MNCS)
 registerModel('games', MNCS)
 registerModel('teamGames', MNCS)
 registerModel('playerGames', MNCS)
+registerModel('matchGames', MNCS)
+registerModel('schedule', MNCS)
+registerModel('seasons', MNCS)
 registerModel('members', MNRL)
 
 module.exports = tables

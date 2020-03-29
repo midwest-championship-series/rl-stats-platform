@@ -29,6 +29,7 @@ module.exports = game =>
         game[color].players.map(player => {
           player.team_color = color
           player.opponent_color = color === 'blue' ? 'orange' : 'blue'
+          player.match_id = game.match_id
           return processPlayer(game, player)
         }),
       ),
