@@ -50,8 +50,8 @@ const assignLeagueIds = async (game, leaguePlayers) => {
   if (matches.length > 1) {
     throw new Error("I don't know how to handle stats for multi-match seasons yet")
   } else if (matches.length < 1) {
-    const teams = (await teams.get()).filter(t => t.id === game.blue.team_id || t.id === game.orange.team_id)
-    throw new Error(`no match found for teams: ${teams[0].name}, ${teams[1].name}`)
+    const matchTeams = (await teams.get()).filter(t => t.id === game.blue.team_id || t.id === game.orange.team_id)
+    throw new Error(`no match found for teams: ${matchTeams[0].name}, ${matchTeams[1].name}`)
   }
   game.match_id = matches[0].id
 }
