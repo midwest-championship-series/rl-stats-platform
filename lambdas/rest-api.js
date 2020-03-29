@@ -1,4 +1,3 @@
-// const tables = require('../src/model')
 const tables = {
   teams: require('../src/model/teams'),
   players: require('../src/model/players'),

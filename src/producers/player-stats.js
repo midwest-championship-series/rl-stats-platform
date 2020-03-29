@@ -26,12 +26,13 @@ module.exports = game =>
   ['blue', 'orange'].reduce(
     (result, color) =>
       result.concat(
-        game[color].players.map(player => {
-          player.team_color = color
-          player.opponent_color = color === 'blue' ? 'orange' : 'blue'
-          player.match_id = game.match_id
-          return processPlayer(game, player)
-        }),
+        game[color].players
+          .filter(player => !!player.league_id)
+          .map(player => {
+            player.team_color = color
+            player.opponent_color = color === 'blue' ? 'orange' : 'blue'
+            return processPlayer(game, player)
+          }),
       ),
     [],
   )

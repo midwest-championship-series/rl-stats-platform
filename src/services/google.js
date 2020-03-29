@@ -22,10 +22,11 @@ const rowToJSON = row => {
 }
 
 class Table {
-  constructor(name, spreadsheetId, sheetId) {
+  constructor(name, spreadsheetId, sheetId, keys) {
     this.name = name
     this.spreadsheetId = spreadsheetId
     this.sheetId = sheetId
+    this.keys = keys || []
     this.sheet = undefined
   }
 
@@ -47,6 +48,32 @@ class Table {
     const sheet = await this.getSheet()
     const rows = await sheet.addRows(data)
     return rows.map(r => (json ? rowToJSON(r) : r))
+  }
+
+  async upsert({ data }) {
+    const sheet = await this.getSheet()
+    const rows = await sheet.getRows()
+    const { newRows, updateRows } = data.reduce(
+      (result, d) => {
+        const updateRows = rows.filter(r => this.keys.every(key => r[key] === d[key]))
+        if (updateRows.length === 0) {
+          console.log('found new row')
+          result.newRows = result.newRows.concat(d)
+        } else {
+          console.log('found row to update')
+          updateRows.forEach(r => {
+            Object.keys(d).forEach(key => (r[key] = d[key]))
+          })
+          result.updateRows = result.updateRows.concat(updateRows)
+        }
+        return result
+      },
+      { newRows: [], updateRows: [] },
+    )
+    const promises = []
+    if (newRows.length > 0) promises.push(sheet.addRows(newRows))
+    if (updateRows.length > 0) updateRows.forEach(r => promises.push(r.save()))
+    await Promise.all(promises)
   }
 }
 

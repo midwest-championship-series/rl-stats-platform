@@ -180,6 +180,11 @@ const createMocks = () => {
   ])
   seasons.get.mockResolvedValue([
     {
+      season: '0',
+      season_year: '2019',
+      current: 'FALSE',
+    },
+    {
       season: '1',
       season_year: '2020',
       current: 'TRUE',
@@ -261,7 +266,8 @@ describe('game stats producer', () => {
   it('should process player stats', async () => {
     createMocks()
     const { playerStats } = await processMatch(replays)
-    expect(playerStats).toHaveLength(24)
+    // a 4-game match will all linked players would have 24, but not all players in test match are linked
+    expect(playerStats).toHaveLength(16)
     expect(playerStats[0]).toMatchObject({
       player_id: '78dacf77-42b2-4be1-b980-bdeb58fb9378',
       screen_name: 'Calster',
