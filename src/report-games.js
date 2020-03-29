@@ -12,6 +12,8 @@ module.exports = async ({ game_ids }) => {
   await games.add({ data: gameStats })
   await teamGames.add({ data: teamStats })
   await playerGames.add({ data: playerStats })
-  const recordedIds = reportGames.map(({ id }) => id)
-  return { recordedIds, stats: { gameStats, teamStats, playerStats } }
+  return {
+    recorded_ids: reportGames.map(({ id }) => id),
+    stats: { game_stats: gameStats, team_stats: teamStats, player_stats: playerStats },
+  }
 }
