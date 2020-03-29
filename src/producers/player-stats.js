@@ -4,6 +4,7 @@ const processPlayer = (game, player) => {
   const opponentTeamStats = game[player.opponent_color].stats.core
   return {
     player_id: player.league_id,
+    screen_name: player.name,
     team_id: player.team_id,
     team_color: player.team_color,
     opponent_team_id: player.opponent_team_id,

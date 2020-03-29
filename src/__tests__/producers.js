@@ -216,6 +216,7 @@ describe('game stats producer', () => {
     expect(playerStats).toHaveLength(24)
     expect(playerStats[0]).toMatchObject({
       player_id: '78dacf77-42b2-4be1-b980-bdeb58fb9378',
+      screen_name: 'Calster',
       team_id: '14c44087-6711-434e-bcfc-199b98800d74',
       team_color: 'blue',
       opponent_team_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
