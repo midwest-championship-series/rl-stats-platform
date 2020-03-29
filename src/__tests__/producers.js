@@ -241,6 +241,7 @@ describe('game stats producer', () => {
       team_id: '14c44087-6711-434e-bcfc-199b98800d74',
       opponent_team_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
       team_color: 'blue',
+      match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       wins: 1,
       /** @todo make these work */
@@ -267,6 +268,7 @@ describe('game stats producer', () => {
       team_id: '14c44087-6711-434e-bcfc-199b98800d74',
       team_color: 'blue',
       opponent_team_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
+      match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       wins: 1,
       shots: 2,

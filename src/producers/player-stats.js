@@ -8,9 +8,9 @@ const processPlayer = (game, player) => {
     team_id: player.team_id,
     team_color: player.team_color,
     opponent_team_id: player.opponent_team_id,
+    match_id: game.match_id,
     game_id: game.id,
     /** @todo make these work */
-    // match_id: '',
     // match_result: '',
     wins: teamStats.goals > opponentTeamStats.goals ? 1 : 0,
     shots: core.shots,
