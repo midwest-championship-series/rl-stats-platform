@@ -84,6 +84,7 @@ functions:
     handler: lambdas/report-games.handler
     name: ${self:service}-report-games-${self:provider.stage}
     runtime: nodejs10.x
+    timeout: 30
     events:
       - http:
           path: /games/_report
