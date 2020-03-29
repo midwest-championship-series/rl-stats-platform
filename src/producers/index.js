@@ -43,10 +43,8 @@ const assignLeagueIds = async (game, leaguePlayers) => {
       json: true,
     })
   ).filter(m => {
-    return (
-      (m.team_1_id === game.blue.team_id && m.team_2_id === game.orange.team_2_id) ||
-      (m.team_1_id === game.orange.team_id && m.team_2_id === game.blue.team_id)
-    )
+    const matchIds = [m.team_1_id, m.team_2_id]
+    return matchIds.includes(game.blue.team_id) && matchIds.includes(game.orange.team_id)
   })
   if (matches.length > 1) {
     throw new Error("I don't know how to handle stats for multi-match seasons yet")
