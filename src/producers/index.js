@@ -1,4 +1,7 @@
-const { members, players, schedule, seasons } = require('../model')
+const members = require('../model/members')
+const players = require('../model/players')
+const schedule = require('../model/schedule')
+const seasons = require('../model/seasons')
 const gameStats = require('./game-stats')
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
@@ -30,27 +33,27 @@ const assignLeagueIds = async (game, leaguePlayers) => {
     })
   })
   // find the match info for these teams facing off
-  // const [currentSeason] = await seasons.get({ criteria: { current: 'TRUE' }, json: true })
-  // const matches = (
-  //   await schedule.get({
-  //     criteria: {
-  //       season: currentSeason.season,
-  //       type: currentSeason.type,
-  //     },
-  //     json: true,
-  //   })
-  // ).filter(m => {
-  //   return (
-  //     (m.team_1_id === game.blue.team_id && m.team_2_id === game.orange.team_2_id) ||
-  //     (m.team_1_id === game.orange.team_id && m.team_2_id === game.blue.team_id)
-  //   )
-  // })
-  // if (matches.length > 1) {
-  //   throw new Error("I don't know how to handle stats for multi-match seasons yet")
-  // } else if (matches.length < 1) {
-  //   throw new Error(`no match found for teams: ${game.blue.team_id}, ${game.orange.team_id}`)
-  // }
-  // game.match_id = matches[0].id
+  const [currentSeason] = await seasons.get({ criteria: { current: 'TRUE' }, json: true })
+  const matches = (
+    await schedule.get({
+      criteria: {
+        season: currentSeason.season,
+        type: currentSeason.type,
+      },
+      json: true,
+    })
+  ).filter(m => {
+    return (
+      (m.team_1_id === game.blue.team_id && m.team_2_id === game.orange.team_2_id) ||
+      (m.team_1_id === game.orange.team_id && m.team_2_id === game.blue.team_id)
+    )
+  })
+  if (matches.length > 1) {
+    throw new Error("I don't know how to handle stats for multi-match seasons yet")
+  } else if (matches.length < 1) {
+    throw new Error(`no match found for teams: ${game.blue.team_id}, ${game.orange.team_id}`)
+  }
+  game.match_id = matches[0].id
 }
 
 module.exports = async games => {
