@@ -250,9 +250,7 @@ describe('game stats producer', () => {
       match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       wins: 1,
-      /** @todo make these work */
-      // match_id: '',
-      // match_result: 'W',
+      match_id_win: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       shots: 5,
       opponent_shots: 7,
       goals: 3,
@@ -278,6 +276,7 @@ describe('game stats producer', () => {
       match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       wins: 1,
+      match_id_win: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       shots: 2,
       goals: 1,
       saves: 2,
