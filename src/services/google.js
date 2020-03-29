@@ -50,13 +50,6 @@ class Table {
   }
 }
 
-const tables = {}
+// const registerModel = (name, tableRegistry) => new Table(name, tableRegistry.spreadsheetId, tableRegistry[name])
 
-const registerModel = (name, tableRegistry) => {
-  tables[name] = new Table(name, tableRegistry.spreadsheetId, tableRegistry[name])
-}
-
-module.exports = {
-  registerModel,
-  tables,
-}
+module.exports = Table
