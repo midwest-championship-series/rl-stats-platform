@@ -17,7 +17,7 @@ const processPlayer = (game, player) => {
     saves: core.saves,
     assists: core.assists,
     score: core.score,
-    mvps: core.mvp ? 1 : 0,
+    // mvps: core.mvp ? 1 : 0,
   }
 }
 
