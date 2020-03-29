@@ -1,5 +1,6 @@
 const members = require('../model/members')
 const players = require('../model/players')
+const teams = require('../model/teams')
 const schedule = require('../model/schedule')
 const seasons = require('../model/seasons')
 const gameStats = require('./game-stats')
@@ -49,7 +50,8 @@ const assignLeagueIds = async (game, leaguePlayers) => {
   if (matches.length > 1) {
     throw new Error("I don't know how to handle stats for multi-match seasons yet")
   } else if (matches.length < 1) {
-    throw new Error(`no match found for teams: ${game.blue.team_id}, ${game.orange.team_id}`)
+    const teams = (await teams.get()).filter(t => t.id === game.blue.team_id || t.id === game.orange.team_id)
+    throw new Error(`no match found for teams: ${teams[0].name}, ${teams[1].name}`)
   }
   game.match_id = matches[0].id
 }
