@@ -234,6 +234,7 @@ describe('game stats producer', () => {
     const game = gameStats[0]
     expect(game).toMatchObject({
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       date_time_played: '2020-03-19T21:35:38Z',
     })
     expect(game).toHaveProperty('date_time_processed')
