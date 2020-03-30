@@ -71,7 +71,8 @@ const assignMatchWin = games => {
     }
     return result
   }, [])
-  const winnerId = teamWins[0].wins > teamWins[1].wins ? teamWins[0].id : teamWins[1].id
+  const winnerId =
+    teamWins.length > 1 ? (teamWins[0].wins > teamWins[1].wins ? teamWins[0].id : teamWins[1].id) : teamWins[0].id
   games.forEach(game => {
     const winnerColor = colors.find(color => game[color].team_id === winnerId)
     game[winnerColor].match_id_win = game.match_id
