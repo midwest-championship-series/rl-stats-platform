@@ -18,11 +18,15 @@ const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
 const assignLeagueIds = async (game, leaguePlayers) => {
   // assign team_id to teams
+  game.teams = []
   colors.forEach(color => {
     const teamPlayer = leaguePlayers.find(player => {
       return game[color].players.some(({ id }) => player.platform === id.platform && player.platform_id === id.id)
     })
-    game[color].team_id = teamPlayer && teamPlayer.team_id
+    if (teamPlayer) {
+      game[color].team_id = teamPlayer.team_id
+      if (!game.teams.includes(teamPlayer.team_id)) game.teams.push(teamPlayer.team_id)
+    }
   })
   // assign team_id and player_id to players
   colors.forEach(color => {
@@ -56,11 +60,30 @@ const assignLeagueIds = async (game, leaguePlayers) => {
   game.match_id = matches[0].id
 }
 
+const assignMatchWin = games => {
+  const teamWins = games.reduce((result, game) => {
+    const winner = game.orange.stats.core.goals > game.blue.stats.core.goals ? 'orange' : 'blue'
+    const winningTeam = result.find(r => r.id === game[winner].team_id)
+    if (!winningTeam) {
+      result.push({ id: game[winner].team_id, wins: 1 })
+    } else {
+      winningTeam.wins++
+    }
+    return result
+  }, [])
+  const winnerId = teamWins[0].wins > teamWins[1].wins ? teamWins[0].id : teamWins[1].id
+  games.forEach(game => {
+    const winnerColor = colors.find(color => game[color].team_id === winnerId)
+    game[winnerColor].match_id_win = game.match_id
+  })
+}
+
 module.exports = async games => {
   const leaguePlayers = await getMemberInfo()
   for (let game of games) {
     await assignLeagueIds(game, leaguePlayers)
   }
+  assignMatchWin(games)
   return {
     gameStats: games.map(gameStats),
     teamStats: games.reduce((result, game) => result.concat(teamStats(game)), []),

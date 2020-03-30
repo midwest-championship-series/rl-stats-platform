@@ -10,8 +10,7 @@ const processPlayer = (game, player) => {
     opponent_team_id: player.opponent_team_id,
     match_id: game.match_id,
     game_id: game.id,
-    /** @todo make these work */
-    // match_result: '',
+    match_id_win: game[player.team_color].match_id_win,
     wins: teamStats.goals > opponentTeamStats.goals ? 1 : 0,
     shots: core.shots,
     goals: core.goals,

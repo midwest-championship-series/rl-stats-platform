@@ -9,6 +9,7 @@ const processTeam = (game, color) => {
     match_id: game.match_id,
     game_id: game.id,
     wins: own.goals > own.goals_against ? 1 : 0,
+    match_id_win: game[color].match_id_win,
     shots: own.shots,
     opponent_shots: own.shots_against,
     goals: own.goals,
