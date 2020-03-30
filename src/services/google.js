@@ -57,10 +57,8 @@ class Table {
       (result, d) => {
         const updateRows = rows.filter(r => this.keys.every(key => r[key] === d[key]))
         if (updateRows.length === 0) {
-          console.log('found new row')
           result.newRows = result.newRows.concat(d)
         } else {
-          console.log('found row to update')
           updateRows.forEach(r => {
             Object.keys(d).forEach(key => (r[key] = d[key]))
           })
