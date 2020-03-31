@@ -27,10 +27,11 @@ module.exports = async ({ match_id, game_ids }) => {
       throw new Error(`cannot report games from multiple matches at once: ${reportedGameMatchIds.join(', ')}`)
     const allMatchGames = allGames.filter(g => g.match_id === reportedGameMatchIds[0])
     // covers case 2
-    if (allMatchGames.length !== game_ids.length)
+    if (reportedGameMatchIds[0] && allMatchGames.length !== game_ids.length)
       throw new Error(
         `expected same number of games to be reported as games in match: ${reportedGameMatchIds[0]}, expected ${allMatchGames.length} but got ${game_ids.length}`,
       )
+    // covers case 3
     if (!allMatchGames.every(g => game_ids.includes(g.game_id)))
       throw new Error(`reported games_ids do not match game_ids for match ${reportedGameMatchIds[0]}`)
     gameIdsToProcess.push(...game_ids)
