@@ -1,5 +1,5 @@
 const processPlayer = (game, player) => {
-  const core = player.stats.core
+  const stats = player.stats
   const teamStats = game[player.team_color].stats.core
   const opponentTeamStats = game[player.opponent_color].stats.core
   return {
@@ -11,27 +11,36 @@ const processPlayer = (game, player) => {
     match_id: game.match_id,
     game_id: game.id,
     match_id_win: game[player.team_color].match_id_win,
+    game_id_win: teamStats.goals > opponentTeamStats.goals ? game.id : undefined,
     wins: teamStats.goals > opponentTeamStats.goals ? 1 : 0,
-    shots: core.shots,
-    goals: core.goals,
-    saves: core.saves,
-    assists: core.assists,
-    score: core.score,
-    // mvps: core.mvp ? 1 : 0,
+    shots: stats.core.shots,
+    goals: stats.core.goals,
+    saves: stats.core.saves,
+    assists: stats.core.assists,
+    score: stats.core.score,
+    mvps: 0,
+    demos_inflicted: stats.demo.inflicted,
+    demos_taken: stats.demo.taken,
   }
 }
 
-module.exports = game =>
-  ['blue', 'orange'].reduce(
+module.exports = game => {
+  // assign stats to each player
+  const colors = ['blue', 'orange']
+  const playerStats = colors.reduce(
     (result, color) =>
       result.concat(
-        game[color].players
-          .filter(player => !!player.league_id)
-          .map(player => {
-            player.team_color = color
-            player.opponent_color = color === 'blue' ? 'orange' : 'blue'
-            return processPlayer(game, player)
-          }),
+        game[color].players.map(player => {
+          player.team_color = color
+          player.opponent_color = color === 'blue' ? 'orange' : 'blue'
+          return processPlayer(game, player)
+        }),
       ),
     [],
   )
+  // assign mvp
+  const winners = playerStats.filter(p => p.wins > 0)
+  winners.find(p => p.score === Math.max(...winners.map(p => p.score))).mvps = 1
+  // return only players which have ids in our system
+  return playerStats.filter(p => !!p.player_id)
+}

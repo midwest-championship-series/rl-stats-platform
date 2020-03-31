@@ -248,9 +248,10 @@ describe('game stats producer', () => {
       opponent_team_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
       team_color: 'blue',
       match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
-      game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
-      wins: 1,
       match_id_win: '69d14320-5103-4c12-bd5b-7bb10719a1da',
+      game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      game_id_win: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      wins: 1,
       shots: 5,
       opponent_shots: 7,
       goals: 3,
@@ -259,6 +260,8 @@ describe('game stats producer', () => {
       opponent_saves: 1,
       assists: 3,
       opponent_assists: 2,
+      demos_inflicted: 2,
+      demos_taken: 5,
     })
     /** @todo write test for opposing team */
   })
@@ -274,15 +277,21 @@ describe('game stats producer', () => {
       team_color: 'blue',
       opponent_team_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
       match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
-      game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
-      wins: 1,
       match_id_win: '69d14320-5103-4c12-bd5b-7bb10719a1da',
+      game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      game_id_win: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      wins: 1,
       shots: 2,
       goals: 1,
       saves: 2,
       assists: 1,
       score: 493,
-      // mvps: 0, // ballchasing does not do this stat correctly, will have to customize
+      mvps: 1,
+      demos_inflicted: 0,
+      demos_taken: 2,
+    })
+    expect(playerStats[1]).toMatchObject({
+      mvps: 0,
     })
   })
 })
