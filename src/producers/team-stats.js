@@ -21,8 +21,16 @@ const processTeam = (game, color) => {
     opponent_assists: opponent.core.assists,
     score: own.core.score,
     opponent_score: opponent.core.score,
+    ms_played: game.duration * 1000,
     demos_inflicted: own.demo.inflicted,
     demos_taken: own.demo.taken,
+    bpm: own.boost.bpm,
+    avg_amount: own.boost.avg_amount,
+    amount_collected: own.boost.amount_collected,
+    amount_stolen: own.boost.amount_stolen,
+    amount_used_while_supersonic: own.boost.amount_used_while_supersonic,
+    ms_zero_boost: own.boost.time_zero_boost * 1000,
+    ms_full_boost: own.boost.time_full_boost * 1000,
   }
 }
 

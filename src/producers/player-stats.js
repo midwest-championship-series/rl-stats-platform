@@ -19,8 +19,16 @@ const processPlayer = (game, player) => {
     assists: stats.core.assists,
     score: stats.core.score,
     mvps: 0,
+    ms_played: (player.end_time - player.start_time) * 1000,
     demos_inflicted: stats.demo.inflicted,
     demos_taken: stats.demo.taken,
+    bpm: stats.boost.bpm,
+    avg_amount: stats.boost.avg_amount,
+    amount_collected: stats.boost.amount_collected,
+    amount_stolen: stats.boost.amount_stolen,
+    amount_used_while_supersonic: stats.boost.amount_used_while_supersonic,
+    ms_zero_boost: stats.boost.time_zero_boost * 1000,
+    ms_full_boost: stats.boost.time_full_boost * 1000,
   }
 }
 

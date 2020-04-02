@@ -260,8 +260,16 @@ describe('game stats producer', () => {
       opponent_saves: 1,
       assists: 3,
       opponent_assists: 2,
+      ms_played: 351000,
       demos_inflicted: 2,
       demos_taken: 5,
+      bpm: 1194,
+      avg_amount: 139.37,
+      amount_collected: 6608,
+      amount_stolen: 1225,
+      amount_used_while_supersonic: 797,
+      ms_zero_boost: 162580,
+      ms_full_boost: 79400,
     })
     /** @todo write test for opposing team */
   })
@@ -287,8 +295,16 @@ describe('game stats producer', () => {
       assists: 1,
       score: 493,
       mvps: 1,
+      ms_played: 351728,
       demos_inflicted: 0,
       demos_taken: 2,
+      bpm: 416,
+      avg_amount: 49.66,
+      amount_collected: 2461,
+      amount_stolen: 410,
+      amount_used_while_supersonic: 212,
+      ms_zero_boost: 52950,
+      ms_full_boost: 23460,
     })
     expect(playerStats[1]).toMatchObject({
       mvps: 0,
