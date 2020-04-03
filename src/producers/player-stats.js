@@ -1,7 +1,16 @@
+const { getTeamStats, getPlayerStats, reduceStats } = require('./common')
+
 const processPlayer = (game, player) => {
-  const stats = player.stats
-  const teamStats = game[player.team_color].stats.core
-  const opponentTeamStats = game[player.opponent_color].stats.core
+  const teamStats = getTeamStats(game, player.team_color)
+  const opponentTeamStats = getTeamStats(game, player.opponent_color)
+  const ownStats = getPlayerStats(player)
+  const modifiers = [
+    { inName: 'inflicted', outName: 'demos_inflicted' },
+    { inName: 'taken', outName: 'demos_taken' },
+    { inName: 'time_full_boost', outName: 'ms_full_boost', out: value => value * 1000 },
+    { inName: 'time_zero_boost', outName: 'ms_zero_boost', out: value => value * 1000 },
+  ]
+  const stats = reduceStats({ ownStats, game, modifiers })
   return {
     player_id: player.league_id,
     screen_name: player.name,
@@ -13,22 +22,8 @@ const processPlayer = (game, player) => {
     match_id_win: game[player.team_color].match_id_win,
     game_id_win: teamStats.goals > opponentTeamStats.goals ? game.id : undefined,
     wins: teamStats.goals > opponentTeamStats.goals ? 1 : 0,
-    shots: stats.core.shots,
-    goals: stats.core.goals,
-    saves: stats.core.saves,
-    assists: stats.core.assists,
-    score: stats.core.score,
-    mvps: 0,
     ms_played: (player.end_time - player.start_time) * 1000,
-    demos_inflicted: stats.demo.inflicted,
-    demos_taken: stats.demo.taken,
-    bpm: stats.boost.bpm,
-    avg_amount: stats.boost.avg_amount,
-    amount_collected: stats.boost.amount_collected,
-    amount_stolen: stats.boost.amount_stolen,
-    amount_used_while_supersonic: stats.boost.amount_used_while_supersonic,
-    ms_zero_boost: stats.boost.time_zero_boost * 1000,
-    ms_full_boost: stats.boost.time_full_boost * 1000,
+    ...stats,
   }
 }
 
@@ -46,9 +41,10 @@ module.exports = game => {
       ),
     [],
   )
-  // assign mvp
+  // assign match mvp
   const winners = playerStats.filter(p => p.wins > 0)
-  winners.find(p => p.score === Math.max(...winners.map(p => p.score))).mvps = 1
+  const mvpScore = Math.max(...winners.map(p => p.score))
+  winners.forEach(p => (p.mvps = p.score === mvpScore ? 1 : 0))
   // return only players which have ids in our system
   return playerStats.filter(p => !!p.player_id)
 }
