@@ -45,6 +45,14 @@ provider:
         - dynamodb:*
       Resource:
         - '*'
+  usagePlan:
+    quota:
+      limit: 10000
+      offset: 2
+      period: MONTH
+    throttle:
+      burstLimit: 10
+      rateLimit: 5
 
 functions:
   # analyzes a replay file and produces its stats
