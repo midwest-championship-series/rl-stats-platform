@@ -16,9 +16,15 @@ const getTeamStats = (game, color) => {
 
 const getPlayerStats = player => combineStats(player.stats)
 
+const timeModifier = value => value * 1000
+
 const reduceStats = ({ ownStats, game, modifiers, opponentStats }) => {
   return Object.keys(ownStats).reduce((memo, prop) => {
     let { inName, outName, out } = modifiers.find(m => m.inName === prop) || { inName: prop, outName: prop }
+    if (inName.split('_')[0] === 'time') {
+      out = timeModifier
+      outName = ['ms', ...inName.split('_').slice(1)].join('_')
+    }
     if (!out) out = value => value
     memo[outName] = out(ownStats[inName], game)
     if (opponentStats) memo[`opponent_${outName}`] = out(opponentStats[inName], game)

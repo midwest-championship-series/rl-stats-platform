@@ -7,8 +7,6 @@ const processPlayer = (game, player) => {
   const modifiers = [
     { inName: 'inflicted', outName: 'demos_inflicted' },
     { inName: 'taken', outName: 'demos_taken' },
-    { inName: 'time_full_boost', outName: 'ms_full_boost', out: value => value * 1000 },
-    { inName: 'time_zero_boost', outName: 'ms_zero_boost', out: value => value * 1000 },
   ]
   const stats = reduceStats({ ownStats, game, modifiers })
   return {
