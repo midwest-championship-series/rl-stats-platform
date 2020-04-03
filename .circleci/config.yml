@@ -1,0 +1,66 @@
+version: 2.1
+executors:
+  node:
+    docker:
+      - image: circleci/node:10.15
+orbs:
+  aws-cli: circleci/aws-cli@0.1.16
+jobs:
+  build-and-test:
+    executor: node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run:
+          name: Install Dependencies
+          command: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Run Tests
+          command: yarn test:ci
+      - store_test_results:
+          path: ./test-results
+  deploy:
+    executor: node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - aws-cli/setup
+      - run:
+          name: Install Serverless CLI and dependencies
+          command: sudo npm i -g serverless # use npm because serverless behaves oddly with yarn
+      - run:
+          name: Retrieve Google Credentials
+          command: node scripts/retrieve-creds
+      - run:
+          name: Deploy
+          command: ./scripts/deploy.sh
+      - run:
+          name: Version
+          command: ./scripts/release.sh
+workflows:
+  version: 2
+  test-and-deploy:
+    jobs:
+      - build-and-test
+      - deploy:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - dev
+                - master

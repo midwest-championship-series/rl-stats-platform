@@ -4,6 +4,8 @@ const tables = {
   games: require('../src/model/games'),
   members: require('../src/model/members'),
   schedule: require('../src/model/schedule'),
+  'player-games': require('../src/model/player-games'),
+  'team-games': require('../src/model/team-games'),
 }
 
 const api = {
