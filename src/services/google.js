@@ -75,6 +75,4 @@ class Table {
   }
 }
 
-// const registerModel = (name, tableRegistry) => new Table(name, tableRegistry.spreadsheetId, tableRegistry[name])
-
 module.exports = Table

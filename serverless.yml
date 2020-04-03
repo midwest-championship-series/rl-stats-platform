@@ -42,6 +42,7 @@ provider:
       Action:
         - states:StartExecution
         - s3:*
+        - dynamodb:*
       Resource:
         - '*'
 

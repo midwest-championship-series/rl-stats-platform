@@ -6,6 +6,7 @@ const tables = {
   schedule: require('../src/model/schedule'),
   'player-games': require('../src/model/player-games'),
   'team-games': require('../src/model/team-games'),
+  auth: require('../src/model/auth'),
 }
 
 const api = {
