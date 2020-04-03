@@ -142,3 +142,15 @@ resources:
       Description: The arn for the match polling state machine
       Value:
         Ref: MatchPollerDash${self:provider.stage} # Dash is used to replace '-' in local state machine name
+  Resources:
+    AuthTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: auth-table-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
