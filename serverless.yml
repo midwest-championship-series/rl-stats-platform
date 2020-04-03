@@ -28,14 +28,14 @@ provider:
   name: aws
   runtime: python3.6
   profile: personal
-  region: us-east-1
-  stage: dev
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
   environment:
-    SERVERLESS_REGION: ${opt:region,self:provider.region}
+    SERVERLESS_REGION: ${self:provider.region}
     SERVERLESS_STAGE: ${self:provider.stage}
     BALLCHASING_KEY: ${ssm:BALLCHASING_KEY}
-    MNCS_STAT_SHEET_ID: ${ssm:MNCS_STAT_SHEET_ID}
-    MNRL_SHEET_ID: ${ssm:MNRL_SHEET_ID}
+    MNCS_STAT_SHEET_ID: ${ssm:${self:provider.stage}-MNCS_STAT_SHEET_ID}
+    MNRL_SHEET_ID: ${ssm:${self:provider.stage}-MNRL_SHEET_ID}
     MATCH_STATE_MACHINE_ARN: ${self:resources.Outputs.MatchPollerArn.Value}
   iamRoleStatements:
     - Effect: Allow
