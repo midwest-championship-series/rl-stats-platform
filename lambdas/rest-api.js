@@ -17,6 +17,7 @@ const api = {
 }
 
 const handler = async (event, context) => {
+  // console.log(event.requestContext.authorizer)
   try {
     event.body = JSON.parse(event.body)
   } catch (err) {
