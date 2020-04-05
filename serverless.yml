@@ -30,6 +30,7 @@ provider:
   profile: personal
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
+  endpointType: REGIONAL
   environment:
     SERVERLESS_REGION: ${self:provider.region}
     SERVERLESS_STAGE: ${self:provider.stage}
