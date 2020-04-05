@@ -37,12 +37,23 @@ provider:
     MNCS_STAT_SHEET_ID: ${ssm:${self:provider.stage}-MNCS_STAT_SHEET_ID}
     MNRL_SHEET_ID: ${ssm:${self:provider.stage}-MNRL_SHEET_ID}
     MATCH_STATE_MACHINE_ARN: ${self:resources.Outputs.MatchPollerArn.Value}
+    GAMES_QUEUE_URL:
+      Ref: GamesQueue
   iamRoleStatements:
     - Effect: Allow
       Action:
         - states:StartExecution
         - s3:*
         - dynamodb:*
+      Resource:
+        - '*'
+    - Effect: Allow
+      Action:
+        - sqs:ListQueues
+        - sqs:DeleteMessage
+        - sqs:GetQueueUrl
+        - sqs:ReceiveMessage
+        - sqs:SendMessage
       Resource:
         - '*'
   usagePlan:
@@ -100,6 +111,20 @@ functions:
           method: post
           private: true
           cors: true
+  
+  process-match:
+    handler: lambdas/process-match.handler
+    name: ${self:service}-process-match-${self:provider.stage}
+    runtime: nodejs10.x
+    timeout: 30
+    reservedConcurrency: 1
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - GamesQueue
+              - Arn
+          batchSize: 1
 
   authorize:
     handler: lambdas/authorize.handler
@@ -155,11 +180,6 @@ stepFunctions:
           #         Next: save-match-results
 
 resources:
-  Outputs:
-    MatchPollerArn:
-      Description: The arn for the match polling state machine
-      Value:
-        Ref: MatchPollerDash${self:provider.stage} # Dash is used to replace '-' in local state machine name
   Resources:
     AuthTable:
       Type: AWS::DynamoDB::Table
@@ -172,3 +192,19 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+    GamesQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-process-games-queue-${self:provider.stage}
+        DelaySeconds: 0
+        MessageRetentionPeriod: 345600
+        ReceiveMessageWaitTimeSeconds: 20
+        VisibilityTimeout: 40
+  Outputs:
+    MatchPollerArn:
+      Description: The arn for the match polling state machine
+      Value:
+        Ref: MatchPollerDash${self:provider.stage} # Dash is used to replace '-' in local state machine name
+    GamesQueue:
+      Value:
+        Ref: GamesQueue

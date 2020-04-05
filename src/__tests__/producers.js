@@ -178,59 +178,13 @@ const createMocks = () => {
       screen_name: 'cheeriojf',
     },
   ])
-  seasons.get.mockResolvedValue([
-    {
-      season: '0',
-      season_year: '2019',
-      current: 'FALSE',
-    },
-    {
-      season: '1',
-      season_year: '2020',
-      current: 'TRUE',
-    },
-  ])
-  schedule.get.mockResolvedValue([
-    {
-      id: '6d317375-f76b-457c-ad4d-f2973de54458',
-      team_1_name: 'Granite City Giants',
-      team_1_id: '2ac3b6ba-49ee-4d5d-908e-889a558f27e2',
-      team_2_name: 'Minneapolis Miracles',
-      team_2_id: '2bf283a2-b387-46be-ae3d-7803403c0186',
-      week: '1',
-      season: '1',
-      type: 'REG',
-      league: 'mncs',
-    },
-    {
-      id: 'ff8158fa-972b-4784-adbb-6258139fc683',
-      team_1_name: 'Bemidji Lumberjacks',
-      team_1_id: '9d2b9eaf-370b-4aa3-a680-a048dc53fe5b',
-      team_2_name: 'St. Paul Senators',
-      team_2_id: '956cde96-5baf-4ad9-9ac7-292aaa183d0e',
-      week: '1',
-      season: '1',
-      type: 'REG',
-      league: 'mncs',
-    },
-    {
-      id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
-      team_1_name: 'Duluth Superiors',
-      team_1_id: '14c44087-6711-434e-bcfc-199b98800d74',
-      team_2_name: 'Burnsville Inferno',
-      team_2_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
-      week: '1',
-      season: '1',
-      type: 'REG',
-      league: 'mncs',
-    },
-  ])
 }
 
 describe('game stats producer', () => {
+  const matchId = '69d14320-5103-4c12-bd5b-7bb10719a1da'
   it('should process game stats', async () => {
     createMocks()
-    const { gameStats } = await processMatch(replays)
+    const { gameStats } = await processMatch(replays, matchId)
     const game = gameStats[0]
     expect(game).toMatchObject({
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
@@ -241,7 +195,7 @@ describe('game stats producer', () => {
   })
   it('should process team stats', async () => {
     createMocks()
-    const { teamStats } = await processMatch(replays)
+    const { teamStats } = await processMatch(replays, matchId)
     expect(teamStats).toHaveLength(8)
     expect(teamStats[0]).toMatchObject({
       team_id: '14c44087-6711-434e-bcfc-199b98800d74',
@@ -275,7 +229,7 @@ describe('game stats producer', () => {
   })
   it('should process player stats', async () => {
     createMocks()
-    const { playerStats } = await processMatch(replays)
+    const { playerStats } = await processMatch(replays, matchId)
     // a 4-game match will all linked players would have 24, but not all players in test match are linked
     expect(playerStats).toHaveLength(16)
     expect(playerStats[0]).toMatchObject({

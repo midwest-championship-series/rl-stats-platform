@@ -1,8 +1,5 @@
 const members = require('../model/members')
 const players = require('../model/players')
-const teams = require('../model/teams')
-const schedule = require('../model/schedule')
-const seasons = require('../model/seasons')
 const gameStats = require('./game-stats')
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
@@ -16,7 +13,7 @@ const getMemberInfo = async () => {
 
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
-const assignLeagueIds = async (game, leaguePlayers) => {
+const assignLeagueIds = async (game, leaguePlayers, matchId) => {
   // assign team_id to teams
   game.teams = []
   colors.forEach(color => {
@@ -37,27 +34,7 @@ const assignLeagueIds = async (game, leaguePlayers) => {
       player.league_id = leaguePlayer && leaguePlayer.id
     })
   })
-  // find the match info for these teams facing off
-  const [currentSeason] = await seasons.get({ criteria: { current: 'TRUE' }, json: true })
-  const matches = (
-    await schedule.get({
-      criteria: {
-        season: currentSeason.season,
-        type: currentSeason.type,
-      },
-      json: true,
-    })
-  ).filter(m => {
-    const matchIds = [m.team_1_id, m.team_2_id]
-    return matchIds.includes(game.blue.team_id) && matchIds.includes(game.orange.team_id)
-  })
-  if (matches.length > 1) {
-    throw new Error("I don't know how to handle stats for multi-match seasons yet")
-  } else if (matches.length < 1) {
-    const matchTeams = (await teams.get()).filter(t => t.id === game.blue.team_id || t.id === game.orange.team_id)
-    throw new Error(`no match found for teams: ${matchTeams[0].name}, ${matchTeams[1].name}`)
-  }
-  game.match_id = matches[0].id
+  game.match_id = matchId
 }
 
 const assignMatchWin = games => {
@@ -79,10 +56,10 @@ const assignMatchWin = games => {
   })
 }
 
-module.exports = async games => {
+module.exports = async (games, matchId) => {
   const leaguePlayers = await getMemberInfo()
   for (let game of games) {
-    await assignLeagueIds(game, leaguePlayers)
+    await assignLeagueIds(game, leaguePlayers, matchId)
   }
   assignMatchWin(games)
   return {

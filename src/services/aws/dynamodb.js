@@ -4,7 +4,7 @@ let instance
 
 const getDb = () => {
   if (instance) return instance
-  return new DynamoDB.DocumentClient({ region: process.env.SERVERLESS_REGION })
+  return new DynamoDB.DocumentClient()
 }
 
 class Table {

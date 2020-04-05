@@ -1,8 +1,9 @@
-const ballchasing = require('./services/ballchasing')
+// const ballchasing = require('./services/ballchasing')
 const games = require('./model/games')
-const teamGames = require('./model/team-games')
-const playerGames = require('./model/player-games')
-const processMatch = require('./producers')
+// const teamGames = require('./model/team-games')
+// const playerGames = require('./model/player-games')
+// const processMatch = require('./producers')
+const sqs = require('./services/aws').sqs
 
 module.exports = async ({ match_id, game_ids }) => {
   const gameIdsToProcess = []
@@ -22,30 +23,25 @@ module.exports = async ({ match_id, game_ids }) => {
     const reportedGameMatchIds = [
       ...new Set(allGames.filter(g => game_ids.some(id => g.game_id === id)).map(g => g.match_id)),
     ]
+    match_id = reportedGameMatchIds[0]
+    // covers not finding a match id
+    if (!match_id) throw new Error('match id not found for games')
     // validate against case 1
     if (reportedGameMatchIds.length > 1)
       throw new Error(`cannot report games from multiple matches at once: ${reportedGameMatchIds.join(', ')}`)
-    const allMatchGames = allGames.filter(g => g.match_id === reportedGameMatchIds[0])
+    const allMatchGames = allGames.filter(g => g.match_id === match_id)
     // covers case 2
-    if (reportedGameMatchIds[0] && allMatchGames.length !== game_ids.length)
+    if (allMatchGames.length !== game_ids.length)
       throw new Error(
-        `expected same number of games to be reported as games in match: ${reportedGameMatchIds[0]}, expected ${allMatchGames.length} but got ${game_ids.length}`,
+        `expected same number of games to be reported as games in match: ${match_id}, expected ${allMatchGames.length} but got ${game_ids.length}`,
       )
     // covers case 3
     if (!allMatchGames.every(g => game_ids.includes(g.game_id)))
-      throw new Error(`reported games_ids do not match game_ids for match ${reportedGameMatchIds[0]}`)
+      throw new Error(`reported games_ids do not match game_ids for match ${match_id}`)
     gameIdsToProcess.push(...game_ids)
   } else {
     throw new Error('expected match_id or game_ids[] in request body')
   }
-  // begin game reporting
-  const reportGames = await ballchasing.getReplays({ game_ids: gameIdsToProcess })
-  const { gameStats, teamStats, playerStats } = await processMatch(reportGames)
-  await games.upsert({ data: gameStats })
-  await teamGames.upsert({ data: teamStats })
-  await playerGames.upsert({ data: playerStats })
-  return {
-    recorded_ids: reportGames.map(({ id }) => id),
-    stats: { game_stats: gameStats, team_stats: teamStats, player_stats: playerStats },
-  }
+  await sqs.sendMessage(process.env.GAMES_QUEUE_URL, { game_ids: gameIdsToProcess, match_id })
+  return { recorded_ids: gameIdsToProcess }
 }
