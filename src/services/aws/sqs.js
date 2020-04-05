@@ -13,7 +13,7 @@ const sendMessage = (queueUrl, body) => {
 }
 
 const sendMessageBatch = async (queue, messages, batchSize) => {
-  if (!batchSize) batchSize = messages.length
+  if (!batchSize) batchSize = 10
   const messageGroups = chunk(
     messages.map((msg, i) => ({
       Id: i + '',

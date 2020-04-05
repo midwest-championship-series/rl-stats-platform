@@ -1,7 +1,6 @@
 const processMatch = require('../src/process-match')
 
-const handler = async (event, context) => {
-  console.log(event.Records[0])
+const handler = async event => {
   const messages = event.Records.map(r => JSON.parse(r.body))
   for (let message of messages) {
     const processedIds = await processMatch(message)

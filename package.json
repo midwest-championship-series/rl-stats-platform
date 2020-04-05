@@ -26,6 +26,7 @@
     "bluebird": "^3.7.2",
     "cheerio": "^1.0.0-rc.3",
     "google-spreadsheet": "^3.0.9",
+    "lodash": "^4.17.15",
     "uuid": "^7.0.2"
   }
 }

@@ -111,6 +111,18 @@ functions:
           method: post
           private: true
           cors: true
+
+  reprocess-games:
+    handler: lambdas/reprocess-games.handler
+    name: ${self:service}-reprocess-games-${self:provider.stage}
+    runtime: nodejs10.x
+    timeout: 30
+    events:
+      - http:
+          path: /games/_reprocess
+          method: post
+          private: true
+          cors: true
   
   process-match:
     handler: lambdas/process-match.handler
