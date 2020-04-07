@@ -148,6 +148,7 @@ functions:
     handler: lambdas/rest-api.handler
     name: ${self:service}-rest-api-${self:provider.stage}
     runtime: nodejs10.x
+    timeout: 30
     events:
       - http:
           path: /api/{table}
