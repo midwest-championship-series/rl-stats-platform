@@ -155,7 +155,7 @@ functions:
           method: get
           # authorizer: authorize
           cors: true
-          # private: true
+          private: true
       - http:
           path: /api/{table}
           method: put
