@@ -5,8 +5,6 @@ const processMatch = require('../producers')
 const replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
 
 // mocks
-const seasons = require('../model/seasons')
-jest.mock('../model/seasons')
 const members = require('../model/members')
 jest.mock('../model/members')
 const players = require('../model/players')

@@ -7,7 +7,6 @@ module.exports = {
     schedule: '1647203076',
     teamGames: '966495728',
     playerGames: '1992851802',
-    seasons: '465615763',
     leagues: '1266408426',
   },
   MNRL: {
