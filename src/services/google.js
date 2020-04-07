@@ -28,6 +28,7 @@ class Table {
     this.sheetId = sheetId
     this.keys = keys || []
     this.sheet = undefined
+    this.populations = undefined
   }
 
   async getSheet() {
@@ -72,6 +73,22 @@ class Table {
     if (newRows.length > 0) promises.push(sheet.addRows(newRows))
     if (updateRows.length > 0) updateRows.forEach(r => promises.push(r.save()))
     await Promise.all(promises)
+  }
+
+  async populate(data, populate) {
+    if (!this.populations) return data
+    for (let popName of populate) {
+      // validate that we can handle the population
+      const { table, localField, foreignField, as } = this.populations.find(p => p.table === popName)
+      if (!table) throw new Error(`no population on table ${this.name} for ${popName}`)
+      const results = await table.get()
+      console.log(results)
+    }
+  }
+
+  addPopulation(pop) {
+    if (!this.populations) this.populations = []
+    this.populations.push(pop)
   }
 }
 

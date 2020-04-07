@@ -1,28 +1,12 @@
-const tables = {
-  teams: require('../src/model/teams'),
-  players: require('../src/model/players'),
-  games: require('../src/model/games'),
-  members: require('../src/model/members'),
-  schedule: require('../src/model/schedule'),
-  seasons: require('../src/model/seasons'),
-  'player-games': require('../src/model/player-games'),
-  'team-games': require('../src/model/team-games'),
-}
+const api = require('../src/rest-api')
+const tables = api.tables
 
-const api = {
-  GET: ({ table, queryStringParameters }) => tables[table].get({ criteria: queryStringParameters, json: true }),
-  PUT: ({ table, body }) => {
-    return tables[table].add({ data: body[table], json: true })
-  },
-}
-
-const handler = async (event, context) => {
+const handler = async event => {
   // console.log(event.requestContext.authorizer)
-  try {
+  if (event.body) {
     event.body = JSON.parse(event.body)
-  } catch (err) {
-    // some requests won't have bodies and that's ok
   }
+
   const {
     requestContext: { httpMethod },
     pathParameters: { table },
@@ -30,10 +14,9 @@ const handler = async (event, context) => {
     body,
   } = event
   try {
-    if (!Object.keys(tables).includes(table)) {
+    if (!tables[table]) {
       return { statusCode: 404 }
     }
-    // const data = await api[httpMethod](table, JSON.parse(body), queryStringParameters)
     const data = await api[httpMethod]({ table, body, queryStringParameters })
     return {
       statusCode: 200,
