@@ -1,8 +1,4 @@
-// const ballchasing = require('./services/ballchasing')
 const games = require('./model/games')
-// const teamGames = require('./model/team-games')
-// const playerGames = require('./model/player-games')
-// const processMatch = require('./producers')
 const sqs = require('./services/aws').sqs
 
 module.exports = async ({ match_id, game_ids }) => {

@@ -58,8 +58,12 @@ const assignMatchWin = games => {
 
 module.exports = async (games, matchId) => {
   const leaguePlayers = await getMemberInfo()
-  for (let game of games) {
+  const sortedGames = games.sort((a, b) => new Date(b.date) - new Date(a.date))
+  let gameNumber = 1
+  for (let game of sortedGames) {
+    game.game_number = gameNumber
     await assignLeagueIds(game, leaguePlayers, matchId)
+    gameNumber++
   }
   assignMatchWin(games)
   return {

@@ -17,6 +17,7 @@ const processPlayer = (game, player) => {
     opponent_team_id: player.opponent_team_id,
     match_id: game.match_id,
     game_id: game.id,
+    game_number: game.game_number.toString(),
     match_id_win: game[player.team_color].match_id_win,
     game_id_win: teamStats.goals > opponentTeamStats.goals ? game.id : undefined,
     wins: teamStats.goals > opponentTeamStats.goals ? 1 : 0,

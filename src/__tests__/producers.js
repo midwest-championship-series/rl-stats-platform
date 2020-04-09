@@ -9,8 +9,6 @@ const members = require('../model/members')
 jest.mock('../model/members')
 const players = require('../model/players')
 jest.mock('../model/players')
-const schedule = require('../model/schedule')
-jest.mock('../model/schedule')
 // this is mocking both teams.get and members.get because jest thinks they're the same function :( it's weird but it works
 const createMocks = () => {
   players.get.mockResolvedValue([
@@ -203,6 +201,7 @@ describe('game stats producer', () => {
       match_id_win: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       game_id_win: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      game_number: '1',
       wins: 1,
       shots: 5,
       opponent_shots: 7,
@@ -240,6 +239,7 @@ describe('game stats producer', () => {
       match_id_win: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       game_id_win: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      game_number: '1',
       wins: 1,
       shots: 2,
       goals: 1,
