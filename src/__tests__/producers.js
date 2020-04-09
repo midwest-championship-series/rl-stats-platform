@@ -5,11 +5,21 @@ const processMatch = require('../producers')
 const replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
 
 // mocks
-const members = require('../model/members')
-jest.mock('../model/members')
 const players = require('../model/players')
 jest.mock('../model/players')
-// this is mocking both teams.get and members.get because jest thinks they're the same function :( it's weird but it works
+const members = require('../model/members')
+jest.mock('../model/members')
+const mockMatch = {
+  id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
+  team_1_name: 'Duluth Superiors',
+  team_1_id: '14c44087-6711-434e-bcfc-199b98800d74',
+  team_2_name: 'Burnsville Inferno',
+  team_2_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
+  week: 1,
+  season: 1,
+  type: 'REG',
+  league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3',
+}
 const createMocks = () => {
   players.get.mockResolvedValue([
     {
@@ -177,10 +187,9 @@ const createMocks = () => {
 }
 
 describe('game stats producer', () => {
-  const matchId = '69d14320-5103-4c12-bd5b-7bb10719a1da'
   it('should process game stats', async () => {
     createMocks()
-    const { gameStats } = await processMatch(replays, matchId)
+    const { gameStats } = await processMatch(replays, mockMatch)
     const game = gameStats[0]
     expect(game).toMatchObject({
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
@@ -191,7 +200,7 @@ describe('game stats producer', () => {
   })
   it('should process team stats', async () => {
     createMocks()
-    const { teamStats } = await processMatch(replays, matchId)
+    const { teamStats } = await processMatch(replays, mockMatch)
     expect(teamStats).toHaveLength(8)
     expect(teamStats[0]).toMatchObject({
       team_id: '14c44087-6711-434e-bcfc-199b98800d74',
@@ -199,9 +208,15 @@ describe('game stats producer', () => {
       team_color: 'blue',
       match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       match_id_win: '69d14320-5103-4c12-bd5b-7bb10719a1da',
+      match_type: 'REG',
+      week: 1,
+      season: 1,
+      league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       game_id_win: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       game_number: '1',
+      game_date: '2020-03-19T21:35:38Z',
+      map_name: 'Utopia Coliseum',
       wins: 1,
       shots: 5,
       opponent_shots: 7,
@@ -226,7 +241,7 @@ describe('game stats producer', () => {
   })
   it('should process player stats', async () => {
     createMocks()
-    const { playerStats } = await processMatch(replays, matchId)
+    const { playerStats } = await processMatch(replays, mockMatch)
     // a 4-game match will all linked players would have 24, but not all players in test match are linked
     expect(playerStats).toHaveLength(16)
     expect(playerStats[0]).toMatchObject({
@@ -237,9 +252,15 @@ describe('game stats producer', () => {
       opponent_team_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
       match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
       match_id_win: '69d14320-5103-4c12-bd5b-7bb10719a1da',
+      match_type: 'REG',
+      week: 1,
+      season: 1,
+      league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       game_id_win: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       game_number: '1',
+      game_date: '2020-03-19T21:35:38Z',
+      map_name: 'Utopia Coliseum',
       wins: 1,
       shots: 2,
       goals: 1,

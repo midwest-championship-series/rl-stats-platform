@@ -13,7 +13,7 @@ const getMemberInfo = async () => {
 
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
-const assignLeagueIds = async (game, leaguePlayers, matchId) => {
+const assignLeagueIds = async (game, leaguePlayers, match) => {
   // assign team_id to teams
   game.teams = []
   colors.forEach(color => {
@@ -34,7 +34,11 @@ const assignLeagueIds = async (game, leaguePlayers, matchId) => {
       player.league_id = leaguePlayer && leaguePlayer.id
     })
   })
-  game.match_id = matchId
+  game.match_id = match.id
+  game.match_type = match.type
+  game.week = match.week
+  game.season = match.season
+  game.league_id = match.league_id
 }
 
 const assignMatchWin = games => {
@@ -56,13 +60,13 @@ const assignMatchWin = games => {
   })
 }
 
-module.exports = async (games, matchId) => {
+module.exports = async (games, match) => {
   const leaguePlayers = await getMemberInfo()
   const sortedGames = games.sort((a, b) => new Date(b.date) - new Date(a.date))
   let gameNumber = 1
   for (let game of sortedGames) {
     game.game_number = gameNumber
-    await assignLeagueIds(game, leaguePlayers, matchId)
+    await assignLeagueIds(game, leaguePlayers, match)
     gameNumber++
   }
   assignMatchWin(games)
