@@ -1,4 +1,4 @@
-const schedule = require('./model/schedule')
+const schedule = require('./model/schedules')
 const games = require('./model/games')
 const sqs = require('./services/aws').sqs
 
