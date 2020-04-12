@@ -5,19 +5,69 @@ const games = require('../model/games')
 jest.mock('../model/games')
 const processMatch = require('../producers')
 jest.mock('../producers')
+const aws = require('../services/aws')
 jest.mock('../services/aws')
 
 describe('report-games', () => {
+  process.env.GAMES_QUEUE_URL = 'fake queue url'
+  afterEach(() => {
+    aws.sqs.sendMessage.mockClear()
+  })
   it('should report games given a match_id', async () => {
     games.get.mockResolvedValue([
-      '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-      '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-      'd4687e39-2848-4958-90b7-264f266ea849',
-      '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+      { game_id: '7ea390d1-2a7c-451a-b4a2-8778a2089096' },
+      { game_id: '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6' },
+      { game_id: 'd4687e39-2848-4958-90b7-264f266ea849' },
+      { game_id: '4fb8a123-6b75-49df-918d-ed5ae85dbfaf' },
     ])
-    await reportGames({ match_id: '7b33907d-8132-4027-beda-489aaad70ef3' })
+    const result = await reportGames({ match_id: '7b33907d-8132-4027-beda-489aaad70ef3' })
+    expect(aws.sqs.sendMessage).toHaveBeenCalledWith('fake queue url', {
+      game_ids: [
+        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
+        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
+        'd4687e39-2848-4958-90b7-264f266ea849',
+        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+      ],
+      match_id: '7b33907d-8132-4027-beda-489aaad70ef3',
+    })
+    expect(result).toMatchObject({
+      recorded_ids: [
+        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
+        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
+        'd4687e39-2848-4958-90b7-264f266ea849',
+        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+      ],
+    })
   })
-  // it('should re-process games given game_ids')
+  it('should process games given game_ids', async () => {
+    // simulate first game reported
+    games.get.mockResolvedValue([])
+    const result = await reportGames({
+      game_ids: [
+        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
+        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
+        'd4687e39-2848-4958-90b7-264f266ea849',
+        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+      ],
+    })
+    expect(aws.sqs.sendMessage).toHaveBeenCalledWith('fake queue url', {
+      game_ids: [
+        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
+        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
+        'd4687e39-2848-4958-90b7-264f266ea849',
+        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+      ],
+      match_id: undefined,
+    })
+    expect(result).toMatchObject({
+      recorded_ids: [
+        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
+        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
+        'd4687e39-2848-4958-90b7-264f266ea849',
+        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+      ],
+    })
+  })
   it('should process a new set of game_ids into a match', async () => {
     games.get.mockResolvedValue([
       { game_id: '7ea390d1-2a7c-451a-b4a2-8778a2089096', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
@@ -83,18 +133,16 @@ describe('report-games', () => {
       ),
     )
   })
-  it('should reject if game ids are not related to a match', async () => {
+  it('should resolve if a match is not found for the gameids', async () => {
     games.get.mockResolvedValue([])
     processMatch.mockResolvedValue({})
-    await expect(
-      reportGames({
-        game_ids: [
-          '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-          '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-          'd4687e39-2848-4958-90b7-264f266ea849',
-          '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
-        ],
-      }),
-    ).rejects.toEqual(new Error('match id not found for games'))
+    const result = await reportGames({
+      game_ids: [
+        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
+        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
+        'd4687e39-2848-4958-90b7-264f266ea849',
+        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+      ],
+    })
   })
 })

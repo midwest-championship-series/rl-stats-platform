@@ -9,18 +9,9 @@ const players = require('../model/players')
 jest.mock('../model/players')
 const members = require('../model/members')
 jest.mock('../model/members')
-const mockMatch = {
-  id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
-  team_1_name: 'Duluth Superiors',
-  team_1_id: '14c44087-6711-434e-bcfc-199b98800d74',
-  team_2_name: 'Burnsville Inferno',
-  team_2_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
-  week: 1,
-  season: 1,
-  type: 'REG',
-  league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3',
-}
-const createMocks = () => {
+const schedules = require('../model/schedules')
+jest.mock('../model/schedules')
+const resetMocks = () => {
   players.get.mockResolvedValue([
     {
       id: '373ff47a-6ac2-4a41-925d-39716aa1231c',
@@ -184,12 +175,25 @@ const createMocks = () => {
       screen_name: 'cheeriojf',
     },
   ])
+  schedules.get.mockResolvedValue([
+    {
+      id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
+      team_1_name: 'Duluth Superiors',
+      team_1_id: '14c44087-6711-434e-bcfc-199b98800d74',
+      team_2_name: 'Burnsville Inferno',
+      team_2_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
+      week: 1,
+      season: 1,
+      type: 'REG',
+      league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3',
+    },
+  ])
 }
 
 describe('game stats producer', () => {
   it('should process game stats', async () => {
-    createMocks()
-    const { gameStats } = await processMatch(replays, mockMatch)
+    resetMocks()
+    const { gameStats } = await processMatch(replays, '69d14320-5103-4c12-bd5b-7bb10719a1da')
     const game = gameStats[0]
     expect(game).toMatchObject({
       game_id: '111c0144-7219-426a-8263-8cff260d030d',
@@ -199,8 +203,8 @@ describe('game stats producer', () => {
     expect(game).toHaveProperty('date_time_processed')
   })
   it('should process team stats', async () => {
-    createMocks()
-    const { teamStats } = await processMatch(replays, mockMatch)
+    resetMocks()
+    const { teamStats } = await processMatch(replays, '69d14320-5103-4c12-bd5b-7bb10719a1da')
     expect(teamStats).toHaveLength(8)
     expect(teamStats[6]).toMatchObject({
       team_id: '14c44087-6711-434e-bcfc-199b98800d74',
@@ -240,8 +244,8 @@ describe('game stats producer', () => {
     /** @todo write test for opposing team */
   })
   it('should process player stats', async () => {
-    createMocks()
-    const { playerStats } = await processMatch(replays, mockMatch)
+    resetMocks()
+    const { playerStats } = await processMatch(replays, '69d14320-5103-4c12-bd5b-7bb10719a1da')
     // a 4-game match will all linked players would have 24, but not all players in test match are linked
     expect(playerStats).toHaveLength(16)
     expect(playerStats[12]).toMatchObject({
@@ -282,5 +286,20 @@ describe('game stats producer', () => {
     expect(playerStats[13]).toMatchObject({
       mvps: 0,
     })
+  })
+  it('should process reported games into a match', async () => {
+    resetMocks()
+    const { gameStats } = await processMatch(replays, undefined)
+    expect(gameStats[0]).toMatchObject({
+      game_id: '111c0144-7219-426a-8263-8cff260d030d',
+      match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
+      date_time_played: '2020-03-19T21:14:32Z',
+    })
+  })
+  it('should not process a match which does not exist', async () => {
+    resetMocks()
+    schedules.get.mockResolvedValue([])
+    const stats = await processMatch(replays, undefined)
+    expect(stats).toBeUndefined()
   })
 })

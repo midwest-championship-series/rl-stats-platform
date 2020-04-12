@@ -1,5 +1,6 @@
 const members = require('../model/members')
 const players = require('../model/players')
+const schedules = require('../model/schedules')
 const gameStats = require('./game-stats')
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
@@ -13,7 +14,23 @@ const getMemberInfo = async () => {
 
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
-const assignLeagueIds = async (game, leaguePlayers, match) => {
+const getMatch = async (matchId, games) => {
+  if (matchId) {
+    const matches = await schedules.get({ criteria: { id: matchId }, json: true })
+    return matches[0]
+  } else {
+    const teams = games.reduce((result, game) => {
+      game.teams.forEach(teamId => {
+        if (!result.includes(teamId)) result.push(teamId)
+      })
+      return result
+    }, [])
+    const matches = await schedules.get()
+    return matches.filter(m => [m.team_1_id, m.team_2_id].every(id => teams.includes(id)))[0]
+  }
+}
+
+const assignLeagueIds = (game, leaguePlayers) => {
   // assign team_id to teams
   game.teams = []
   colors.forEach(color => {
@@ -34,6 +51,9 @@ const assignLeagueIds = async (game, leaguePlayers, match) => {
       player.league_id = leaguePlayer && leaguePlayer.id
     })
   })
+}
+
+const assignMatchContext = (game, match) => {
   game.match_id = match.id
   game.match_type = match.type
   game.week = match.week
@@ -60,14 +80,19 @@ const assignMatchWin = games => {
   })
 }
 
-module.exports = async (games, match) => {
+module.exports = async (games, matchId) => {
   const leaguePlayers = await getMemberInfo()
   const sortedGames = games.sort((a, b) => new Date(a.date) - new Date(b.date))
   let gameNumber = 1
   for (let game of sortedGames) {
     game.game_number = gameNumber
-    await assignLeagueIds(game, leaguePlayers, match)
+    assignLeagueIds(game, leaguePlayers)
     gameNumber++
+  }
+  const match = await getMatch(matchId, games)
+  if (!match) return
+  for (let game of sortedGames) {
+    assignMatchContext(game, match)
   }
   assignMatchWin(games)
   return {
