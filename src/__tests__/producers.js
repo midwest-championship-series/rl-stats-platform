@@ -192,9 +192,9 @@ describe('game stats producer', () => {
     const { gameStats } = await processMatch(replays, mockMatch)
     const game = gameStats[0]
     expect(game).toMatchObject({
-      game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      game_id: '111c0144-7219-426a-8263-8cff260d030d',
       match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
-      date_time_played: '2020-03-19T21:35:38Z',
+      date_time_played: '2020-03-19T21:14:32Z',
     })
     expect(game).toHaveProperty('date_time_processed')
   })
@@ -202,7 +202,7 @@ describe('game stats producer', () => {
     createMocks()
     const { teamStats } = await processMatch(replays, mockMatch)
     expect(teamStats).toHaveLength(8)
-    expect(teamStats[0]).toMatchObject({
+    expect(teamStats[6]).toMatchObject({
       team_id: '14c44087-6711-434e-bcfc-199b98800d74',
       opponent_team_id: 'b59d2f52-7001-4820-a5ef-89f673397bfd',
       team_color: 'blue',
@@ -214,7 +214,7 @@ describe('game stats producer', () => {
       league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       game_id_win: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
-      game_number: '1',
+      game_number: '4',
       game_date: '2020-03-19T21:35:38Z',
       map_name: 'Utopia Coliseum',
       wins: 1,
@@ -244,7 +244,7 @@ describe('game stats producer', () => {
     const { playerStats } = await processMatch(replays, mockMatch)
     // a 4-game match will all linked players would have 24, but not all players in test match are linked
     expect(playerStats).toHaveLength(16)
-    expect(playerStats[0]).toMatchObject({
+    expect(playerStats[12]).toMatchObject({
       player_id: '78dacf77-42b2-4be1-b980-bdeb58fb9378',
       screen_name: 'Calster',
       team_id: '14c44087-6711-434e-bcfc-199b98800d74',
@@ -258,7 +258,7 @@ describe('game stats producer', () => {
       league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3',
       game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
       game_id_win: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
-      game_number: '1',
+      game_number: '4',
       game_date: '2020-03-19T21:35:38Z',
       map_name: 'Utopia Coliseum',
       wins: 1,
@@ -279,7 +279,7 @@ describe('game stats producer', () => {
       ms_zero_boost: 52950,
       ms_full_boost: 23460,
     })
-    expect(playerStats[1]).toMatchObject({
+    expect(playerStats[13]).toMatchObject({
       mvps: 0,
     })
   })

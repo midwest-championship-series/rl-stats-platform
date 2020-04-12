@@ -62,7 +62,7 @@ const assignMatchWin = games => {
 
 module.exports = async (games, match) => {
   const leaguePlayers = await getMemberInfo()
-  const sortedGames = games.sort((a, b) => new Date(b.date) - new Date(a.date))
+  const sortedGames = games.sort((a, b) => new Date(a.date) - new Date(b.date))
   let gameNumber = 1
   for (let game of sortedGames) {
     game.game_number = gameNumber
