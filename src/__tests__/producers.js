@@ -293,6 +293,7 @@ describe('game stats producer', () => {
     expect(gameStats[0]).toMatchObject({
       game_id: '111c0144-7219-426a-8263-8cff260d030d',
       match_id: '69d14320-5103-4c12-bd5b-7bb10719a1da',
+      league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3',
       date_time_played: '2020-03-19T21:14:32Z',
     })
   })
