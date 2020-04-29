@@ -21,16 +21,20 @@ package:
     - .env
 
 custom:
+  keepWarm:
+    prod: true
+    notprod: false
   dev:
     dbSecret: rds-db-credentials/cluster-7D5M6AOKEDM4X7ASP7PTQME3BQ/root
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs12.x
   profile: personal
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
   endpointType: REGIONAL
+  memorySize: 256
   environment:
     SERVERLESS_REGION: ${self:provider.region}
     SERVERLESS_STAGE: ${self:provider.stage}
@@ -39,19 +43,8 @@ provider:
     BALLCHASING_KEY: ${ssm:BALLCHASING_KEY}
     MNCS_STAT_SHEET_ID: ${ssm:${self:provider.stage}-MNCS_STAT_SHEET_ID}
     MNRL_SHEET_ID: ${ssm:${self:provider.stage}-MNRL_SHEET_ID}
-    MATCH_STATE_MACHINE_ARN: ${self:resources.Outputs.MatchPollerArn.Value}
     GAMES_QUEUE_URL:
       Ref: GamesQueue
-  vpc:
-    securityGroupIds:
-      - sg-bd8bb2e1
-    subnetIds:
-      - subnet-935a77cf
-      - subnet-809565cd
-      - subnet-6a406f44
-      - subnet-d37e0aed
-      - subnet-c64b51c9
-      - subnet-28af8e4f
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -85,18 +78,10 @@ provider:
       rateLimit: 5
 
 functions:
-  # analyzes a replay file and produces its stats
-  process-game:
-    handler: lambdas/process-game.handler
-    name: ${self:service}-process-game-${self:provider.stage}
-    memorySize: 3008
-    timeout: 10
-
   # fetches a player's ranks via https://rocketleague.tracker.network/
   fetch-ranks:
     handler: lambdas/fetch-ranks.handler
     name: ${self:service}-fetch-ranks-${self:provider.stage}
-    runtime: nodejs10.x
     events:
       - http:
           path: /ranks/{platform}/{platformId}
@@ -112,7 +97,6 @@ functions:
   fetch-games:
     handler: lambdas/fetch-games.handler
     name: ${self:service}-fetch-games-${self:provider.stage}
-    runtime: nodejs10.x
     events:
       - http:
           path: /games
@@ -122,7 +106,6 @@ functions:
   report-games:
     handler: lambdas/report-games.handler
     name: ${self:service}-report-games-${self:provider.stage}
-    runtime: nodejs10.x
     timeout: 30
     events:
       - http:
@@ -134,7 +117,6 @@ functions:
   reprocess-games:
     handler: lambdas/reprocess-games.handler
     name: ${self:service}-reprocess-games-${self:provider.stage}
-    runtime: nodejs10.x
     timeout: 30
     events:
       - http:
@@ -146,7 +128,6 @@ functions:
   process-match:
     handler: lambdas/process-match.handler
     name: ${self:service}-process-match-${self:provider.stage}
-    runtime: nodejs10.x
     timeout: 30
     reservedConcurrency: 1
     events:
@@ -160,12 +141,10 @@ functions:
   authorize:
     handler: lambdas/authorize.handler
     name: ${self:service}-authorize-${self:provider.stage}
-    runtime: nodejs10.x
 
   rest-api:
     handler: lambdas/rest-api.handler
     name: ${self:service}-rest-api-${self:provider.stage}
-    runtime: nodejs10.x
     timeout: 30
     events:
       - http:
@@ -179,43 +158,20 @@ functions:
           method: put
           cors: true
           private: true
+      - schedule:
+          rate: rate(10 minutes)
+          enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
+          input:
+            type: warmer
   
   init-step-function:
     handler: lambdas/init-step-function.handler
     name: ${self:service}-init-step-function-${self:provider.stage}
-    runtime: nodejs10.x
 
   migrate:
     handler: lambdas/migrate.handler
     name: ${self:service}-migrate-${self:provider.stage}
-    runtime: nodejs10.x
     timeout: 300
-
-stepFunctions:
-  stateMachines:
-    MatchReader:
-      name: MatchPoller-${self:provider.stage}
-      definition:
-        StartAt: retrieve-match-results
-        States:
-          retrieve-match-results:
-            Type: Task
-            # Next: is-match-closed
-            End: true
-            Resource:
-              Fn::Join:
-                - ":"
-                - - arn:aws:lambda
-                  - Ref: 'AWS::Region'
-                  - Ref: 'AWS::AccountId'
-                  - function:${self:service}-fetch-games-${self:provider.stage}
-            TimeoutSeconds: 300
-          # is-match-closed:
-          #   Type: Choice
-          #   Choices:
-          #     - Variable: $.closed
-          #         NumericGreaterThan: 0
-          #         Next: save-match-results
 
 resources:
   Resources:
@@ -239,10 +195,6 @@ resources:
         ReceiveMessageWaitTimeSeconds: 20
         VisibilityTimeout: 40
   Outputs:
-    MatchPollerArn:
-      Description: The arn for the match polling state machine
-      Value:
-        Ref: MatchPollerDash${self:provider.stage} # Dash is used to replace '-' in local state machine name
     GamesQueue:
       Value:
         Ref: GamesQueue

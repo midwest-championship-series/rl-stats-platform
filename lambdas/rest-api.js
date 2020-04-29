@@ -1,8 +1,9 @@
 const api = require('../src/rest-api')
+const warmerIntercept = require('../src/util/warmer-intercept')
 const tables = api.tables
 
 const handler = async event => {
-  // console.log(event.requestContext.authorizer)
+  if (warmerIntercept(event)) return
   if (event.body) {
     event.body = JSON.parse(event.body)
   }

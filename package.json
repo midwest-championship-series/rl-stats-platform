@@ -7,6 +7,10 @@
     "start": "AWS_PROFILE=personal nodemon -L --exec serverless offline start --port 4200",
     "test": "jest"
   },
+  "engines": {
+    "node": "^12.13",
+    "yarn": "^1.19"
+  },
   "devDependencies": {
     "@types/jest": "^25.1.4",
     "@types/request": "^2.48.4",
