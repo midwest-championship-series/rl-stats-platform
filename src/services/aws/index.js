@@ -6,4 +6,6 @@ AWS.config.update({ region: process.env.SERVERLESS_REGION })
 module.exports = {
   sqs: require('./sqs'),
   dynamodb: require('./dynamodb'),
+  ssm: require('./ssm'),
+  aurora: require('./aurora'),
 }

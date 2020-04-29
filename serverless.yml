@@ -1,7 +1,9 @@
 service: rl-stats
 
 plugins:
-  - serverless-python-requirements
+  # - serverless-python-requirements
+  - serverless-export-env
+  - serverless-dotenv-plugin
   - serverless-step-functions
   - serverless-offline
 
@@ -16,17 +18,15 @@ package:
     - README*
     - __test__/**
     - temp/**
+    - .env
 
 custom:
-  pythonRequirements:
-    dockerizePip: true
-    usePipenv: true
-    # useDownloadCache: false
-    # useStaticCache: false
+  dev:
+    dbSecret: rds-db-credentials/cluster-7D5M6AOKEDM4X7ASP7PTQME3BQ/root
 
 provider:
   name: aws
-  runtime: python3.6
+  runtime: nodejs10.x
   profile: personal
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
@@ -34,18 +34,34 @@ provider:
   environment:
     SERVERLESS_REGION: ${self:provider.region}
     SERVERLESS_STAGE: ${self:provider.stage}
+    SERVERLESS_ACCOUNT_ID:
+      Ref: AWS::AccountId
     BALLCHASING_KEY: ${ssm:BALLCHASING_KEY}
     MNCS_STAT_SHEET_ID: ${ssm:${self:provider.stage}-MNCS_STAT_SHEET_ID}
     MNRL_SHEET_ID: ${ssm:${self:provider.stage}-MNRL_SHEET_ID}
     MATCH_STATE_MACHINE_ARN: ${self:resources.Outputs.MatchPollerArn.Value}
     GAMES_QUEUE_URL:
       Ref: GamesQueue
+    DB_ARN:
+      Fn::Join: [":", [arn:aws:rds, '${self:provider.region}', { Ref: AWS::AccountId }, cluster, { Ref: Db }]]
+    DB_SECRET_NAME: ${self:custom.${self:provider.stage}.dbSecret}
+  vpc:
+    securityGroupIds:
+      - sg-bd8bb2e1
+    subnetIds:
+      - subnet-935a77cf
+      - subnet-809565cd
+      - subnet-6a406f44
+      - subnet-d37e0aed
+      - subnet-c64b51c9
+      - subnet-28af8e4f
   iamRoleStatements:
     - Effect: Allow
       Action:
         - states:StartExecution
         - s3:*
         - dynamodb:*
+        - rds:*
       Resource:
         - '*'
     - Effect: Allow
@@ -56,6 +72,11 @@ provider:
         - sqs:ReceiveMessage
         - sqs:SendMessage
       Resource:
+        - '*'
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource: 
         - '*'
   usagePlan:
     quota:
@@ -167,6 +188,12 @@ functions:
     name: ${self:service}-init-step-function-${self:provider.stage}
     runtime: nodejs10.x
 
+  migrate:
+    handler: lambdas/migrate.handler
+    name: ${self:service}-migrate-${self:provider.stage}
+    runtime: nodejs10.x
+    timeout: 300
+
 stepFunctions:
   stateMachines:
     MatchReader:
@@ -214,6 +241,37 @@ resources:
         MessageRetentionPeriod: 345600
         ReceiveMessageWaitTimeSeconds: 20
         VisibilityTimeout: 40
+    Db:
+      Type: AWS::RDS::DBCluster
+      Properties:
+        DBClusterIdentifier: ${self:service}-cluster-${self:provider.stage}
+        Engine: aurora
+        EngineMode: serverless
+        EngineVersion: 5.6.10a
+        EnableHttpEndpoint: true
+        MasterUsername: root
+        MasterUserPassword: hxvhnyyz62mhEC8KBHHbobLC7
+        BackupRetentionPeriod: 3
+        ScalingConfiguration:
+          AutoPause: true
+          MinCapacity: 1
+          MaxCapacity: 32
+          SecondsUntilAutoPause: 600
+    ElasticIpForNAT:
+      Type: AWS::EC2::EIP
+      Properties:
+        Domain: vpc
+    NatGateway:
+      Type: AWS::EC2::NatGateway
+      Properties:
+        AllocationId:
+          Fn::GetAtt:
+          - ElasticIpForNAT
+          - AllocationId
+        SubnetId: subnet-935a77cf
+        Tags:
+        - Key: Name
+          Value: ${self:service}
   Outputs:
     MatchPollerArn:
       Description: The arn for the match polling state machine
