@@ -42,9 +42,6 @@ provider:
     MATCH_STATE_MACHINE_ARN: ${self:resources.Outputs.MatchPollerArn.Value}
     GAMES_QUEUE_URL:
       Ref: GamesQueue
-    DB_ARN:
-      Fn::Join: [":", [arn:aws:rds, '${self:provider.region}', { Ref: AWS::AccountId }, cluster, { Ref: Db }]]
-    DB_SECRET_NAME: ${self:custom.${self:provider.stage}.dbSecret}
   vpc:
     securityGroupIds:
       - sg-bd8bb2e1
@@ -241,37 +238,6 @@ resources:
         MessageRetentionPeriod: 345600
         ReceiveMessageWaitTimeSeconds: 20
         VisibilityTimeout: 40
-    Db:
-      Type: AWS::RDS::DBCluster
-      Properties:
-        DBClusterIdentifier: ${self:service}-cluster-${self:provider.stage}
-        Engine: aurora
-        EngineMode: serverless
-        EngineVersion: 5.6.10a
-        EnableHttpEndpoint: true
-        MasterUsername: root
-        MasterUserPassword: hxvhnyyz62mhEC8KBHHbobLC7
-        BackupRetentionPeriod: 3
-        ScalingConfiguration:
-          AutoPause: true
-          MinCapacity: 1
-          MaxCapacity: 32
-          SecondsUntilAutoPause: 600
-    ElasticIpForNAT:
-      Type: AWS::EC2::EIP
-      Properties:
-        Domain: vpc
-    NatGateway:
-      Type: AWS::EC2::NatGateway
-      Properties:
-        AllocationId:
-          Fn::GetAtt:
-          - ElasticIpForNAT
-          - AllocationId
-        SubnetId: subnet-935a77cf
-        Tags:
-        - Key: Name
-          Value: ${self:service}
   Outputs:
     MatchPollerArn:
       Description: The arn for the match polling state machine
