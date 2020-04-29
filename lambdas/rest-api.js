@@ -1,6 +1,5 @@
-const api = require('../src/rest-api')
+const apis = require('../src/api')
 const warmerIntercept = require('../src/util/warmer-intercept')
-const tables = api.tables
 
 const handler = async event => {
   if (warmerIntercept(event)) return
@@ -10,11 +9,13 @@ const handler = async event => {
 
   const {
     requestContext: { httpMethod },
-    pathParameters: { table },
+    pathParameters: { version, table },
     queryStringParameters,
     body,
   } = event
   try {
+    const api = apis[version || 'v0']
+    const tables = api.tables
     if (!tables[table]) {
       return { statusCode: 404 }
     }

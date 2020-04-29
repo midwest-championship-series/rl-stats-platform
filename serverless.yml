@@ -163,6 +163,28 @@ functions:
           enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
           input:
             type: warmer
+
+  rest-api-versioned:
+    handler: lambdas/rest-api.handler
+    name: ${self:service}-rest-api-versioned-${self:provider.stage}
+    timeout: 30
+    events:
+      - http:
+          path: /{version}/{table}
+          method: get
+          # authorizer: authorize
+          cors: true
+          private: true
+      - http:
+          path: /{version}/{table}
+          method: put
+          cors: true
+          private: true
+      - schedule:
+          rate: rate(10 minutes)
+          enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
+          input:
+            type: warmer
   
   init-step-function:
     handler: lambdas/init-step-function.handler

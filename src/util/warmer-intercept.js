@@ -1,4 +1,6 @@
 module.exports = event => {
-  console.log('intercepting warmer')
-  return event && event.type === 'warmer'
+  if (event && event.type === 'warmer') {
+    console.log('intercepting warmer')
+    return true
+  }
 }
