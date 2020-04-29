@@ -6,8 +6,10 @@ const tables = {
   schedules: require('../model/schedules'),
   leagues: {
     get: async () => {
-      const leagueData = await require('../model/leagues').get({ json: true })
-      const scheduleData = await require('../model/schedules').get({ json: true })
+      const [leagueData, scheduleData] = await Promise.all([
+        require('../model/leagues').get({ json: true }),
+        require('../model/schedules').get({ json: true }),
+      ])
       leagueData.forEach(league => {
         league.schedule = scheduleData.filter(s => s.league_id === league.id)
       })
