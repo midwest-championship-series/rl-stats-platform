@@ -1,0 +1,535 @@
+service: rl-stats-setup
+
+custom: ${file(../config.yml)}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: personal
+  region: ${opt:region, 'us-east-1'}
+  versionFunctions: false
+  stage: prod # there is only one stage for setup, don't want it deployed more than once per region/account
+  deploymentBucket:
+    name: ${self:custom.deploymentBucket}
+  stackTags:
+    Project: rl-stats
+    Role: ${self:service}
+
+package:
+  exclude:
+    - .env
+    - node_modules/aws-sdk/**
+    - node_modules/**/aws-sdk/**
+    - node_modules/serverless/**
+    - coverage/**
+    - codebuild-image/**
+
+resources:
+  Parameters:
+    Stage:
+      Type: String
+      Default: "${self:provider.stage}"
+  
+  Conditions:
+    IsProd:
+      Fn::Equals: [ Ref: Stage, "prod" ]
+
+  Resources:
+    # MasterKey:
+    #   DependsOn: CodebuildRole
+    #   Type: AWS::KMS::Key
+    #   Properties: 
+    #     Description: "Master Key For SSM Encryption"
+    #     KeyPolicy: 
+    #       Version: "2012-10-17"
+    #       Id: "${self:custom.kmsKeyName}"
+    #       Statement:
+    #         - 
+    #           Sid: "Allow administration of the key"
+    #           Effect: "Allow"
+    #           Principal: 
+    #             AWS: 
+    #               Fn::Join:
+    #                 - ":"
+    #                 - - arn:aws:iam
+    #                   - ''
+    #                   - Ref: 'AWS::AccountId'
+    #                   - role/${self:custom.codebuildAdminRole}
+    #           Action: 
+    #             - "kms:*"
+    #           Resource: "*"
+    #         - 
+    #           Sid: "Allow use through codebuild"
+    #           Effect: "Allow"
+    #           Principal: 
+    #             AWS:
+    #               Fn::Join:
+    #                 - ":"
+    #                 - - arn:aws:iam
+    #                   - ''
+    #                   - Ref: 'AWS::AccountId'
+    #                   - role/service-role/${self:custom.codebuildRole}
+    #           Action: 
+    #             - "kms:DescribeKey"
+    #             - "kms:Decrypt"
+    #           Resource: "*"
+    #         - 
+    #           Sid: "Allow use by devs"
+    #           Effect: "Allow"
+    #           Principal: 
+    #             AWS:
+    #               Fn::Join:
+    #                 - ":"
+    #                 - - arn:aws:iam
+    #                   - ''
+    #                   - Ref: 'AWS::AccountId'
+    #                   - role/${self:custom.devRole}
+    #           Action: 
+    #             - "kms:DescribeKey"
+    #             - "kms:Decrypt"
+    #           Resource: "*"
+
+    # MasterKeyAlias:
+    #   Type: AWS::KMS::Alias
+    #   Properties: 
+    #     AliasName: alias/${self:service}-${self:custom.kmsKeyName}
+    #     TargetKeyId:
+    #       Ref: MasterKey
+
+    #
+    # -- VPC, INTERNET GATEWAY, AND SUBNETS
+    #
+    VPC:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: ${self:custom.vpcCidr}
+        Tags:
+        - Key: Name
+          Value: ${self:service}
+    InternetGateway:
+      Type: AWS::EC2::InternetGateway
+      Properties:
+        Tags:
+        - Key: Name
+          Value: ${self:service}
+    VPCGatewayAttachment:
+      Type: AWS::EC2::VPCGatewayAttachment
+      Properties:
+        VpcId:
+          Ref: VPC
+        InternetGatewayId:
+          Ref: InternetGateway
+    PrivateSubnetA:
+      DependsOn: VPC
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId:
+          Ref: VPC
+        AvailabilityZone: ${self:provider.region}a
+        CidrBlock: ${self:custom.subnet.private.a}
+        Tags:
+          - Key: Name
+            Value: private-a-${self:service}
+    PrivateSubnetB:
+      DependsOn: VPC
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId:
+          Ref: VPC
+        AvailabilityZone: ${self:provider.region}b
+        CidrBlock: ${self:custom.subnet.private.b}
+        Tags:
+          - Key: Name
+            Value: private-b-${self:service}
+    PrivateSubnetC:
+      DependsOn: VPC
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId:
+          Ref: VPC
+        AvailabilityZone: ${self:provider.region}c
+        CidrBlock: ${self:custom.subnet.private.c}
+        Tags:
+          - Key: Name
+            Value: private-c-${self:service}
+    PrivateSubnetD:
+      DependsOn: VPC
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId:
+          Ref: VPC
+        AvailabilityZone: ${self:provider.region}d
+        CidrBlock: ${self:custom.subnet.private.d}
+        Tags:
+          - Key: Name
+            Value: private-d-${self:service}
+    PublicSubnetA:
+      DependsOn: VPC
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId:
+          Ref: VPC
+        AvailabilityZone: ${self:provider.region}a
+        CidrBlock: ${self:custom.subnet.public.a}
+        Tags:
+          - Key: Name
+            Value: public-a-${self:service}
+    PublicSubnetB:
+      DependsOn: VPC
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId:
+          Ref: VPC
+        AvailabilityZone: ${self:provider.region}b
+        CidrBlock: ${self:custom.subnet.public.b}
+        Tags:
+          - Key: Name
+            Value: public-b-${self:service}
+    
+    #
+    # -- NAT
+    #
+    ElasticIpForNAT:
+      Type: AWS::EC2::EIP
+      Properties:
+        Domain: vpc
+    NatGateway:
+      Type: AWS::EC2::NatGateway
+      Properties:
+        AllocationId:
+          Fn::GetAtt:
+          - ElasticIpForNAT
+          - AllocationId
+        SubnetId:
+          Ref: PublicSubnetA
+        Tags:
+        - Key: Name
+          Value: ${self:service}
+
+    #
+    # -- ROUTING & SUBNET ASSOCIATIONS
+    #
+    PrivateRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId:
+          Ref: VPC
+    PrivateRoute:
+      DependsOn: NatGateway
+      Type: AWS::EC2::Route
+      Properties:
+        RouteTableId:
+          Ref: PrivateRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        NatGatewayId:
+          Ref: NatGateway
+    PublicRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId:
+          Ref: VPC
+    PublicRoute:
+      Type: AWS::EC2::Route
+      Properties:
+        RouteTableId:
+          Ref: PublicRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId:
+          Ref: InternetGateway
+    SubnetRouteTableAssociationPrivateA:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: PrivateSubnetA
+        RouteTableId:
+          Ref: PrivateRouteTable
+    SubnetRouteTableAssociationPrivateB:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: PrivateSubnetB
+        RouteTableId:
+          Ref: PrivateRouteTable
+    SubnetRouteTableAssociationPublicA:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: PublicSubnetA
+        RouteTableId:
+          Ref: PublicRouteTable
+    SubnetRouteTableAssociationPublicB:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: PublicSubnetB
+        RouteTableId:
+          Ref: PublicRouteTable
+    
+    #
+    # -- LAMBDA SECURITY GROUP
+    #
+    SecurityGroup:
+      DependsOn: VPC
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: SecurityGroup for ${self:service}
+        VpcId:
+          Ref: VPC
+        SecurityGroupIngress:
+        - IpProtocol: -1
+          CidrIp: ${self:custom.vpcCidr}
+    
+    #
+    # -- DATABASE 
+    #
+    DBSubnetGroup:
+      Type: "AWS::RDS::DBSubnetGroup"
+      Properties:
+        DBSubnetGroupDescription: "db subnet group"
+        SubnetIds:
+          - Ref: PrivateSubnetC
+          - Ref: PrivateSubnetD
+
+    DbSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: SecurityGroup for ${self:service} RDS
+        VpcId:
+          Ref: VPC
+        SecurityGroupIngress:
+        - IpProtocol: -1
+          CidrIp: ${self:custom.vpcCidr}
+
+    #
+    # -- CODEBUILD ROLE ADN POLICY
+    #
+    CodebuildRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:service}
+        AssumeRolePolicyDocument: 
+          Version: "2012-10-17"
+          Statement: 
+            - 
+              Effect: Allow
+              Principal: 
+                Service: 
+                  - codebuild.amazonaws.com
+              Action: 
+                - sts:AssumeRole
+        Path: /service-role/
+        Policies: 
+          - 
+            PolicyName: ${self:service}-codebuild
+            PolicyDocument: 
+              Version: "2012-10-17"
+              Statement: 
+                - 
+                  Effect: Allow
+                  Action:
+                    - ec2:CreateNetworkInterface
+                    - ec2:DescribeDhcpOptions
+                    - ec2:DescribeNetworkInterfaces
+                    - ec2:DeleteNetworkInterface
+                    - ec2:DescribeSubnets
+                    - ec2:DescribeSecurityGroups
+                    - ec2:DescribeVpcs
+                  Resource: "*"
+                - 
+                  Effect: Allow
+                  Action:
+                    - ec2:CreateNetworkInterfacePermission
+                  Resource:
+                    - Fn::Join:
+                      - ":"
+                      - - arn:aws:ec2
+                        - Ref: 'AWS::Region'
+                        - Ref: 'AWS::AccountId'
+                        - network-interface/*
+                  Condition:
+                    StringEquals:
+                      'ec2:subnet': 
+                        - Fn::Join:
+                          - ""
+                          - - 'arn:aws:ec2:'
+                            - Ref: 'AWS::Region'
+                            - ":"
+                            - Ref: 'AWS::AccountId'
+                            - ":"
+                            - subnet/
+                            - Ref: PrivateSubnetA
+                        - Fn::Join:
+                          - ""
+                          - - 'arn:aws:ec2:'
+                            - Ref: 'AWS::Region'
+                            - ":"
+                            - Ref: 'AWS::AccountId'
+                            - ":"
+                            - subnet/
+                            - Ref: PrivateSubnetB
+                        - Fn::Join:
+                          - ""
+                          - - 'arn:aws:ec2:'
+                            - Ref: 'AWS::Region'
+                            - ":"
+                            - Ref: 'AWS::AccountId'
+                            - ":"
+                            - subnet/
+                            - Ref: PrivateSubnetC
+                        - Fn::Join:
+                          - ""
+                          - - 'arn:aws:ec2:'
+                            - Ref: 'AWS::Region'
+                            - ":"
+                            - Ref: 'AWS::AccountId'
+                            - ":"
+                            - subnet/
+                            - Ref: PrivateSubnetD
+                      'ec2:AuthorizedService': 'codebuild.amazonaws.com'
+                - 
+                  Effect: Allow
+                  Action:
+                    - ssm:DescribeAssociation
+                    - ssm:GetParameters
+                    - ssm:GetParameter
+                    - ssm:GetParametersByPath
+                  Resource: arn:aws:ssm:*:*:parameter/*
+                - 
+                  Effect: Allow
+                  Action:
+                    - cloudformation:CancelUpdateStack
+                    - cloudformation:ContinueUpdateRollback
+                    - cloudformation:CreateStack
+                    - cloudformation:DeleteStack
+                    - cloudformation:DeleteStackSet
+                    - cloudformation:DescribeChangeSet
+                    - cloudformation:DescribeStackEvents
+                    - cloudformation:DescribeStackResource*
+                    - cloudformation:DescribeStacks
+                    - cloudformation:ExecuteChangeSet
+                    - cloudformation:GetStackPolicy
+                    - cloudformation:GetTemplate
+                    - cloudformation:ListChangeSets
+                    - cloudformation:ListStackResources
+                    - cloudformation:UpdateStack
+                    - cloudformation:ValidateTemplate
+                    - iam:AttachRolePolicy
+                    - iam:CreateRole
+                    - iam:CreateInstanceProfile
+                    - iam:AddRoleToInstanceProfile
+                    - iam:DeleteRole
+                    - iam:DeleteRolePolicy
+                    - iam:DetachRolePolicy
+                    - iam:GetPolicy
+                    - iam:GetRole
+                    - iam:ListAttachedRolePolicies
+                    - iam:ListPolicies
+                    - iam:ListRolePolicies
+                    - iam:ListRoles
+                    - iam:PutRolePolicy
+                    - iam:UpdateRole
+                    - iam:PassRole
+                    - iam:DeleteInstanceProfile
+                    - iam:RemoveRoleFromInstanceProfile
+                    - lambda:AddPermission
+                    - lambda:CreateAlias
+                    - lambda:CreateEventSourceMapping
+                    - lambda:CreateFunction
+                    - lambda:DeleteAlias
+                    - lambda:DeleteEventSourceMapping
+                    - lambda:DeleteFunction
+                    - lambda:DeleteFunctionConcurrency
+                    - lambda:Get*
+                    - lambda:List*
+                    - lambda:PublishVersion
+                    - lambda:PutFunctionConcurrency
+                    - lambda:RemovePermission
+                    - lambda:TagResource
+                    - lambda:UntagResource
+                    - lambda:Update*
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:DeleteLogGroup
+                    - logs:DeleteLogStream
+                    - logs:DeleteRetentionPolicy
+                    - logs:DeleteSubscriptionFilter
+                    - logs:PutMetricFilter
+                    - logs:PutSubscriptionFilter
+                    - logs:DescribeLogGroups
+                    - logs:PutRetentionPolicy
+                    - s3:ListBucket
+                    - s3:ListObjects*
+                    - s3:DeleteObject
+                    - s3:DeleteObjectVersion
+                    - s3:ListBucketVersions
+                    - s3:CreateBucket
+                    - s3:PutObject
+                    - s3:PutObjectAcl
+                    - s3:GetObject
+                    - s3:GetBucketLocation
+                    - s3:GetObjectVersion
+                    - s3:PutLifecycleConfiguration
+                    - s3:DeleteBucket
+                    - events:*
+                    - sns:*
+                    - apigateway:*
+                    - rds:*
+                    - sqs:*
+                    - cloudwatch:*
+                  Resource: "*"
+                - 
+                  Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    - Fn::Join:
+                      - ":"
+                      - - arn:aws:logs
+                        - Ref: 'AWS::Region'
+                        - Ref: 'AWS::AccountId'
+                        - log-group
+                        - /aws/codebuild/*
+
+  Outputs:
+    VPC:
+      Value:
+        Ref: VPC
+    SecurityGroupId:
+      Value:
+        Fn::GetAtt: SecurityGroup.GroupId
+    DbSubnetGroup:
+      Value:
+        Ref: DBSubnetGroup
+    DbSecurityGroup:
+      Value:
+        Ref: DbSecurityGroup
+    PrivateSubNetA:
+      Value:
+        Ref: PrivateSubnetA
+    PrivateSubNetB:
+      Value:
+        Ref: PrivateSubnetB
+    PrivateSubNetC:
+      Value:
+        Ref: PrivateSubnetC
+    PublicSubNetA:
+      Value:
+        Ref: PublicSubnetA
+    PublicSubNetB:
+      Value:
+        Ref: PublicSubnetB
+    CodebuildRole:
+      Value:
+        Fn::GetAtt:
+          - CodebuildRole
+          - Arn
+    KmsKeyName:
+      Value: alias/${self:service}-secret-key
+    DeploymentBucket:
+      Value: ${self:custom.deploymentBucket}
+    CodebuildImage:
+      Value: ${self:custom.image}
+    GithubUrl:
+      Value: ${self:custom.githubUrl}

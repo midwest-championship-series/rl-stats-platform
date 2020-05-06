@@ -35,6 +35,12 @@ provider:
   stage: ${opt:stage, 'dev'}
   endpointType: REGIONAL
   memorySize: 256
+  vpc:
+    securityGroupIds:
+      - ${cf:rl-stats-setup-prod.SecurityGroupId}
+    subnetIds:
+      - ${cf:rl-stats-setup-prod.PrivateSubNetA}
+      - ${cf:rl-stats-setup-prod.PrivateSubNetB}
   environment:
     SERVERLESS_REGION: ${self:provider.region}
     SERVERLESS_STAGE: ${self:provider.stage}
@@ -76,6 +82,9 @@ provider:
     throttle:
       burstLimit: 10
       rateLimit: 5
+  stackTags:
+    Project: rl-stats
+    Role: ${self:service}
 
 functions:
   # fetches a player's ranks via https://rocketleague.tracker.network/
