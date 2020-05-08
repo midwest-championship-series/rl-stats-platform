@@ -225,13 +225,6 @@ resources:
         DestinationCidrBlock: 0.0.0.0/0
         NatGatewayId:
           Ref: NatGateway
-    DbRoute:
-      Type: AWS::EC2::Route
-      Properties:
-        RouteTableId:
-          Ref: PrivateRouteTable
-        DestinationCidrBlock: ${self:custom.dbCidr}
-        VpcPeeringConnectionId: ${self:custom.dbVpcConnectionId}
     PublicRouteTable:
       Type: AWS::EC2::RouteTable
       Properties:
@@ -245,6 +238,13 @@ resources:
         DestinationCidrBlock: 0.0.0.0/0
         GatewayId:
           Ref: InternetGateway
+    # DbRoute:
+    #   Type: AWS::EC2::Route
+    #   Properties:
+    #     RouteTableId:
+    #       Ref: PublicRouteTable
+    #     DestinationCidrBlock: ${self:custom.dbCidr}
+    #     VpcPeeringConnectionId: ${self:custom.dbVpcConnectionId}
     SubnetRouteTableAssociationPrivateA:
       Type: AWS::EC2::SubnetRouteTableAssociation
       Properties:

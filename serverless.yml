@@ -51,6 +51,7 @@ provider:
     MNRL_SHEET_ID: ${ssm:${self:provider.stage}-MNRL_SHEET_ID}
     GAMES_QUEUE_URL:
       Ref: GamesQueue
+    MONGODB_PASSWORD: ${ssm:${self:provider.stage}-mnrl-db-pass~true}
   iamRoleStatements:
     - Effect: Allow
       Action:

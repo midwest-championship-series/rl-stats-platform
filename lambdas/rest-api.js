@@ -1,11 +1,14 @@
 const apis = require('../src/api')
 const warmerIntercept = require('../src/util/warmer-intercept')
+const db = require('../src/services/mongodb')
 
 const handler = async event => {
   if (warmerIntercept(event)) return
   if (event.body) {
     event.body = JSON.parse(event.body)
   }
+
+  await db()
 
   const {
     requestContext: { httpMethod },
