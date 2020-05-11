@@ -3,14 +3,22 @@ const router = require('express').Router()
 const v0Handler = async (req, res, next) => {
   const { table } = req.params
   // handle v0 api
-  const body = await require('./v0')[req.method.toUpperCase()]({ table, queryStringParameters: req.query })
+  const body = await require('./v0')[req.method.toUpperCase()]({
+    table,
+    queryStringParameters: req.query,
+    body: req.body,
+  })
   res.status(200).send(body)
 }
 
 const v1Handler = async (req, res, next) => {
   const { table } = req.params
   // handle v0 api
-  const body = await require('./v1')[req.method.toUpperCase()]({ table, queryStringParameters: req.query })
+  const body = await require('./v1')[req.method.toUpperCase()]({
+    table,
+    queryStringParameters: req.query,
+    body: req.body,
+  })
   res.status(200).send(body)
 }
 
