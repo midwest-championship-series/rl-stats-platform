@@ -1,11 +1,5 @@
 const router = require('express').Router()
 
-// const apis = {
-//   v0: require('./v0'),
-//   v1: require('./v1'),
-//   v2: require('./v2'),
-// }
-
 const v0Handler = async (req, res, next) => {
   const { table } = req.params
   // handle v0 api
