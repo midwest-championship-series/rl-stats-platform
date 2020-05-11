@@ -185,7 +185,7 @@ functions:
     timeout: 300
     events:
       - schedule:
-          rate: rate(1 hour)
+          rate: rate(10 minutes)
           enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
 
 resources:
