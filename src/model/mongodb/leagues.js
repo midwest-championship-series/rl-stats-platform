@@ -51,7 +51,18 @@ const schema = {
   player_ids: [{ type: Schema.Types.ObjectId }],
 }
 
-const Model = createModel('League', schema)
+const Model = createModel('League', schema, schema => {
+  schema.virtual('players', {
+    ref: 'Player',
+    localField: 'player_ids',
+    foreignField: '_id',
+  })
+  schema.virtual('teams', {
+    ref: 'Team',
+    localField: 'team_ids',
+    foreignField: '_id',
+  })
+})
 
 module.exports = {
   get: ({ criteria }) => Model.find(criteria).exec(),
