@@ -35,7 +35,7 @@ const handler = async () => {
         mutator: (record, league) => {
           record.old_league_id = record.league_id
           delete record.league_id
-          record.league_id = league.id
+          record.league_id = league._id
         },
       },
       players: {
@@ -44,7 +44,7 @@ const handler = async () => {
         mutator: (record, league) => {
           record.old_league_id = record.league_id
           delete record.league_id
-          record.league_id = league.id
+          record.league_id = league._id
           record.old_team_id = record.team_id
           delete record.team_id
         },
@@ -81,7 +81,7 @@ const handler = async () => {
     }
     for (let player of adjustedModels.players) {
       const team = adjustedModels.teams.find(t => t.old_id === player.old_team_id)
-      player.team_id = team.id
+      player.team_id = team._id
     }
     for (let member of adjustedModels.members) {
       let player = adjustedModels.players.find(p => p.old_id === member.old_id)
@@ -106,9 +106,9 @@ const handler = async () => {
       await player.save()
     }
     for (let league of leagues) {
-      console.log(`saving league: ${league.id}`)
-      league.team_ids = adjustedModels.teams.map(t => t.id)
-      league.player_ids = adjustedModels.players.map(p => p.id)
+      console.log(`saving league: ${league._id}`)
+      league.team_ids = adjustedModels.teams.map(t => t._id)
+      league.player_ids = adjustedModels.players.map(p => p._id)
       league.seasons.forEach(season => {
         season.matches.forEach(match => {
           match.team_ids = adjustedModels.teams.filter(t => match.old_team_ids.includes(t.old_id))
@@ -119,12 +119,6 @@ const handler = async () => {
       })
       await league.save()
     }
-    // console.log(adjustedModels)
-    // console.log(leagues)
-    /**
-     * @todo update player and team league_ids
-     * @todo add team_ids and player_ids to leagues
-     */
     console.log('finished update')
     process.exit(0)
   } catch (err) {
