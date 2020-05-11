@@ -1,14 +1,14 @@
 const tables = {
-  teams: require('../model/teams'),
-  players: require('../model/players'),
-  games: require('../model/games'),
-  members: require('../model/members'),
-  schedules: require('../model/schedules'),
+  teams: require('../model/sheets/teams'),
+  players: require('../model/sheets/players'),
+  games: require('../model/sheets/games'),
+  members: require('../model/sheets/members'),
+  schedules: require('../model/sheets/schedules'),
   leagues: {
     get: async () => {
       const [leagueData, scheduleData] = await Promise.all([
-        require('../model/leagues').get({ json: true }),
-        require('../model/schedules').get({ json: true }),
+        require('../model/sheets/leagues').get({ json: true }),
+        require('../model/sheets/schedules').get({ json: true }),
       ])
       leagueData.forEach(league => {
         league.schedule = scheduleData.filter(s => s.league_id === league.id)
@@ -16,8 +16,8 @@ const tables = {
       return leagueData
     },
   },
-  'player-games': require('../model/player-games'),
-  'team-games': require('../model/team-games'),
+  'player-games': require('../model/sheets/player-games'),
+  'team-games': require('../model/sheets/team-games'),
 }
 
 module.exports = {

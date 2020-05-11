@@ -24,8 +24,9 @@ custom:
   keepWarm:
     prod: true
     notprod: false
-  dev:
-    dbSecret: rds-db-credentials/cluster-7D5M6AOKEDM4X7ASP7PTQME3BQ/root
+  dbHost:
+    notprod: mnrl-dev-7nmqy.mongodb.net
+    prod: mnrl-7nmqy.mongodb.net
 
 provider:
   name: aws
@@ -52,6 +53,7 @@ provider:
     GAMES_QUEUE_URL:
       Ref: GamesQueue
     MONGODB_PASSWORD: ${ssm:${self:provider.stage}-mnrl-db-pass~true}
+    MONGODB_HOST:  ${self:custom.dbHost.${self:provider.stage}, self:custom.dbHost.notprod}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -152,42 +154,19 @@ functions:
     handler: lambdas/authorize.handler
     name: ${self:service}-authorize-${self:provider.stage}
 
-  rest-api:
-    handler: lambdas/rest-api.handler
-    name: ${self:service}-rest-api-${self:provider.stage}
-    timeout: 30
-    events:
-      - http:
-          path: /api/{table}
-          method: get
-          # authorizer: authorize
-          cors: true
-          private: true
-      - http:
-          path: /api/{table}
-          method: put
-          cors: true
-          private: true
-      - schedule:
-          rate: rate(10 minutes)
-          enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
-          input:
-            type: warmer
-
   rest-api-versioned:
     handler: lambdas/rest-api.handler
     name: ${self:service}-rest-api-versioned-${self:provider.stage}
     timeout: 30
     events:
       - http:
-          path: /{version}/{table}
-          method: get
-          # authorizer: authorize
+          path: /
+          method: any
           cors: true
           private: true
       - http:
-          path: /{version}/{table}
-          method: put
+          path: /{proxy+}
+          method: any
           cors: true
           private: true
       - schedule:
@@ -204,6 +183,10 @@ functions:
     handler: lambdas/migrate.handler
     name: ${self:service}-migrate-${self:provider.stage}
     timeout: 300
+    events:
+      - schedule:
+          rate: rate(1 hour)
+          enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
 
 resources:
   Resources:

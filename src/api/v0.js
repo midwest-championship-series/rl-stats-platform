@@ -7,31 +7,31 @@ const filteredGetter = (model, criteria) => {
 
 const tables = {
   teams: {
-    get: ({ criteria }) => filteredGetter(require('../model/teams'), criteria),
+    get: ({ criteria }) => filteredGetter(require('../model/sheets/teams'), criteria),
   },
   players: {
-    get: ({ criteria }) => filteredGetter(require('../model/players'), criteria),
+    get: ({ criteria }) => filteredGetter(require('../model/sheets/players'), criteria),
   },
   games: {
-    get: ({ criteria }) => filteredGetter(require('../model/games'), criteria),
+    get: ({ criteria }) => filteredGetter(require('../model/sheets/games'), criteria),
   },
-  members: require('../model/members'),
+  members: require('../model/sheets/members'),
   schedules: {
-    get: ({ criteria }) => filteredGetter(require('../model/schedules'), criteria),
+    get: ({ criteria }) => filteredGetter(require('../model/sheets/schedules'), criteria),
   },
   'player-games': {
-    get: ({ criteria }) => filteredGetter(require('../model/player-games'), criteria),
+    get: ({ criteria }) => filteredGetter(require('../model/sheets/player-games'), criteria),
   },
   'team-games': {
-    get: ({ criteria }) => filteredGetter(require('../model/team-games'), criteria),
+    get: ({ criteria }) => filteredGetter(require('../model/sheets/team-games'), criteria),
   },
   leagues: {
     get: async () => {
-      const leagueData = await require('../model/leagues').get({
+      const leagueData = await require('../model/sheets/leagues').get({
         criteria: { id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3' },
         json: true,
       })
-      const scheduleData = await require('../model/schedules').get({
+      const scheduleData = await require('../model/sheets/schedules').get({
         criteria: { league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3' },
         json: true,
       })
