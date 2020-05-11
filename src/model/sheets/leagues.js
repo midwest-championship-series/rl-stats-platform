@@ -1,4 +1,4 @@
-const Table = require('../services/google')
+const Table = require('../../services/google')
 const { MNCS } = require('./constants')()
 
 const leagues = new Table('games', MNCS.spreadsheetId, MNCS.leagues)

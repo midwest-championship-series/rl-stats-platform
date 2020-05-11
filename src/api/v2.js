@@ -1,9 +1,9 @@
 const tables = {
-  teams: require('../model/sheets/teams'),
-  players: require('../model/sheets/players'),
-  games: require('../model/sheets/games'),
-  members: require('../model/sheets/members'),
-  schedules: require('../model/sheets/schedules'),
+  teams: require('../model/mongodb/teams'),
+  players: require('../model/mongodb/players'),
+  games: require('../model/mongodb/games'),
+  members: require('../model/mongodb/members'),
+  // schedules: require('../model/mongodb/schedules'),
   leagues: {
     get: async () => {
       const [leagueData, scheduleData] = await Promise.all([
@@ -24,6 +24,7 @@ module.exports = {
   tables,
   GET: ({ table, queryStringParameters }) => tables[table].get({ criteria: queryStringParameters, json: true }),
   PUT: ({ table, body }) => {
+    console.log(body)
     return tables[table].add({ data: body[table], json: true })
   },
 }
