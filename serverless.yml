@@ -152,42 +152,19 @@ functions:
     handler: lambdas/authorize.handler
     name: ${self:service}-authorize-${self:provider.stage}
 
-  rest-api:
-    handler: lambdas/rest-api.handler
-    name: ${self:service}-rest-api-${self:provider.stage}
-    timeout: 30
-    events:
-      - http:
-          path: /api/{table}
-          method: get
-          # authorizer: authorize
-          cors: true
-          private: true
-      - http:
-          path: /api/{table}
-          method: put
-          cors: true
-          private: true
-      - schedule:
-          rate: rate(10 minutes)
-          enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
-          input:
-            type: warmer
-
   rest-api-versioned:
     handler: lambdas/rest-api.handler
     name: ${self:service}-rest-api-versioned-${self:provider.stage}
     timeout: 30
     events:
       - http:
-          path: /{version}/{table}
-          method: get
-          # authorizer: authorize
+          path: /
+          method: any
           cors: true
           private: true
       - http:
-          path: /{version}/{table}
-          method: put
+          path: /{proxy+}
+          method: any
           cors: true
           private: true
       - schedule:
@@ -204,6 +181,10 @@ functions:
     handler: lambdas/migrate.handler
     name: ${self:service}-migrate-${self:provider.stage}
     timeout: 300
+    events:
+      - schedule:
+          rate: rate(1 hour)
+          enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
 
 resources:
   Resources:
