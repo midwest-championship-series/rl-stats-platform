@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const timestamps = require('mongoose-timestamp')
 
-const connStr = `mongodb+srv://mnrl_stats:${process.env.MONGODB_PASSWORD}@mnrl-7nmqy.mongodb.net/mnrl`
+const connStr = `mongodb+srv://mnrl_stats:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/mnrl`
 
 mongoose.Promise = Promise
 

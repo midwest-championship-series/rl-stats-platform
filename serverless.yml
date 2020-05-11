@@ -24,8 +24,9 @@ custom:
   keepWarm:
     prod: true
     notprod: false
-  dev:
-    dbSecret: rds-db-credentials/cluster-7D5M6AOKEDM4X7ASP7PTQME3BQ/root
+  dbHost:
+    notprod: mnrl-dev-7nmqy.mongodb.net
+    prod: mnrl-7nmqy.mongodb.net
 
 provider:
   name: aws
@@ -52,6 +53,7 @@ provider:
     GAMES_QUEUE_URL:
       Ref: GamesQueue
     MONGODB_PASSWORD: ${ssm:${self:provider.stage}-mnrl-db-pass~true}
+    MONGODB_HOST:  ${self:custom.dbHost.${self:provider.stage}, self:custom.dbHost.notprod}
   iamRoleStatements:
     - Effect: Allow
       Action:
