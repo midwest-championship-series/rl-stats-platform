@@ -40,6 +40,7 @@ const createModel = (modelName, schemaJson, decorator) => {
   connect()
   if (mongoose.models[modelName]) return mongoose.models[modelName]
   const schema = new mongoose.Schema(schemaJson, {
+    id: false,
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
   })

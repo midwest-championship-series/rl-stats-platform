@@ -21,7 +21,14 @@ const schema = {
   },
 }
 
-const Model = createModel('Player', schema)
+const Model = createModel('Player', schema, schema => {
+  schema.set('toJSON', {
+    ...schema.toJSON,
+    transform: function(doc, ret) {
+      delete ret.accounts
+    },
+  })
+})
 
 module.exports = {
   get: ({ criteria }) => Model.find(criteria).exec(),
