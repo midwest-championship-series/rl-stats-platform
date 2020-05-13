@@ -1,46 +1,6 @@
 const { Schema } = require('mongoose')
 const createModel = require('../../services/mongodb')
 
-// const Game = createModel('Game', {
-//   old_id: { type: String, required: true },
-//   status: { type: String, default: 'open' },
-//   winner_id: { type: Schema.Types.ObjectId },
-//   date_time_played: { type: Date },
-//   date_time_processed: { type: Date },
-// })
-
-// const Match = createModel(
-//   'Match',
-//   {
-//     old_id: { type: String, required: true },
-//     team_ids: [{ type: Schema.Types.ObjectId }],
-//     old_team_ids: [{ type: String }],
-//     week: { type: String },
-//     league_id: { type: Schema.Types.ObjectId },
-//     status: { type: String, default: 'open' },
-//     games: { type: [Game.schema], default: [] },
-//     best_of: { type: Number },
-//   },
-//   schema => {
-//     schema.pre('validate', function() {
-//       const minGames = Math.ceil(this.best_of / 2)
-//       if (this.games && this.games.length > 0 && this.games.length < minGames) {
-//         this.invalidate(
-//           'games',
-//           `number of games (${this.games.length}) must be greater than the minumum to win a best of ${this.best_of} series`,
-//           this.games.length,
-//         )
-//       }
-//     })
-//   },
-// )
-
-// const Season = createModel('Season', {
-//   name: { type: String },
-//   season_type: { type: String },
-//   matches: [Match.schema],
-// })
-
 const schema = {
   name: { type: String, required: true },
   current_season: { type: String, required: true },
