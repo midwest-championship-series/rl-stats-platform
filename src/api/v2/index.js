@@ -1,13 +1,19 @@
 const router = require('express').Router()
 const attachModel = require('./attach-model')
-const { model: Leagues } = require('../../model/mongodb/leagues')
-const { model: Teams } = require('../../model/mongodb/teams')
-const { model: Players } = require('../../model/mongodb/players')
+const { Model: Teams } = require('../../model/mongodb/teams')
+const { Model: Players } = require('../../model/mongodb/players')
+const { Model: Leagues } = require('../../model/mongodb/leagues')
+const { Model: Seasons } = require('../../model/mongodb/seasons')
+const { Model: Matches } = require('../../model/mongodb/matches')
+const { Model: Games } = require('../../model/mongodb/games')
 
 router.use(require('./modify-request'))
-router.use('/leagues', attachModel(Leagues))
 router.use('/teams', attachModel(Teams))
 router.use('/players', attachModel(Players))
+router.use('/leagues', attachModel(Leagues))
+router.use('/seasons', attachModel(Seasons))
+router.use('/matches', attachModel(Matches))
+router.use('/games', attachModel(Games))
 router.use(require('./send-request'))
 
 module.exports = router

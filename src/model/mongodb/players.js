@@ -34,7 +34,13 @@ module.exports = {
   get: ({ criteria }) => Model.find(criteria).exec(),
   add: ({ data }) =>
     Promise.all(
-      data.map(d => Model.findOneAndUpdate({ old_id: d.old_id }, { $set: d }, { new: true, upsert: true }).exec()),
+      data.map(d =>
+        Model.findOneAndUpdate(
+          { old_id: d.old_id },
+          { $set: d },
+          { new: true, upsert: true, runValidators: true },
+        ).exec(),
+      ),
     ),
-  model: Model,
+  Model,
 }

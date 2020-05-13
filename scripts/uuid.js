@@ -1,4 +1,4 @@
-const { v4: uuid } = require('uuid')
+const { ObjectId } = require('mongodb')
 for (let i = 0; i < 10; i++) {
-  console.log(uuid())
+  console.log(new ObjectId().toHexString())
 }
