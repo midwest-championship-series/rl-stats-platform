@@ -1,17 +1,16 @@
 const { Schema } = require('mongoose')
 const createModel = require('../../services/mongodb')
 
-const schema = {
+const Model = createModel('Game', {
   old_id: { type: String, required: true },
-  name: { type: String },
-  league_id: { type: Schema.Types.ObjectId },
-  old_league_id: { type: String, required: true },
-  league: { type: String }, // should go away in favor of league_id
-  discord_id: { type: String },
-  hex_color: { type: String },
-}
-
-const Model = createModel('Team', schema)
+  ballchasing_id: { type: String, required: true },
+  old_match_id: { type: String, required: true },
+  status: { type: String, default: 'open' },
+  /** @todo add winner_ids to games */
+  // winner_id: { type: Schema.Types.ObjectId },
+  date_time_played: { type: Date },
+  date_time_processed: { type: Date },
+})
 
 module.exports = {
   get: ({ criteria }) => Model.find(criteria).exec(),
