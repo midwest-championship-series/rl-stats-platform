@@ -5,7 +5,7 @@ const connStr = `mongodb+srv://mnrl_stats:${process.env.MONGODB_PASSWORD}@${proc
 
 mongoose.Promise = Promise
 
-let connectionConfigured = false
+mongoose.connectionConfigured = false
 
 const setup = () => {
   mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
@@ -20,9 +20,10 @@ const setup = () => {
 }
 
 const connect = () => {
-  if (!connectionConfigured) {
+  if (!mongoose.connectionConfigured) {
+    console.log('configuring mongodb connection')
     setup()
-    connectionConfigured = true
+    mongoose.connectionConfigured = true
   }
 
   if (mongoose.connection.readyState !== 1) {
