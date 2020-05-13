@@ -17,6 +17,7 @@ const handler = async () => {
           delete record.league_id
           record.old_team_id = record.team_id
           delete record.team_id
+          record.accounts = []
         },
       },
       members: { sheets: require('../src/model/sheets/members') },
@@ -55,12 +56,14 @@ const handler = async () => {
         })
         adjustedModels.players.push(player)
       }
-      if (!player.accounts) player.accounts = []
-      player.accounts.push({
-        platform: member.platform,
-        platform_id: member.platform_id,
-        screen_name: member.screen_name,
-      })
+      const account = player.accounts.find(a => a.platform === member.platform && a.platform_id === member.platform_id)
+      if (!account) {
+        player.accounts.push({
+          platform: member.platform,
+          platform_id: member.platform_id,
+          screen_name: member.screen_name,
+        })
+      }
     }
     for (let player of adjustedModels.players) {
       console.log(`saving player: ${player.screen_name}`)
@@ -114,7 +117,7 @@ const handler = async () => {
     const newLeagues = await require('../src/model/mongodb/leagues').add({ data: oldLeagues })
 
     console.log('finished update')
-    process.exit(0)
+    return { success: true }
   } catch (err) {
     console.error(err)
     process.exit(0)

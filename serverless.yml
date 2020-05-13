@@ -2,8 +2,8 @@ service: rl-stats
 
 plugins:
   # - serverless-python-requirements
-  - serverless-export-env
-  - serverless-dotenv-plugin
+  # - serverless-export-env
+  # - serverless-dotenv-plugin
   - serverless-step-functions
   - serverless-offline
 
