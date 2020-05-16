@@ -39,5 +39,15 @@ module.exports = Model => {
     next()
   })
 
+  router.delete('/:id', async (req, res, next) => {
+    const { n, deletedCount } = await Model.deleteOne({ _id: req.params.id }).exec()
+    if (n > 0 && deletedCount > 0) {
+      req.context = { success: true }
+    } else {
+      res.status(404)
+    }
+    next()
+  })
+
   return router
 }
