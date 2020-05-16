@@ -9,16 +9,34 @@ const populateQuery = (query, populations) => {
   return query
 }
 
-module.exports = model => {
+module.exports = Model => {
   const router = express.Router()
 
   router.get('/', async (req, res, next) => {
-    req.context = await populateQuery(model.find(req.query), req.populate).exec()
+    req.context = await populateQuery(Model.find(req.query), req.populate).exec()
     next()
   })
 
   router.get('/:id', async (req, res, next) => {
-    req.context = await populateQuery(model.findById(req.params.id), req.populate).exec()
+    req.context = await populateQuery(Model.findById(req.params.id), req.populate).exec()
+    next()
+  })
+
+  router.put('/:id', async (req, res, next) => {
+    const doc = await Model.findById(req.params.id).exec()
+    if (!model) {
+      return res.status(404).send()
+    }
+    for (let property of req.body) {
+      doc[property] = req.body[property]
+    }
+    req.context = await doc.save()
+    next()
+  })
+
+  router.post('/', async (req, res, next) => {
+    const doc = new Model(req.body)
+    req.context = await doc.save()
     next()
   })
 
