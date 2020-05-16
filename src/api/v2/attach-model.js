@@ -35,8 +35,7 @@ module.exports = Model => {
   })
 
   router.post('/', async (req, res, next) => {
-    const doc = new Model(req.body)
-    req.context = await doc.save()
+    req.context = await Model.create(req.body)
     next()
   })
 
