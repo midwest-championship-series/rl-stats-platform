@@ -1,4 +1,4 @@
-const games = require('./model/games')
+const games = require('./model/sheets/games')
 const sqs = require('./services/aws').sqs
 
 module.exports = async ({ match_id, game_ids }) => {
