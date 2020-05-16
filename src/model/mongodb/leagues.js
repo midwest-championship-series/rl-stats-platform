@@ -3,10 +3,10 @@ const createModel = require('../../services/mongodb')
 
 const schema = {
   name: { type: String, required: true },
-  current_season: { type: String, required: true },
-  current_week: { type: String, required: true },
-  season_ids: [{ type: Schema.Types.ObjectId, required: true }],
-  old_id: { type: String, required: true },
+  current_season: { type: String },
+  current_week: { type: String },
+  season_ids: [{ type: Schema.Types.ObjectId }],
+  old_id: { type: String },
   team_ids: [{ type: Schema.Types.ObjectId, required: true }],
   player_ids: [{ type: Schema.Types.ObjectId, required: true }],
 }
