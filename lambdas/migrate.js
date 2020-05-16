@@ -48,12 +48,17 @@ const handler = async () => {
     for (let member of adjustedModels.members) {
       let player = adjustedModels.players.find(p => p.old_id === member.old_id)
       if (!player) {
-        const { Model } = require('../src/model/mongodb/players')
-        player = new Model({
-          discord_id: member.discord_id,
-          screen_name: member.screen_name,
-          old_id: member.old_id,
+        const Players = require('../src/model/mongodb/players')
+        const [newPlayer] = await Players.add({
+          data: [
+            {
+              discord_id: member.discord_id,
+              screen_name: member.screen_name,
+              old_id: member.old_id,
+            },
+          ],
         })
+        player = newPlayer
         adjustedModels.players.push(player)
       }
       const account = player.accounts.find(a => a.platform === member.platform && a.platform_id === member.platform_id)
