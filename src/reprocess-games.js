@@ -1,5 +1,5 @@
-const schedule = require('./model/schedules')
-const games = require('./model/games')
+const schedule = require('./model/sheets/schedules')
+const games = require('./model/sheets/games')
 const sqs = require('./services/aws').sqs
 
 module.exports = async criteria => {
