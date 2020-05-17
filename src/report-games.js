@@ -1,13 +1,15 @@
-const games = require('./model/sheets/games')
+const { Model: Games } = require('./model/mongodb/games')
+const { Model: Matches } = require('./model/mongodb/matches')
 const sqs = require('./services/aws').sqs
 
 module.exports = async ({ match_id, game_ids }) => {
   const gameIdsToProcess = []
   // validate that all games for a match are being reported
   if (match_id) {
-    const matchGames = (await games.get({ criteria: { match_id }, json: true })).map(game => game.game_id)
-    if (matchGames.length === 0) throw new Error(`no game_ids found for match_id: ${match_id}`)
-    gameIdsToProcess.push(...matchGames)
+    const match = await Matches.findById(match_id).exec()
+    if (!match) throw new Error(`no match found for id: ${match_id}`)
+    if (!match.game_ids || match.game_ids.length < 1) throw new Error(`no game_ids found for match_id: ${match_id}`)
+    gameIdsToProcess.push(...match.game_ids.map(id => id.toHexString()))
   } else if (game_ids && game_ids.length > 0) {
     /**
      * games could be mis-reported in 3 ways:
@@ -15,25 +17,28 @@ module.exports = async ({ match_id, game_ids }) => {
      * 2) the games have already been processed, but only part of them are being reprocessed
      * 3) someone is attempting to add a new game to a match that already exists
      */
-    const allGames = await games.get()
-    const reportedGameMatchIds = [
-      ...new Set(allGames.filter(g => game_ids.some(id => g.game_id === id)).map(g => g.match_id)),
-    ]
-    match_id = reportedGameMatchIds[0]
-    // validate match games are correct with known matches
-    if (match_id) {
+    const matches = await Matches.find({ game_ids: { $in: game_ids } }).exec()
+    // const reportedGameMatchIds = [
+    //   ...new Set(allGames.filter(g => game_ids.some(id => g.game_id === id)).map(g => g.match_id)),
+    // ]
+    if (matches.length > 1)
       // validate against case 1
-      if (reportedGameMatchIds.length > 1)
-        throw new Error(`cannot report games from multiple matches at once: ${reportedGameMatchIds.join(', ')}`)
-      const allMatchGames = allGames.filter(g => g.match_id === match_id)
+      throw new Error(
+        `cannot report games from multiple matches at once: ${matches.map(m => m._id.toHexString()).join(', ')}`,
+      )
+    const match = matches[0]
+    // validate match games are correct with known matches
+    if (match) {
       // covers case 2
-      if (allMatchGames.length !== game_ids.length)
+      if (match.game_ids.length !== game_ids.length)
         throw new Error(
-          `expected same number of games to be reported as games in match: ${match_id}, expected ${allMatchGames.length} but got ${game_ids.length}`,
+          `expected same number of games to be reported as games in match: ${match._id.toHexString()}, expected ${
+            match.game_ids.length
+          } but got ${game_ids.length}`,
         )
       // covers case 3
-      if (!allMatchGames.every(g => game_ids.includes(g.game_id)))
-        throw new Error(`reported games_ids do not match game_ids for match ${match_id}`)
+      if (!match.game_ids.every(id => game_ids.includes(id.toHexString())))
+        throw new Error(`reported games_ids do not match game_ids for match ${match._id.toHexString()}`)
     }
     gameIdsToProcess.push(...game_ids)
   } else {
