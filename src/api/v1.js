@@ -1,21 +1,19 @@
 const tables = {
   teams: require('../model/sheets/teams'),
-  players: require('../model/sheets/players'),
+  players: {
+    get: async ({ criteria }) => {
+      const players = await require('../model/mongodb/players').get({ criteria })
+      const [mncs] = await require('../model/mongodb/leagues').get({ criteria: { name: 'mncs' } })
+      return players.map(p => ({
+        ...p.toJSON(),
+        id: p._id,
+        league_id: mncs._id,
+      }))
+    },
+  },
   games: require('../model/sheets/games'),
   members: require('../model/sheets/members'),
   schedules: require('../model/sheets/schedules'),
-  // leagues: {
-  //   get: async () => {
-  //     const [leagueData, scheduleData] = await Promise.all([
-  //       require('../model/sheets/leagues').get({ json: true }),
-  //       require('../model/sheets/schedules').get({ json: true }),
-  //     ])
-  //     leagueData.forEach(league => {
-  //       league.schedule = scheduleData.filter(s => s.league_id === league.id)
-  //     })
-  //     return leagueData
-  //   },
-  // },
   leagues: {
     get: async () => {
       const leagues = await require('../model/mongodb/leagues').Model.aggregate([
