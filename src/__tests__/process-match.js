@@ -4,12 +4,12 @@ const ballchasing = require('../services/ballchasing')
 jest.mock('../services/ballchasing')
 const processGame = require('../producers')
 jest.mock('../producers')
-const teamGames = require('../model/team-games')
-jest.mock('../model/team-games')
-const playerGames = require('../model/player-games')
-jest.mock('../model/player-games')
-const games = require('../model/games')
-jest.mock('../model/games')
+const teamGames = require('../model/sheets/team-games')
+jest.mock('../model/sheets/team-games')
+const playerGames = require('../model/sheets/player-games')
+jest.mock('../model/sheets/player-games')
+const games = require('../model/sheets/games')
+jest.mock('../model/sheets/games')
 
 describe('process-match', () => {
   const ballchasingGames = [

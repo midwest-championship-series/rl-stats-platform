@@ -1,7 +1,7 @@
 const ballchasing = require('./services/ballchasing')
-const games = require('./model/games')
-const teamGames = require('./model/team-games')
-const playerGames = require('./model/player-games')
+const games = require('./model/sheets/games')
+const teamGames = require('./model/sheets/team-games')
+const playerGames = require('./model/sheets/player-games')
 const processMatch = require('./producers')
 
 module.exports = async ({ match_id, game_ids }) => {
