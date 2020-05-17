@@ -1,8 +1,8 @@
 const reportGames = require('../report-games')
 
 // mocks
-const games = require('../model/games')
-jest.mock('../model/games')
+const games = require('../model/sheets/games')
+jest.mock('../model/sheets/games')
 const processMatch = require('../producers')
 jest.mock('../producers')
 const aws = require('../services/aws')

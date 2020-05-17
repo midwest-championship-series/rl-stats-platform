@@ -5,12 +5,12 @@ const processMatch = require('../producers')
 const replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
 
 // mocks
-const players = require('../model/players')
-jest.mock('../model/players')
-const members = require('../model/members')
-jest.mock('../model/members')
-const schedules = require('../model/schedules')
-jest.mock('../model/schedules')
+const players = require('../model/sheets/players')
+jest.mock('../model/sheets/players')
+const members = require('../model/sheets/members')
+jest.mock('../model/sheets/members')
+const schedules = require('../model/sheets/schedules')
+jest.mock('../model/sheets/schedules')
 const resetMocks = () => {
   players.get.mockResolvedValue([
     {
