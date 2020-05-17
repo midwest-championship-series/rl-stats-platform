@@ -1,5 +1,16 @@
 const tables = {
-  teams: require('../model/sheets/teams'),
+  teams: {
+    get: async ({ criteria }) => {
+      const teams = await require('../model/mongodb/teams').get({ criteria })
+      const [mncs] = await require('../model/mongodb/leagues').get({ criteria: { name: 'mncs' } })
+      return teams.map(t => ({
+        ...t.toJSON(),
+        id: t._id,
+        league_id: mncs._id,
+        league: mncs.name,
+      }))
+    },
+  },
   players: {
     get: async ({ criteria }) => {
       const players = await require('../model/mongodb/players').get({ criteria })
