@@ -79,9 +79,14 @@ module.exports = async ({ match_id, game_ids }) => {
   } else {
     games = match.games
   }
-  /** @todo remove await here after processMatch is synchronous */
-  const { teamStats, playerStats } = await processMatch(reportGames, { match, games, teams, players })
+  const { teamStats, playerStats } = processMatch(reportGames, { match, games, teams, players })
   await teamGames.upsert({ data: teamStats })
   await playerGames.upsert({ data: playerStats })
+
+  for (let game of games) {
+    game.date_time_processed = Date.now()
+    await game.save()
+  }
+  await match.save()
   return { match_id: match._id.toHexString(), game_ids: games.map(({ _id }) => _id.toHexString()) }
 }

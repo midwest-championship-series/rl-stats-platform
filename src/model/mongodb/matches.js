@@ -6,10 +6,10 @@ const Model = createModel(
   {
     old_id: { type: String, required: true },
     team_ids: [{ type: Schema.Types.ObjectId, required: true }],
-    old_team_ids: [{ type: String, required: true }],
+    old_team_ids: [{ type: String }],
     week: { type: String, required: true },
     status: { type: String, default: 'open' },
-    game_ids: [{ type: Schema.Types.ObjectId, required: true }],
+    game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
     best_of: { type: Number },
   },
   schema => {
@@ -28,11 +28,11 @@ const Model = createModel(
       const minGames = Math.ceil(this.best_of / 2)
       if (this.game_ids && this.game_ids.length > 0) {
         // validate that best_of has been met
-        if (this.games.length < minGames) {
+        if (this.game_ids.length < minGames) {
           this.invalidate(
-            'games',
-            `number of games (${this.games.length}) must be greater than the minumum to win a best of ${this.best_of} series`,
-            this.games.length,
+            'game_ids',
+            `number of games (${this.game_ids.length}) must be greater than the minumum to win a best of ${this.best_of} series`,
+            this.game_ids.length,
           )
         } else {
           this.status = 'closed'

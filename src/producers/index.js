@@ -1,40 +1,13 @@
 // const members = require('../model/sheets/members')
 // const players = require('../model/sheets/players')
 // const schedules = require('../model/sheets/schedules')
-const gameStats = require('./game-stats')
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
 const colors = ['blue', 'orange']
 
-// const getMemberInfo = async () => {
-//   const leaguePlayers = await players.get()
-//   const mnrlMembers = await members.get()
-//   return mnrlMembers.map(member => ({ ...member, ...leaguePlayers.find(player => player.id === member.id) }))
-// }
-
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
-// const getMatch = async (matchId, games) => {
-//   if (matchId) {
-//     const matches = await schedules.get({ criteria: { id: matchId }, json: true })
-//     return matches[0]
-//   } else {
-//     const teams = games.reduce((result, game) => {
-//       game.teams.forEach(teamId => {
-//         if (!result.includes(teamId)) result.push(teamId)
-//       })
-//       return result
-//     }, [])
-//     const matches = await schedules.get()
-//     return matches.filter(m => [m.team_1_id, m.team_2_id].every(id => teams.includes(id)))[0]
-//   }
-// }
-
 const assignLeagueIds = (game, { match, players, teams, games }) => {
-  // assign team_id to teams, players
-  // assign player_id to players
-  // assign league_id to players, teams
-
   game.game_id = games.find(g => g.ballchasing_id === game.id)._id.toHexString()
   game.match_id = match._id.toHexString()
   game.match_type = match.season.season_type
@@ -62,7 +35,10 @@ const assignLeagueIds = (game, { match, players, teams, games }) => {
           return platform === player.id.platform && platform_id === player.id.id
         })
       })
-      player.league_id = leaguePlayer && leaguePlayer._id.toHexString()
+      if (leaguePlayer) {
+        player.league_id = leaguePlayer._id.toHexString()
+        player.name = leaguePlayer.screen_name
+      }
     })
   })
 }
@@ -86,7 +62,7 @@ const assignMatchWin = games => {
   })
 }
 
-module.exports = async (games, leagueInfo) => {
+module.exports = (games, leagueInfo) => {
   const sortedGames = games.sort((a, b) => new Date(a.date) - new Date(b.date))
   let gameNumber = 1
   for (let game of sortedGames) {

@@ -2,6 +2,11 @@ const fs = require('fs')
 const path = require('path')
 const { ObjectId } = require('mongodb')
 
+const mockDoc = obj => {
+  obj.save = jest.fn()
+  return obj
+}
+
 // mock data
 const mockPlayers = [
   {
@@ -15,6 +20,7 @@ const mockPlayers = [
     ],
     created_at: { $date: '2020-05-16T19:42:49.164Z' },
     discord_id: '191639902100783108',
+    screen_name: 'Calster',
     updated_at: { $date: '2020-05-16T19:44:06.774Z' },
     team_id: ObjectId('5ebc62a9d09245d2a7c62e86'),
   },
@@ -86,7 +92,7 @@ const mockTeams = [
   },
 ]
 const mockClosedMatch = [
-  {
+  mockDoc({
     _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
     week: 1,
     game_ids: [
@@ -96,22 +102,22 @@ const mockClosedMatch = [
       '5ebc62afd09245d2a7c63350',
     ],
     games: [
-      {
+      mockDoc({
         _id: ObjectId('5ebc62afd09245d2a7c6333f'),
         ballchasing_id: '9aee7f5f-7d75-40b0-8116-a8e1e2c9d4c5',
-      },
-      {
+      }),
+      mockDoc({
         _id: ObjectId('5ebc62afd09245d2a7c63338'),
         ballchasing_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
-      },
-      {
+      }),
+      mockDoc({
         _id: ObjectId('5ebc62afd09245d2a7c6335e'),
         ballchasing_id: '2493a4bd-aeb5-49ba-8cac-059cc99865c1',
-      },
-      {
+      }),
+      mockDoc({
         _id: ObjectId('5ebc62afd09245d2a7c63350'),
         ballchasing_id: '111c0144-7219-426a-8263-8cff260d030d',
-      },
+      }),
     ],
     season: {
       _id: ObjectId('5ebc62b0d09245d2a7c63477'),
@@ -121,7 +127,7 @@ const mockClosedMatch = [
         _id: ObjectId('5ebc62b1d09245d2a7c63516'),
       },
     },
-  },
+  }),
 ]
 
 // mocks
@@ -187,22 +193,6 @@ describe('process-match', () => {
     expect(playerGames.upsert.mock.calls.length).toBe(1)
     // expect(playerGames.upsert).toHaveBeenCalledWith({ data: 'player stats' })
   })
-  it('should not add stats for games which are not played by league teams', async () => {
-    players.Model.find.mockResolvedValue([mockPlayers[0]])
-    teams.Model.find.mockResolvedValueOnce([{}])
-    await expect(
-      processMatch({
-        game_ids: [
-          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
-        ],
-      }),
-    ).rejects.toEqual(new Error('expected to process match between 2 teams but got 1. Teams: 5ebc62a9d09245d2a7c62e86'))
-  })
-  it.skip('should process a new match', () => {})
-  it.skip('should fail if players dont belong to exactly 2 teams', () => {})
   it('should process team stats', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
@@ -292,8 +282,8 @@ describe('process-match', () => {
       week: 1,
       season: '1',
       league_id: '5ebc62b1d09245d2a7c63516',
-      game_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
-      game_id_win: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      game_id: '5ebc62afd09245d2a7c63338',
+      game_id_win: '5ebc62afd09245d2a7c63338',
       game_number: '4',
       game_date: '2020-03-19T21:35:38Z',
       map_name: 'Utopia Coliseum',
@@ -324,5 +314,20 @@ describe('process-match', () => {
       game_id_win: undefined,
       match_id_win: undefined,
     })
+  })
+  it.skip('should process a new match', () => {})
+  it('should not add stats for games which are not played by league teams', async () => {
+    players.Model.find.mockResolvedValue([mockPlayers[0]])
+    teams.Model.find.mockResolvedValueOnce([{}])
+    await expect(
+      processMatch({
+        game_ids: [
+          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
+          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+        ],
+      }),
+    ).rejects.toEqual(new Error('expected to process match between 2 teams but got 1. Teams: 5ebc62a9d09245d2a7c62e86'))
   })
 })

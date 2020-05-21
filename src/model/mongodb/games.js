@@ -4,9 +4,9 @@ const createModel = require('../../services/mongodb')
 const Model = createModel(
   'Game',
   {
-    old_id: { type: String, required: true },
+    old_id: { type: String },
     ballchasing_id: { type: String, required: true },
-    old_match_id: { type: String, required: true },
+    old_match_id: { type: String },
     status: { type: String, default: 'open' },
     /** @todo add winner_ids to games */
     // winner_id: { type: Schema.Types.ObjectId },
