@@ -1,8 +1,8 @@
 module.exports = {
-  Leagues: require('./leagues'),
-  Seasons: require('./seasons'),
-  Matches: require('./matches'),
-  Games: require('./games'),
-  Players: require('./players'),
-  Teams: require('./teams'),
+  Leagues: require('./leagues').Model,
+  Seasons: require('./seasons').Model,
+  Matches: require('./matches').Model,
+  Games: require('./games').Model,
+  Players: require('./players').Model,
+  Teams: require('./teams').Model,
 }

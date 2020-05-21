@@ -1,0 +1,122 @@
+[
+  {
+      "_id": "5ebc62a9d09245d2a7c62e5a",
+      "old_id": "2bf283a2-b387-46be-ae3d-7803403c0186",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286130629771274",
+      "hex_color": "8015E8",
+      "league": "mncs",
+      "name": "Minneapolis Miracles",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  },
+  {
+      "_id": "5ebc62a9d09245d2a7c62e82",
+      "old_id": "956cde96-5baf-4ad9-9ac7-292aaa183d0e",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286239237079155",
+      "hex_color": "540809",
+      "league": "mncs",
+      "name": "St. Paul Senators",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  },
+  {
+      "_id": "5ebc62a9d09245d2a7c62e86",
+      "old_id": "14c44087-6711-434e-bcfc-199b98800d74",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286287655993365",
+      "hex_color": "1C2153",
+      "league": "mncs",
+      "name": "Duluth Superiors",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  },
+  {
+      "_id": "5ebc62a9d09245d2a7c62eae",
+      "old_id": "a24edf35-d0c6-4a31-8683-be04677e80ef",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286382921089056",
+      "hex_color": "8014E8",
+      "league": "mncs",
+      "name": "Rochester Rhythm",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  },
+  {
+      "_id": "5ebc62a9d09245d2a7c62eb3",
+      "old_id": "b59d2f52-7001-4820-a5ef-89f673397bfd",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286346783359027",
+      "hex_color": "ED5829",
+      "league": "mncs",
+      "name": "Burnsville Inferno",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  },
+  {
+      "_id": "5ebc62a9d09245d2a7c62eba",
+      "old_id": "310b1802-1b1b-46ea-a04d-4117560194fe",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286317263847465",
+      "hex_color": "1E0C30",
+      "league": "mncs",
+      "name": "Minnetonka Barons",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  },
+  {
+      "_id": "5ebc62aad09245d2a7c62eed",
+      "old_id": "2b7c8fa9-b1fc-4463-ad2e-ed77e6631c58",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286412701040710",
+      "hex_color": "999997",
+      "league": "mncs",
+      "name": "Hibbing Rangers",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  },
+  {
+      "_id": "5ebc62aad09245d2a7c62ef8",
+      "old_id": "2ac3b6ba-49ee-4d5d-908e-889a558f27e2",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286435177922562",
+      "hex_color": "886C63",
+      "league": "mncs",
+      "name": "Granite City Giants",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  },
+  {
+      "_id": "5ebc62aad09245d2a7c62ef9",
+      "old_id": "2379c5e6-d0a8-4f34-a71a-a6f25846ba1b",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286462747213846",
+      "hex_color": "B4BCF0",
+      "league": "mncs",
+      "name": "Bloomington Maulers",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  },
+  {
+      "_id": "5ebc62aad09245d2a7c62efc",
+      "old_id": "9d2b9eaf-370b-4aa3-a680-a048dc53fe5b",
+      "__v": 0,
+      "created_at": "2020-05-13T21:12:09.069Z",
+      "discord_id": "688286489557467243",
+      "hex_color": "131846",
+      "league": "mncs",
+      "name": "Bemidji Lumberjacks",
+      "old_league_id": "0b3814d4-f880-4cfd-a33c-4fb31f5860f3",
+      "updated_at": "2020-05-21T07:12:44.839Z"
+  }
+]
