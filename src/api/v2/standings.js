@@ -8,9 +8,7 @@ const makeUnique = arr => [...new Set(arr.filter(item => !!item))]
 module.exports = async (req, res, next) => {
   const { season_id } = req.params
   const records = await teamGames.get({ criteria: { season_id }, json: true })
-  // console.log(records)
   const recordsByTeam = groupBy(records, r => r.team_id)
-  // console.log(recordsByTeam)
   const season = await Seasons.findById(season_id)
     .populate('teams')
     .lean()
@@ -18,8 +16,6 @@ module.exports = async (req, res, next) => {
     .map(team => {
       const wins = makeUnique(recordsByTeam[team._id].map(r => r.game_id_win)).length
       const played = makeUnique(recordsByTeam[team._id].map(r => r.game_id)).length
-      // console.log(wins, played)
-      // if (played > 100) console.log(makeUnique(recordsByTeam[team._id].map(r => r.game_id)))
       if (played > 100) console.log('team', team)
       return {
         _id: team._id,
