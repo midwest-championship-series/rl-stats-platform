@@ -17,6 +17,7 @@ const processTeam = (game, color) => {
     match_id: game.match_id,
     match_type: game.match_type,
     season: game.season,
+    season_id: game.season_id,
     week: game.week,
     game_id: game.game_id,
     game_date: game.date,

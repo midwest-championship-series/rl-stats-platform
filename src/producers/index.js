@@ -13,6 +13,7 @@ const assignLeagueIds = (game, { match, players, teams, games }) => {
   game.match_type = match.season.season_type
   game.week = match.week
   game.season = match.season.name
+  game.season_id = match.season._id.toHexString()
   game.league_id = match.season.league._id.toHexString()
 
   colors.forEach(color => {
