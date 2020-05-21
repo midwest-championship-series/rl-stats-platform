@@ -18,6 +18,12 @@ const Model = createModel(
       localField: 'game_ids',
       foreignField: '_id',
     })
+    schema.virtual('season', {
+      ref: 'Season',
+      localField: '_id',
+      foreignField: 'match_ids',
+      justOne: true,
+    })
     schema.pre('validate', function() {
       const minGames = Math.ceil(this.best_of / 2)
       if (this.game_ids && this.game_ids.length > 0) {

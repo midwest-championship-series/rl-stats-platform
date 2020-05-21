@@ -18,9 +18,6 @@ module.exports = async ({ match_id, game_ids }) => {
      * 3) someone is attempting to add a new game to a match that already exists
      */
     const matches = await Matches.find({ game_ids: { $in: game_ids } }).exec()
-    // const reportedGameMatchIds = [
-    //   ...new Set(allGames.filter(g => game_ids.some(id => g.game_id === id)).map(g => g.match_id)),
-    // ]
     if (matches.length > 1)
       // validate against case 1
       throw new Error(

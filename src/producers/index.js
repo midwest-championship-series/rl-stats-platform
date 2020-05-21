@@ -1,64 +1,70 @@
-const members = require('../model/sheets/members')
-const players = require('../model/sheets/players')
-const schedules = require('../model/sheets/schedules')
+// const members = require('../model/sheets/members')
+// const players = require('../model/sheets/players')
+// const schedules = require('../model/sheets/schedules')
 const gameStats = require('./game-stats')
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
 const colors = ['blue', 'orange']
 
-const getMemberInfo = async () => {
-  const leaguePlayers = await players.get()
-  const mnrlMembers = await members.get()
-  return mnrlMembers.map(member => ({ ...member, ...leaguePlayers.find(player => player.id === member.id) }))
-}
+// const getMemberInfo = async () => {
+//   const leaguePlayers = await players.get()
+//   const mnrlMembers = await members.get()
+//   return mnrlMembers.map(member => ({ ...member, ...leaguePlayers.find(player => player.id === member.id) }))
+// }
 
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
-const getMatch = async (matchId, games) => {
-  if (matchId) {
-    const matches = await schedules.get({ criteria: { id: matchId }, json: true })
-    return matches[0]
-  } else {
-    const teams = games.reduce((result, game) => {
-      game.teams.forEach(teamId => {
-        if (!result.includes(teamId)) result.push(teamId)
-      })
-      return result
-    }, [])
-    const matches = await schedules.get()
-    return matches.filter(m => [m.team_1_id, m.team_2_id].every(id => teams.includes(id)))[0]
-  }
-}
+// const getMatch = async (matchId, games) => {
+//   if (matchId) {
+//     const matches = await schedules.get({ criteria: { id: matchId }, json: true })
+//     return matches[0]
+//   } else {
+//     const teams = games.reduce((result, game) => {
+//       game.teams.forEach(teamId => {
+//         if (!result.includes(teamId)) result.push(teamId)
+//       })
+//       return result
+//     }, [])
+//     const matches = await schedules.get()
+//     return matches.filter(m => [m.team_1_id, m.team_2_id].every(id => teams.includes(id)))[0]
+//   }
+// }
 
-const assignLeagueIds = (game, leaguePlayers) => {
-  // assign team_id to teams
-  game.teams = []
+const assignLeagueIds = (game, { match, players, teams, games }) => {
+  // assign team_id to teams, players
+  // assign player_id to players
+  // assign league_id to players, teams
+
+  game.game_id = games.find(g => g.ballchasing_id === game.id)._id.toHexString()
+  game.match_id = match._id.toHexString()
+  game.match_type = match.season.season_type
+  game.week = match.week
+  game.season = match.season.name
+  game.league_id = match.season.league._id.toHexString()
+
   colors.forEach(color => {
-    const teamPlayer = leaguePlayers.find(player => {
-      return game[color].players.some(({ id }) => player.platform === id.platform && player.platform_id === id.id)
+    const teamPlayer = players.find(player => {
+      return game[color].players.some(({ id }) => {
+        return player.accounts.some(({ platform, platform_id }) => {
+          return id.platform === platform && id.id === platform_id
+        })
+      })
     })
-    if (teamPlayer) {
-      game[color].team_id = teamPlayer.team_id
-      if (!game.teams.includes(teamPlayer.team_id)) game.teams.push(teamPlayer.team_id)
-    }
+    game[color].team_id = teamPlayer.team_id.toHexString()
   })
   // assign team_id and player_id to players
   colors.forEach(color => {
     game[color].players.forEach(player => {
       player.team_id = game[color].team_id
       player.opponent_team_id = game[getOpponentColor(color)].team_id
-      const leaguePlayer = leaguePlayers.find(p => p.platform === player.id.platform && p.platform_id === player.id.id)
-      player.league_id = leaguePlayer && leaguePlayer.id
+      const leaguePlayer = players.find(p => {
+        return p.accounts.some(({ platform, platform_id }) => {
+          return platform === player.id.platform && platform_id === player.id.id
+        })
+      })
+      player.league_id = leaguePlayer && leaguePlayer._id.toHexString()
     })
   })
-}
-
-const assignMatchContext = (game, match) => {
-  game.match_id = match.id
-  game.match_type = match.type
-  game.week = match.week
-  game.season = match.season
-  game.league_id = match.league_id
 }
 
 const assignMatchWin = games => {
@@ -80,23 +86,16 @@ const assignMatchWin = games => {
   })
 }
 
-module.exports = async (games, matchId) => {
-  const leaguePlayers = await getMemberInfo()
+module.exports = async (games, leagueInfo) => {
   const sortedGames = games.sort((a, b) => new Date(a.date) - new Date(b.date))
   let gameNumber = 1
   for (let game of sortedGames) {
     game.game_number = gameNumber
-    assignLeagueIds(game, leaguePlayers)
+    assignLeagueIds(game, leagueInfo)
     gameNumber++
-  }
-  const match = await getMatch(matchId, games)
-  if (!match) return
-  for (let game of sortedGames) {
-    assignMatchContext(game, match)
   }
   assignMatchWin(games)
   return {
-    gameStats: games.map(gameStats),
     teamStats: games.reduce((result, game) => result.concat(teamStats(game)), []),
     playerStats: games.reduce((result, game) => result.concat(playerStats(game)), []),
   }
