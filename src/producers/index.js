@@ -43,7 +43,7 @@ const assignLeagueIds = (game, { match, players, teams, games }) => {
   })
 }
 
-const assignMatchWin = games => {
+const assignMatchWin = (games, match) => {
   const teamWins = games.reduce((result, game) => {
     const winner = game.orange.stats.core.goals > game.blue.stats.core.goals ? 'orange' : 'blue'
     const winningTeam = result.find(r => r.id === game[winner].team_id)
@@ -56,6 +56,10 @@ const assignMatchWin = games => {
   }, [])
   const winnerId =
     teamWins.length > 1 ? (teamWins[0].wins > teamWins[1].wins ? teamWins[0].id : teamWins[1].id) : teamWins[0].id
+  const maxWins = Math.max(...teamWins.map(t => t.wins))
+  if (match.best_of && maxWins < match.best_of / 2) {
+    throw new Error(`expected a team to with the best of ${match.best_of} match, but winning team has only ${maxWins}`)
+  }
   games.forEach(game => {
     const winnerColor = colors.find(color => game[color].team_id === winnerId)
     game[winnerColor].match_id_win = game.match_id
@@ -70,7 +74,7 @@ module.exports = (games, leagueInfo) => {
     assignLeagueIds(game, leagueInfo)
     gameNumber++
   }
-  assignMatchWin(games)
+  assignMatchWin(games, leagueInfo.match)
   return {
     teamStats: games.reduce((result, game) => result.concat(teamStats(game)), []),
     playerStats: games.reduce((result, game) => result.concat(playerStats(game)), []),
