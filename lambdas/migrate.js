@@ -108,6 +108,8 @@ const handler = async () => {
         name: '1',
         season_type: 'REG',
         match_ids: newMatches.map(m => m._id),
+        player_ids: adjustedModels.players.map(p => p._id),
+        team_ids: adjustedModels.teams.map(t => t._id),
       },
     ]
     const newSeasons = await require('../src/model/mongodb/seasons').add({ data: seasons })
@@ -118,8 +120,6 @@ const handler = async () => {
     for (let record of oldLeagues) {
       record.old_id = record.id
       record.season_ids = newSeasons.map(s => s._id)
-      record.player_ids = adjustedModels.players.map(p => p._id)
-      record.team_ids = adjustedModels.teams.map(t => t._id)
     }
     const newLeagues = await require('../src/model/mongodb/leagues').add({ data: oldLeagues })
 
