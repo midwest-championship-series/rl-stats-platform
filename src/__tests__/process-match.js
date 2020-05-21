@@ -101,6 +101,7 @@ const mockClosedMatch = [
       '5ebc62afd09245d2a7c6335e',
       '5ebc62afd09245d2a7c63350',
     ],
+    best_of: 5,
     games: [
       mockDoc({
         _id: ObjectId('5ebc62afd09245d2a7c6333f'),
@@ -129,12 +130,27 @@ const mockClosedMatch = [
     },
   }),
 ]
+const mockOpenMatch = [
+  mockDoc({
+    _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
+    week: 1,
+    game_ids: [],
+    best_of: 5,
+    season: {
+      _id: ObjectId('5ebc62b0d09245d2a7c63477'),
+      name: '1',
+      season_type: 'REG',
+      league: {
+        _id: ObjectId('5ebc62b1d09245d2a7c63516'),
+      },
+    },
+  }),
+]
 
 // mocks
 jest.mock('../services/mongodb')
 const replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
 const ballchasing = require('../services/ballchasing')
-ballchasing.getReplays.mockResolvedValue(replays)
 jest.mock('../services/ballchasing')
 const teamGames = require('../model/sheets/team-games')
 jest.mock('../model/sheets/team-games')
@@ -142,12 +158,24 @@ const playerGames = require('../model/sheets/player-games')
 jest.mock('../model/sheets/player-games')
 const games = require('../model/mongodb/games')
 jest.mock('../model/mongodb/games')
+class Game {
+  constructor(init) {
+    for (let prop in init) {
+      this._id = new ObjectId()
+      this[prop] = init[prop]
+    }
+  }
+  save() {}
+}
+games.Model = Game
 const matches = require('../model/mongodb/matches')
 jest.mock('../model/mongodb/matches')
 const matchesFindMock = jest.fn()
-matches.Model = {
-  find: jest.fn(() => ({ populate: jest.fn(() => ({ populate: matchesFindMock })) })),
+class Match {
+  constructor() {}
 }
+Match.find = jest.fn(() => ({ populate: jest.fn(() => ({ populate: matchesFindMock })) }))
+matches.Model = Match
 const players = require('../model/mongodb/players')
 jest.mock('../model/mongodb/players')
 players.Model = {
@@ -162,11 +190,14 @@ teams.Model = {
 const processMatch = require('../process-match')
 
 describe('process-match', () => {
+  beforeEach(() => {
+    ballchasing.getReplays.mockResolvedValue(replays)
+  })
   afterEach(() => {
     teamGames.upsert.mockClear()
     playerGames.upsert.mockClear()
   })
-  it('should process a match with an id', async () => {
+  it('should process a match with a match_id', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     matchesFindMock.mockResolvedValueOnce(mockClosedMatch)
@@ -315,7 +346,23 @@ describe('process-match', () => {
       match_id_win: undefined,
     })
   })
-  it.skip('should process a new match', () => {})
+  it('should process a new match', async () => {
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValueOnce(mockOpenMatch)
+    const result = await processMatch({
+      game_ids: [
+        'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+        '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+        '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
+        '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+      ],
+    })
+    expect(result).toMatchObject({
+      match_id: '5ebc62b0d09245d2a7c6340c',
+    })
+    expect(result.game_ids).toHaveLength(4)
+  })
   it('should not add stats for games which are not played by league teams', async () => {
     players.Model.find.mockResolvedValue([mockPlayers[0]])
     teams.Model.find.mockResolvedValueOnce([{}])
@@ -329,5 +376,20 @@ describe('process-match', () => {
         ],
       }),
     ).rejects.toEqual(new Error('expected to process match between 2 teams but got 1. Teams: 5ebc62a9d09245d2a7c62e86'))
+  })
+  it('should throw an error if the match does not meet best_of requirements', async () => {
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    ballchasing.getReplays.mockResolvedValue([replays[0], replays[1], replays[3]])
+    matchesFindMock.mockResolvedValueOnce(mockOpenMatch)
+    await expect(
+      processMatch({
+        game_ids: [
+          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+          '111c0144-7219-426a-8263-8cff260d030d',
+        ],
+      }),
+    ).rejects.toEqual(new Error('expected a team to with the best of 5 match, but winning team has only 2'))
   })
 })
