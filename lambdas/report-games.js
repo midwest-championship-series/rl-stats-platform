@@ -1,4 +1,5 @@
 const reportGames = require('../src/report-games')
+require('../src/model/mongodb')
 
 const handler = async (event, context) => {
   try {
