@@ -7,8 +7,20 @@ const Model = createModel(
     name: { type: String, required: true },
     season_type: { type: String, required: true },
     match_ids: [{ type: Schema.Types.ObjectId, required: true }],
+    team_ids: [{ type: Schema.Types.ObjectId, required: true }],
+    player_ids: [{ type: Schema.Types.ObjectId, required: true }],
   },
   schema => {
+    schema.virtual('players', {
+      ref: 'Player',
+      localField: 'player_ids',
+      foreignField: '_id',
+    })
+    schema.virtual('teams', {
+      ref: 'Team',
+      localField: 'team_ids',
+      foreignField: '_id',
+    })
     schema.virtual('matches', {
       ref: 'Match',
       localField: 'match_ids',

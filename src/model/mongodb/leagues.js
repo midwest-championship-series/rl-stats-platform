@@ -7,21 +7,9 @@ const schema = {
   current_week: { type: String },
   season_ids: [{ type: Schema.Types.ObjectId }],
   old_id: { type: String },
-  team_ids: [{ type: Schema.Types.ObjectId, required: true }],
-  player_ids: [{ type: Schema.Types.ObjectId, required: true }],
 }
 
 const Model = createModel('League', schema, schema => {
-  schema.virtual('players', {
-    ref: 'Player',
-    localField: 'player_ids',
-    foreignField: '_id',
-  })
-  schema.virtual('teams', {
-    ref: 'Team',
-    localField: 'team_ids',
-    foreignField: '_id',
-  })
   schema.virtual('seasons', {
     ref: 'Season',
     localField: 'season_ids',
