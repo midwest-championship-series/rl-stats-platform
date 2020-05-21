@@ -1,39 +1,23 @@
-const games = require('./model/sheets/games')
+const { Model: Games } = require('./model/mongodb/games')
+const { Model: Matches } = require('./model/mongodb/matches')
 const sqs = require('./services/aws').sqs
 
 module.exports = async ({ match_id, game_ids }) => {
   const gameIdsToProcess = []
   // validate that all games for a match are being reported
   if (match_id) {
-    const matchGames = (await games.get({ criteria: { match_id }, json: true })).map(game => game.game_id)
-    if (matchGames.length === 0) throw new Error(`no game_ids found for match_id: ${match_id}`)
-    gameIdsToProcess.push(...matchGames)
+    const match = await Matches.findById(match_id).populate('games')
+    if (!match) throw new Error(`no match found for id: ${match_id}`)
+    if (!match.games || match.games.length < 1) throw new Error(`no games found for match_id: ${match_id}`)
+    gameIdsToProcess.push(...match.games.map(game => game.ballchasing_id))
   } else if (game_ids && game_ids.length > 0) {
     /**
-     * games could be mis-reported in 3 ways:
-     * 1) games from different matches are reported together
-     * 2) the games have already been processed, but only part of them are being reprocessed
-     * 3) someone is attempting to add a new game to a match that already exists
+     * if games with these ballchasing ids have already been reported, throw an error - we only want new games to
+     * be reported with this mechanism. all other games should go through the reprocess-games function.
      */
-    const allGames = await games.get()
-    const reportedGameMatchIds = [
-      ...new Set(allGames.filter(g => game_ids.some(id => g.game_id === id)).map(g => g.match_id)),
-    ]
-    match_id = reportedGameMatchIds[0]
-    // validate match games are correct with known matches
-    if (match_id) {
-      // validate against case 1
-      if (reportedGameMatchIds.length > 1)
-        throw new Error(`cannot report games from multiple matches at once: ${reportedGameMatchIds.join(', ')}`)
-      const allMatchGames = allGames.filter(g => g.match_id === match_id)
-      // covers case 2
-      if (allMatchGames.length !== game_ids.length)
-        throw new Error(
-          `expected same number of games to be reported as games in match: ${match_id}, expected ${allMatchGames.length} but got ${game_ids.length}`,
-        )
-      // covers case 3
-      if (!allMatchGames.every(g => game_ids.includes(g.game_id)))
-        throw new Error(`reported games_ids do not match game_ids for match ${match_id}`)
+    const games = await Games.find({ ballchasing_id: { $in: game_ids } })
+    if (games.length > 0) {
+      throw new Error('games have already been reported - please use the !reprocess command')
     }
     gameIdsToProcess.push(...game_ids)
   } else {

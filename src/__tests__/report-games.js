@@ -1,148 +1,100 @@
-const reportGames = require('../report-games')
+const { ObjectId } = require('mongodb')
 
 // mocks
-const games = require('../model/sheets/games')
-jest.mock('../model/sheets/games')
-const processMatch = require('../producers')
-jest.mock('../producers')
+jest.mock('../services/mongodb')
+const games = require('../model/mongodb/games')
+jest.mock('../model/mongodb/games')
+games.Model = {
+  find: jest.fn(),
+}
+const matches = require('../model/mongodb/matches')
+jest.mock('../model/mongodb/matches')
+const matchesFindByIdMock = jest.fn()
+const matchesFindMock = jest.fn()
+matches.Model = {
+  findById: jest.fn(() => ({ populate: matchesFindByIdMock })),
+  find: jest.fn(() => ({ exec: matchesFindMock })),
+}
 const aws = require('../services/aws')
 jest.mock('../services/aws')
+
+const reportGames = require('../report-games')
 
 describe('report-games', () => {
   process.env.GAMES_QUEUE_URL = 'fake queue url'
   afterEach(() => {
     aws.sqs.sendMessage.mockClear()
+    matchesFindByIdMock.mockClear()
+    matchesFindMock.mockClear()
   })
   it('should report games given a match_id', async () => {
-    games.get.mockResolvedValue([
-      { game_id: '7ea390d1-2a7c-451a-b4a2-8778a2089096' },
-      { game_id: '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6' },
-      { game_id: 'd4687e39-2848-4958-90b7-264f266ea849' },
-      { game_id: '4fb8a123-6b75-49df-918d-ed5ae85dbfaf' },
-    ])
-    const result = await reportGames({ match_id: '7b33907d-8132-4027-beda-489aaad70ef3' })
+    matchesFindByIdMock.mockResolvedValueOnce({
+      _id: new ObjectId('5ebc62b0d09245d2a7c63401'),
+      games: [
+        { _id: new ObjectId('5ebc62afd09245d2a7c63310'), ballchasing_id: '595ac248-5f25-48a5-bf39-9b50f25e97a1' },
+        { _id: new ObjectId('5ebc62afd09245d2a7c63304'), ballchasing_id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e' },
+        { _id: new ObjectId('5ebc62afd09245d2a7c632f5'), ballchasing_id: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6' },
+        { _id: new ObjectId('5ebc62afd09245d2a7c63302'), ballchasing_id: '877f66a5-23c9-4397-9c47-97c9870351c0' },
+      ],
+    })
+    const result = await reportGames({ match_id: '5ebc62b0d09245d2a7c63401' })
     expect(aws.sqs.sendMessage).toHaveBeenCalledWith('fake queue url', {
       game_ids: [
-        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-        'd4687e39-2848-4958-90b7-264f266ea849',
-        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+        '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+        'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+        'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+        '877f66a5-23c9-4397-9c47-97c9870351c0',
       ],
-      match_id: '7b33907d-8132-4027-beda-489aaad70ef3',
+      match_id: '5ebc62b0d09245d2a7c63401',
     })
     expect(result).toMatchObject({
       recorded_ids: [
-        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-        'd4687e39-2848-4958-90b7-264f266ea849',
-        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+        '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+        'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+        'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+        '877f66a5-23c9-4397-9c47-97c9870351c0',
       ],
     })
   })
-  it('should process games given game_ids', async () => {
+  it('should process new games given game_ids', async () => {
     // simulate first game reported
-    games.get.mockResolvedValue([])
+    games.Model.find.mockResolvedValueOnce([])
     const result = await reportGames({
       game_ids: [
-        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-        'd4687e39-2848-4958-90b7-264f266ea849',
-        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+        '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+        'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+        'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+        '877f66a5-23c9-4397-9c47-97c9870351c0',
       ],
     })
     expect(aws.sqs.sendMessage).toHaveBeenCalledWith('fake queue url', {
       game_ids: [
-        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-        'd4687e39-2848-4958-90b7-264f266ea849',
-        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+        '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+        'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+        'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+        '877f66a5-23c9-4397-9c47-97c9870351c0',
       ],
       match_id: undefined,
     })
     expect(result).toMatchObject({
       recorded_ids: [
-        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-        'd4687e39-2848-4958-90b7-264f266ea849',
-        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
+        '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+        'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+        'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+        '877f66a5-23c9-4397-9c47-97c9870351c0',
       ],
     })
   })
-  it('should process a new set of game_ids into a match', async () => {
-    games.get.mockResolvedValue([
-      { game_id: '7ea390d1-2a7c-451a-b4a2-8778a2089096', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-      { game_id: '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-      { game_id: 'd4687e39-2848-4958-90b7-264f266ea849', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-      { game_id: '4fb8a123-6b75-49df-918d-ed5ae85dbfaf', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-    ])
-    processMatch.mockResolvedValue({})
-    await reportGames({
-      game_ids: [
-        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-        'd4687e39-2848-4958-90b7-264f266ea849',
-        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
-      ],
-    })
-  })
-  it('should not process games from different matches', async () => {
-    games.get.mockResolvedValue([
-      { game_id: '7ea390d1-2a7c-451a-b4a2-8778a2089096', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-      { game_id: '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-      { game_id: 'd4687e39-2848-4958-90b7-264f266ea849', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-      { game_id: '4fb8a123-6b75-49df-918d-ed5ae85dbfaf', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-      { game_id: '877f66a5-23c9-4397-9c47-97c9870351c0', match_id: 'ff8158fa-972b-4784-adbb-6258139fc683' },
-    ])
-    processMatch.mockResolvedValue({})
+  it('should not allow reported games to be re-reported', async () => {
+    matchesFindMock.mockResolvedValueOnce([])
+    games.Model.find.mockResolvedValueOnce([{}])
     await expect(
       reportGames({
-        game_ids: [
-          '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-          '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-          'd4687e39-2848-4958-90b7-264f266ea849',
-          '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
-          '877f66a5-23c9-4397-9c47-97c9870351c0',
-        ],
+        game_ids: ['5ebc62afd09245d2a7c63355', '5ebc62afd09245d2a7c6333b', '5ebc62afd09245d2a7c63326'],
       }),
-    ).rejects.toEqual(
-      new Error(
-        'cannot report games from multiple matches at once: 7b33907d-8132-4027-beda-489aaad70ef3, ff8158fa-972b-4784-adbb-6258139fc683',
-      ),
-    )
+    ).rejects.toEqual(new Error('games have already been reported - please use the !reprocess command'))
   })
-  it('should not process games of different length than existing match', async () => {
-    games.get.mockResolvedValue([
-      { game_id: '7ea390d1-2a7c-451a-b4a2-8778a2089096', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-      { game_id: '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-      { game_id: 'd4687e39-2848-4958-90b7-264f266ea849', match_id: '7b33907d-8132-4027-beda-489aaad70ef3' },
-    ])
-    processMatch.mockResolvedValue({})
-    await expect(
-      reportGames({
-        game_ids: [
-          '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-          '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-          'd4687e39-2848-4958-90b7-264f266ea849',
-          '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
-          '877f66a5-23c9-4397-9c47-97c9870351c0',
-        ],
-      }),
-    ).rejects.toEqual(
-      new Error(
-        'expected same number of games to be reported as games in match: 7b33907d-8132-4027-beda-489aaad70ef3, expected 3 but got 5',
-      ),
-    )
-  })
-  it('should resolve if a match is not found for the gameids', async () => {
-    games.get.mockResolvedValue([])
-    processMatch.mockResolvedValue({})
-    const result = await reportGames({
-      game_ids: [
-        '7ea390d1-2a7c-451a-b4a2-8778a2089096',
-        '0ecbfb6e-c1bf-40c9-8403-856a955c9ca6',
-        'd4687e39-2848-4958-90b7-264f266ea849',
-        '4fb8a123-6b75-49df-918d-ed5ae85dbfaf',
-      ],
-    })
+  it('should throw an error if there is not a match id or game ids in the body', async () => {
+    await expect(reportGames({})).rejects.toEqual(new Error('expected match_id or game_ids[] in request body'))
   })
 })

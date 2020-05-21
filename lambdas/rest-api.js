@@ -2,6 +2,7 @@ const serverless = require('serverless-http')
 const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
+require('../src/model/mongodb')
 
 app.use(bodyParser.json())
 app.get('/healthcheck', (req, res, next) => {

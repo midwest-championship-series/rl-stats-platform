@@ -1,4 +1,5 @@
 const processMatch = require('../src/process-match')
+require('../src/model/mongodb')
 
 const handler = async event => {
   const messages = event.Records.map(r => JSON.parse(r.body))

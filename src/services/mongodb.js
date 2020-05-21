@@ -21,13 +21,13 @@ const setup = () => {
 
 const connect = () => {
   if (!mongoose.connectionConfigured) {
-    console.log('configuring mongodb connection')
+    console.info('configuring mongodb connection')
     setup()
     mongoose.connectionConfigured = true
   }
 
   if (mongoose.connection.readyState !== 1) {
-    console.log('wiring up the database for ' + process.env.SERVERLESS_STAGE)
+    console.info('wiring up the database for ' + process.env.SERVERLESS_STAGE)
     mongoose.connect(connStr, {
       socketTimeoutMS: 120000,
       useNewUrlParser: true,

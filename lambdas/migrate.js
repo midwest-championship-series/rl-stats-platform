@@ -1,3 +1,5 @@
+require('../src/model/mongodb')
+
 const handler = async () => {
   try {
     const models = {
@@ -35,7 +37,7 @@ const handler = async () => {
         return newRecord
       })
       if (mongo) {
-        console.log(`saving ${property}`)
+        console.info(`saving ${property}`)
         adjustedModels[property] = await mongo.add({ data: records })
       } else {
         adjustedModels[property] = records
@@ -71,12 +73,12 @@ const handler = async () => {
       }
     }
     for (let player of adjustedModels.players) {
-      console.log(`saving player: ${player.screen_name}`)
+      console.info(`saving player: ${player.screen_name}`)
       await player.save()
     }
 
     // games
-    console.log('saving games')
+    console.info('saving games')
     const oldGames = await require('../src/model/sheets/games').get({ json: true })
     oldGames.forEach(record => {
       record.old_id = record.game_id
@@ -87,7 +89,7 @@ const handler = async () => {
     const newGames = await require('../src/model/mongodb/games').add({ data: oldGames })
 
     // matches
-    console.log('saving matches')
+    console.info('saving matches')
     const oldMatches = await require('../src/model/sheets/schedules').get({ json: true })
     oldMatches.forEach(record => {
       record.old_id = record.id
@@ -100,7 +102,7 @@ const handler = async () => {
     const newMatches = await require('../src/model/mongodb/matches').add({ data: oldMatches })
 
     // seasons
-    console.log('saving seasons')
+    console.info('saving seasons')
     const seasons = [
       {
         name: '1',
@@ -111,7 +113,7 @@ const handler = async () => {
     const newSeasons = await require('../src/model/mongodb/seasons').add({ data: seasons })
 
     // leagues
-    console.log('saving leagues')
+    console.info('saving leagues')
     const oldLeagues = await require('../src/model/sheets/leagues').get({ json: true })
     for (let record of oldLeagues) {
       record.old_id = record.id

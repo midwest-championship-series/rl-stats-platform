@@ -105,16 +105,6 @@ functions:
                 platform: true
                 platformId: true
 
-  # see query parameter options here https://ballchasing.com/doc/api#replays
-  fetch-games:
-    handler: lambdas/fetch-games.handler
-    name: ${self:service}-fetch-games-${self:provider.stage}
-    events:
-      - http:
-          path: /games
-          method: get
-          cors: true
-
   report-games:
     handler: lambdas/report-games.handler
     name: ${self:service}-report-games-${self:provider.stage}

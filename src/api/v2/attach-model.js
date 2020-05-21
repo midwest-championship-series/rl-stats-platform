@@ -3,7 +3,22 @@ const express = require('express')
 const populateQuery = (query, populations) => {
   if (populations) {
     populations.forEach(p => {
-      query = query.populate(p)
+      console.log('populating', p)
+      const arr = p.split('.')
+      if (arr.length === 1) {
+        query = query.populate(p)
+      } else {
+        const pop = {}
+        let currentLevel = pop
+        arr.forEach((level, i) => {
+          currentLevel.path = level
+          if (i !== arr.length - 1) {
+            currentLevel.populate = {}
+            currentLevel = currentLevel.populate
+          }
+        })
+        query.populate(pop)
+      }
     })
   }
   return query
