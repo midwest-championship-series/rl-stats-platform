@@ -19,6 +19,7 @@ const processPlayer = (game, player) => {
     match_id: game.match_id,
     match_type: game.match_type,
     season: game.season,
+    season_id: game.season_id,
     week: game.week,
     game_id: game.game_id,
     game_number: game.game_number.toString(),

@@ -69,7 +69,6 @@ module.exports = async ({ match_id, game_ids }) => {
       `expected to get one match but got ${matches.length} for query: ${buildMatchesQuery(match_id, teams)}`,
     )
   const match = matches[0]
-  // const season = await Seasons.findOne({ match_ids: match._id })
   let games
   if (!match.games || match.games.length < 1) {
     // create games
