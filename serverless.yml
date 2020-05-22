@@ -168,15 +168,6 @@ functions:
   init-step-function:
     handler: lambdas/init-step-function.handler
     name: ${self:service}-init-step-function-${self:provider.stage}
-
-  migrate:
-    handler: lambdas/migrate.handler
-    name: ${self:service}-migrate-${self:provider.stage}
-    timeout: 300
-    events:
-      - schedule:
-          rate: rate(10 minutes)
-          enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
   
   adjust-data:
     handler: lambdas/adjust-data.handler
