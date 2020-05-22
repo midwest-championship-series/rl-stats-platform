@@ -7,7 +7,7 @@ const Model = createModel(
     old_id: { type: String, required: true },
     team_ids: [{ type: Schema.Types.ObjectId, required: true }],
     old_team_ids: [{ type: String }],
-    week: { type: String, required: true },
+    week: { type: Number, required: true },
     status: { type: String, default: 'open' },
     game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
     best_of: { type: Number },
@@ -50,7 +50,7 @@ module.exports = {
         Model.findOneAndUpdate(
           { old_id: d.old_id },
           { $set: d },
-          { new: true, upsert: true, runValidators: true },
+          { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
         ).exec(),
       ),
     ),

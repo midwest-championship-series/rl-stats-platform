@@ -43,7 +43,7 @@ module.exports = {
         Model.findOneAndUpdate(
           { name: d.name, season_type: d.season_type },
           { $set: d },
-          { new: true, upsert: true, runValidators: true },
+          { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
         ).exec(),
       ),
     ),

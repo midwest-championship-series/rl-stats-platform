@@ -4,6 +4,7 @@ const createModel = require('../../services/mongodb')
 const schema = {
   name: { type: String, required: true },
   current_season: { type: String },
+  current_season_id: { type: Schema.Types.ObjectId },
   current_week: { type: String },
   season_ids: [{ type: Schema.Types.ObjectId }],
   old_id: { type: String },
@@ -25,7 +26,7 @@ module.exports = {
         Model.findOneAndUpdate(
           { old_id: d.old_id },
           { $set: d },
-          { new: true, upsert: true, runValidators: true },
+          { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
         ).exec(),
       ),
     ),

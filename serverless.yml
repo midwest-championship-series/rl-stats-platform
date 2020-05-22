@@ -177,6 +177,13 @@ functions:
       - schedule:
           rate: rate(10 minutes)
           enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
+  
+  adjust-data:
+    handler: lambdas/adjust-data.handler
+    name: ${self:service}-adjust-data-${self:provider.stage}
+    timeout: 300
+    events:
+      - schedule: cron(0 0 * * ? *)
 
 resources:
   Resources:

@@ -120,6 +120,7 @@ const handler = async () => {
     for (let record of oldLeagues) {
       record.old_id = record.id
       record.season_ids = newSeasons.map(s => s._id)
+      record.current_season_id = newSeasons[0]._id
     }
     const newLeagues = await require('../src/model/mongodb/leagues').add({ data: oldLeagues })
 
