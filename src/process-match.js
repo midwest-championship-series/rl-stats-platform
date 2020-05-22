@@ -57,7 +57,9 @@ const buildMatchesQuery = (matchId, teams) => {
 module.exports = async ({ match_id, game_ids }) => {
   const reportGames = await ballchasing.getReplays({ game_ids })
   const players = await Players.find(buildPlayersQuery(reportGames))
-  const teams = await Teams.find(buildTeamsQuery(players.map(({ team_id }) => team_id.toHexString())))
+  const teams = await Teams.find(
+    buildTeamsQuery(players.filter(p => !!p.team_id).map(({ team_id }) => team_id.toHexString())),
+  )
   const matches = await Matches.find(buildMatchesQuery(match_id, teams))
     .populate('games')
     .populate({
