@@ -22,8 +22,8 @@ const v1Handler = async (req, res, next) => {
   res.status(200).send(body)
 }
 
-router.get('/api/:table', v0Handler)
-router.put('/api/:table', v0Handler)
+router.get('/api/:table', v1Handler)
+router.put('/api/:table', v1Handler)
 router.get('/v1/:table', v1Handler)
 router.put('/v1/:table', v1Handler)
 
