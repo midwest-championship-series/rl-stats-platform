@@ -10,8 +10,10 @@ const processTeam = (game, color) => {
   ]
   const stats = reduceStats({ ownStats, game, modifiers, opponentStats })
   return {
-    team_id: game[color].team_id,
-    opponent_team_id: game[opponentColor].team_id,
+    team_id: game[color].team._id.toHexString(),
+    team_name: game[color].team.name,
+    opponent_team_id: game[opponentColor].team._id.toHexString(),
+    opponent_team_name: game[opponentColor].team.name,
     team_color: color,
     league_id: game.league_id,
     match_id: game.match_id,

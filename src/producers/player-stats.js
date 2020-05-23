@@ -11,10 +11,12 @@ const processPlayer = (game, player) => {
   const stats = reduceStats({ ownStats, game, modifiers })
   return {
     player_id: player.league_id,
-    screen_name: player.name,
+    player_name: player.name,
     team_id: player.team_id,
+    team_name: player.team_name,
     team_color: player.team_color,
     opponent_team_id: player.opponent_team_id,
+    opponent_team_name: player.opponent_team_name,
     league_id: game.league_id,
     match_id: game.match_id,
     match_type: game.match_type,
