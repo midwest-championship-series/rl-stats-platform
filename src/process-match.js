@@ -34,8 +34,6 @@ const buildPlayersQuery = games => {
 
 const buildTeamsQuery = teamIds => {
   const unique = [...new Set(teamIds)]
-  if (unique.length !== 2)
-    throw new Error(`expected to process match between 2 teams but got ${unique.length}. Teams: ${unique.join(', ')}`)
   return { $or: unique.map(id => ({ _id: id })) }
 }
 
@@ -57,9 +55,17 @@ const buildMatchesQuery = (matchId, teams) => {
 module.exports = async ({ match_id, game_ids }) => {
   const reportGames = await ballchasing.getReplays({ game_ids })
   const players = await Players.find(buildPlayersQuery(reportGames))
+  if (players.length < 1) throw new Error(`no players found for games: ${game_ids.join(', ')}`)
   const teams = await Teams.find(
     buildTeamsQuery(players.filter(p => !!p.team_id).map(({ team_id }) => team_id.toHexString())),
   )
+  if (teams.length !== 2) {
+    throw new Error(
+      `expected to process match between two teams but got ${teams.length}. Teams: ${teams
+        .map(t => t._id.toHexString())
+        .join(', ')}. Games: ${game_ids.join(', ')}`,
+    )
+  }
   const matches = await Matches.find(buildMatchesQuery(match_id, teams))
     .populate('games')
     .populate({
