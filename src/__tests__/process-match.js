@@ -198,8 +198,8 @@ describe('process-match', () => {
     playerGames.upsert.mockClear()
   })
   it('should process a match with a match_id', async () => {
-    players.Model.find.mockResolvedValue(mockPlayers)
-    teams.Model.find.mockResolvedValue(mockTeams)
+    players.Model.find.mockResolvedValueOnce(mockPlayers)
+    teams.Model.find.mockResolvedValueOnce(mockTeams)
     matchesFindMock.mockResolvedValueOnce(mockClosedMatch)
     const result = await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
@@ -225,8 +225,8 @@ describe('process-match', () => {
     // expect(playerGames.upsert).toHaveBeenCalledWith({ data: 'player stats' })
   })
   it('should process team stats', async () => {
-    players.Model.find.mockResolvedValue(mockPlayers)
-    teams.Model.find.mockResolvedValue(mockTeams)
+    players.Model.find.mockResolvedValueOnce(mockPlayers)
+    teams.Model.find.mockResolvedValueOnce(mockTeams)
     matchesFindMock.mockResolvedValueOnce(mockClosedMatch)
     await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
@@ -243,7 +243,9 @@ describe('process-match', () => {
     expect(teamStats.data).toHaveLength(8)
     expect(teamStats.data[6]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
       opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
       team_color: 'blue',
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
@@ -286,8 +288,8 @@ describe('process-match', () => {
     })
   })
   it('should process player stats', async () => {
-    players.Model.find.mockResolvedValue(mockPlayers)
-    teams.Model.find.mockResolvedValue(mockTeams)
+    players.Model.find.mockResolvedValueOnce(mockPlayers)
+    teams.Model.find.mockResolvedValueOnce(mockTeams)
     matchesFindMock.mockResolvedValueOnce(mockClosedMatch)
     await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
@@ -304,10 +306,12 @@ describe('process-match', () => {
     expect(playerStats.data).toHaveLength(16)
     expect(playerStats.data[12]).toMatchObject({
       player_id: '5ec04239d09245d2a7d4fa26',
-      screen_name: 'Calster',
+      player_name: 'Calster',
       team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
       team_color: 'blue',
       opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
       match_type: 'REG',
@@ -367,7 +371,6 @@ describe('process-match', () => {
   })
   it('should not add stats for games which are not played by league teams', async () => {
     players.Model.find.mockResolvedValue([mockPlayers[0]])
-    teams.Model.find.mockResolvedValueOnce([{}])
     await expect(
       processMatch({
         game_ids: [
@@ -380,9 +383,9 @@ describe('process-match', () => {
     ).rejects.toEqual(new Error('expected to process match between 2 teams but got 1. Teams: 5ebc62a9d09245d2a7c62e86'))
   })
   it('should throw an error if the match does not meet best_of requirements', async () => {
-    players.Model.find.mockResolvedValue(mockPlayers)
-    teams.Model.find.mockResolvedValue(mockTeams)
-    ballchasing.getReplays.mockResolvedValue([replays[0], replays[1], replays[3]])
+    players.Model.find.mockResolvedValueOnce(mockPlayers)
+    teams.Model.find.mockResolvedValueOnce(mockTeams)
+    ballchasing.getReplays.mockResolvedValueOnce([replays[0], replays[1], replays[3]])
     matchesFindMock.mockResolvedValueOnce(mockOpenMatch)
     await expect(
       processMatch({
