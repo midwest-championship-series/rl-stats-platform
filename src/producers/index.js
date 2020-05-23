@@ -1,6 +1,3 @@
-// const members = require('../model/sheets/members')
-// const players = require('../model/sheets/players')
-// const schedules = require('../model/sheets/schedules')
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
 const colors = ['blue', 'orange']
