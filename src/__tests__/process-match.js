@@ -403,4 +403,22 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(new Error('expected a team to with the best of 5 match, but winning team has only 2'))
   })
+  it('should throw an error if exactly one match is not returned', async () => {
+    players.Model.find.mockResolvedValueOnce(mockPlayers)
+    teams.Model.find.mockResolvedValueOnce(mockTeams)
+    matchesFindMock.mockResolvedValueOnce([])
+    await expect(
+      processMatch({
+        match_id: '5ebc62b0d09245d2a7c6340c',
+        game_ids: [
+          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
+          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+        ],
+      }),
+    ).rejects.toEqual(
+      new Error('expected to get one match but got 0 for teams: 5ebc62a9d09245d2a7c62e86,5ebc62a9d09245d2a7c62eb3'),
+    )
+  })
 })

@@ -74,7 +74,7 @@ module.exports = async ({ match_id, game_ids }) => {
     })
   if (matches.length !== 1)
     throw new Error(
-      `expected to get one match but got ${matches.length} for query: ${buildMatchesQuery(match_id, teams)}`,
+      `expected to get one match but got ${matches.length} for teams: ${teams.map(t => t._id.toHexString())}`,
     )
   const match = matches[0]
   let games
