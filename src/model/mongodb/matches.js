@@ -18,6 +18,11 @@ const Model = createModel(
       localField: 'game_ids',
       foreignField: '_id',
     })
+    schema.virtual('teams', {
+      ref: 'Team',
+      localField: 'team_ids',
+      foreignField: '_id',
+    })
     schema.virtual('season', {
       ref: 'Season',
       localField: '_id',
