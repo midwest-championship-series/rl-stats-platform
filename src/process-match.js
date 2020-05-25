@@ -32,7 +32,7 @@ const buildPlayersQuery = games => {
   }
 }
 
-const buildTeamsQuery = teamIds => {
+const buildTeamsQueryFromPlayers = teamIds => {
   const unique = [...new Set(teamIds)]
   return { $or: unique.map(id => ({ _id: id })) }
 }
@@ -48,16 +48,36 @@ const buildMatchesQuery = (matchId, teams) => {
   return query
 }
 
+// const getUniquePlayers = games => {
+//   return games
+//     .reduce((result, game) => {
+//       return result.concat(
+//         ['blue', 'orange'].reduce((players, color) => {
+//           return players.concat(game[color].players)
+//         }, []),
+//       )
+//     }, [])
+//     .map(({ id }) => ({ platform: id.platform, platform_id: id.id }))
+//     .reduce((result, item) => {
+//       if (!result.some(r => r.platform === item.platform && r.id === item.platform_id)) {
+//         result.push(item)
+//       }
+//       return result
+//     }, [])
+// }
+
 /**
  * takes a match and game ids and updates stat data
  * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
  */
 module.exports = async ({ match_id, game_ids }) => {
   const reportGames = await ballchasing.getReplays({ game_ids })
+  // const uniquePlayers = getUniquePlayers(reportGames)
+  // console.log(uniquePlayers)
   const players = await Players.find(buildPlayersQuery(reportGames))
   if (players.length < 1) throw new Error(`no players found for games: ${game_ids.join(', ')}`)
   const teams = await Teams.find(
-    buildTeamsQuery(players.filter(p => !!p.team_id).map(({ team_id }) => team_id.toHexString())),
+    buildTeamsQueryFromPlayers(players.filter(p => !!p.team_id).map(({ team_id }) => team_id.toHexString())),
   )
   if (teams.length !== 2) {
     throw new Error(
@@ -86,7 +106,7 @@ module.exports = async ({ match_id, game_ids }) => {
   } else {
     games = match.games
   }
-  const { teamStats, playerStats } = processMatch(reportGames, { match, games, teams, players })
+  const { teamStats, playerStats, playerTeamMap } = processMatch(reportGames, { match, games, teams, players })
   await teamGames.upsert({ data: teamStats })
   await playerGames.upsert({ data: playerStats })
 
@@ -94,6 +114,7 @@ module.exports = async ({ match_id, game_ids }) => {
     game.date_time_processed = Date.now()
     await game.save()
   }
+  match.players_to_teams = playerTeamMap
   await match.save()
   return { match_id: match._id.toHexString(), game_ids: games.map(({ _id }) => _id.toHexString()) }
 }

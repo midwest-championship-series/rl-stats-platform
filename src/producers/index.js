@@ -5,6 +5,7 @@ const colors = ['blue', 'orange']
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
 const assignLeagueIds = (game, { match, players, teams, games }) => {
+  const playerTeamMap = []
   game.game_id = games.find(g => g.ballchasing_id === game.id)._id.toHexString()
   game.match_id = match._id.toHexString()
   game.match_type = match.season.season_type
@@ -39,9 +40,11 @@ const assignLeagueIds = (game, { match, players, teams, games }) => {
       if (leaguePlayer) {
         player.league_id = leaguePlayer._id.toHexString()
         player.name = leaguePlayer.screen_name
+        playerTeamMap.push({ player_id: leaguePlayer._id, team_id: game[color].team._id })
       }
     })
   })
+  return { playerTeamMap }
 }
 
 const assignMatchWin = (games, match) => {
@@ -69,15 +72,23 @@ const assignMatchWin = (games, match) => {
 
 module.exports = (games, leagueInfo) => {
   const sortedGames = games.sort((a, b) => new Date(a.date) - new Date(b.date))
+  let playersToTeams = []
   let gameNumber = 1
   for (let game of sortedGames) {
     game.game_number = gameNumber
-    assignLeagueIds(game, leagueInfo)
+    const { playerTeamMap } = assignLeagueIds(game, leagueInfo)
+    playersToTeams = playersToTeams.concat(playerTeamMap)
     gameNumber++
   }
   assignMatchWin(games, leagueInfo.match)
   return {
     teamStats: games.reduce((result, game) => result.concat(teamStats(game)), []),
     playerStats: games.reduce((result, game) => result.concat(playerStats(game)), []),
+    playerTeamMap: playersToTeams.reduce((result, item) => {
+      if (!result.find(i => i.player_id === item.player_id)) {
+        result.push(item)
+      }
+      return result
+    }, []),
   }
 }

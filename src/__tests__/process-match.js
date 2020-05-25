@@ -220,9 +220,26 @@ describe('process-match', () => {
       ],
     })
     expect(teamGames.upsert.mock.calls.length).toBe(1)
-    // expect(teamGames.upsert).toHaveBeenCalledWith({ data: 'team stats' })
     expect(playerGames.upsert.mock.calls.length).toBe(1)
-    // expect(playerGames.upsert).toHaveBeenCalledWith({ data: 'player stats' })
+    expect(mockClosedMatch[0]).toHaveProperty('players_to_teams')
+    expect(mockClosedMatch[0].players_to_teams).toEqual([
+      {
+        player_id: new ObjectId('5ec04239d09245d2a7d4fa26'),
+        team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
+      },
+      {
+        player_id: new ObjectId('5ec04239d09245d2a7d4fa48'),
+        team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
+      },
+      {
+        player_id: new ObjectId('5ec04239d09245d2a7d4fa4f'),
+        team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+      },
+      {
+        player_id: new ObjectId('5ec04239d09245d2a7d4fa52'),
+        team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+      },
+    ])
   })
   it('should process team stats', async () => {
     players.Model.find.mockResolvedValueOnce(mockPlayers)

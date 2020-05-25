@@ -5,7 +5,27 @@ const Model = createModel(
   'Match',
   {
     old_id: { type: String, required: true },
-    team_ids: [{ type: Schema.Types.ObjectId, required: true }],
+    team_ids: [
+      {
+        type: Schema.Types.ObjectId,
+        required: true,
+        validate: [
+          function(val) {
+            return val.length === 2
+          },
+          '{PATH} expected to be length of two',
+        ],
+      },
+    ],
+    players_to_teams: {
+      type: [
+        {
+          // type: { player_id: Schema.Types.ObjectId, team_id: Schema.Types.ObjectId },
+          player_id: Schema.Types.ObjectId,
+          team_id: Schema.Types.ObjectId,
+        },
+      ],
+    },
     old_team_ids: [{ type: String }],
     week: { type: Number, required: true },
     status: { type: String, default: 'open' },
@@ -23,11 +43,28 @@ const Model = createModel(
       localField: 'team_ids',
       foreignField: '_id',
     })
+    schema.virtual('players', {
+      ref: 'Player',
+      localField: 'players_to_teams.player_id',
+      foreignField: '_id',
+    })
     schema.virtual('season', {
       ref: 'Season',
       localField: '_id',
       foreignField: 'match_ids',
       justOne: true,
+    })
+    schema.set('toJSON', {
+      virtuals: true,
+      transform: function(doc, ret) {
+        if (ret.players && ret.teams) {
+          ret.teams.forEach(t => {
+            t.match_players = ret.players_to_teams
+              .filter(({ team_id }) => t._id.equals(team_id))
+              .map(({ player_id }) => ret.players.find(p => p._id.equals(player_id)))
+          })
+        }
+      },
     })
     schema.pre('validate', function() {
       const minGames = Math.ceil(this.best_of / 2)
