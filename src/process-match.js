@@ -3,7 +3,6 @@ const { Model: Players } = require('./model/mongodb/players')
 const { Model: Teams } = require('./model/mongodb/teams')
 const { Model: Games } = require('./model/mongodb/games')
 const { Model: Matches } = require('./model/mongodb/matches')
-const { Model: Seasons } = require('./model/mongodb/seasons')
 const teamGames = require('./model/sheets/team-games')
 const playerGames = require('./model/sheets/player-games')
 const processMatch = require('./producers')
@@ -37,45 +36,22 @@ const buildTeamsQueryFromPlayers = teamIds => {
   return { $or: unique.map(id => ({ _id: id })) }
 }
 
-const buildMatchesQuery = (matchId, teams) => {
-  let query
-  if (matchId) {
-    query = { _id: matchId }
-  } else {
-    query = { $and: teams.map(t => ({ team_ids: t._id })) }
-  }
-  query
-  return query
+const buildMatchesQuery = teams => {
+  return { $and: teams.map(t => ({ team_ids: t._id })) }
 }
 
-// const getUniquePlayers = games => {
-//   return games
-//     .reduce((result, game) => {
-//       return result.concat(
-//         ['blue', 'orange'].reduce((players, color) => {
-//           return players.concat(game[color].players)
-//         }, []),
-//       )
-//     }, [])
-//     .map(({ id }) => ({ platform: id.platform, platform_id: id.id }))
-//     .reduce((result, item) => {
-//       if (!result.some(r => r.platform === item.platform && r.id === item.platform_id)) {
-//         result.push(item)
-//       }
-//       return result
-//     }, [])
-// }
+const getMatchInfoById = async matchId => {
+  const match = await Matches.findById(matchId)
+    .populate('games')
+    .populate('teams')
+    .populate({
+      path: 'season',
+      populate: { path: 'league' },
+    })
+  return { match, teams: match.teams }
+}
 
-/**
- * takes a match and game ids and updates stat data
- * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
- */
-module.exports = async ({ match_id, game_ids }) => {
-  const reportGames = await ballchasing.getReplays({ game_ids })
-  // const uniquePlayers = getUniquePlayers(reportGames)
-  // console.log(uniquePlayers)
-  const players = await Players.find(buildPlayersQuery(reportGames))
-  if (players.length < 1) throw new Error(`no players found for games: ${game_ids.join(', ')}`)
+const getMatchInfoByPlayers = async players => {
   const teams = await Teams.find(
     buildTeamsQueryFromPlayers(players.filter(p => !!p.team_id).map(({ team_id }) => team_id.toHexString())),
   )
@@ -83,10 +59,10 @@ module.exports = async ({ match_id, game_ids }) => {
     throw new Error(
       `expected to process match between two teams but got ${teams.length}. Teams: ${teams
         .map(t => t._id.toHexString())
-        .join(', ')}. Games: ${game_ids.join(', ')}`,
+        .join(', ')}.`,
     )
   }
-  const matches = await Matches.find(buildMatchesQuery(match_id, teams))
+  const matches = await Matches.find(buildMatchesQuery(teams))
     .populate('games')
     .populate({
       path: 'season',
@@ -97,6 +73,19 @@ module.exports = async ({ match_id, game_ids }) => {
       `expected to get one match but got ${matches.length} for teams: ${teams.map(t => t._id.toHexString())}`,
     )
   const match = matches[0]
+  return { match, teams }
+}
+
+/**
+ * takes a match and game ids and updates stat data
+ * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
+ */
+module.exports = async ({ match_id, game_ids }) => {
+  const reportGames = await ballchasing.getReplays({ game_ids })
+  const players = await Players.find(buildPlayersQuery(reportGames))
+  if (players.length < 1) throw new Error(`no players found for games: ${game_ids.join(', ')}`)
+
+  const { match, teams } = await (match_id ? getMatchInfoById(match_id) : getMatchInfoByPlayers(players))
   let games
   if (!match.games || match.games.length < 1) {
     // create games

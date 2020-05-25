@@ -91,45 +91,44 @@ const mockTeams = [
     updated_at: { $date: '2020-05-16T19:44:02.611Z' },
   },
 ]
-const mockClosedMatch = [
-  mockDoc({
-    _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
-    week: 1,
-    game_ids: [
-      '5ebc62afd09245d2a7c6333f',
-      '5ebc62afd09245d2a7c63338',
-      '5ebc62afd09245d2a7c6335e',
-      '5ebc62afd09245d2a7c63350',
-    ],
-    best_of: 5,
-    games: [
-      mockDoc({
-        _id: ObjectId('5ebc62afd09245d2a7c6333f'),
-        ballchasing_id: '9aee7f5f-7d75-40b0-8116-a8e1e2c9d4c5',
-      }),
-      mockDoc({
-        _id: ObjectId('5ebc62afd09245d2a7c63338'),
-        ballchasing_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
-      }),
-      mockDoc({
-        _id: ObjectId('5ebc62afd09245d2a7c6335e'),
-        ballchasing_id: '2493a4bd-aeb5-49ba-8cac-059cc99865c1',
-      }),
-      mockDoc({
-        _id: ObjectId('5ebc62afd09245d2a7c63350'),
-        ballchasing_id: '111c0144-7219-426a-8263-8cff260d030d',
-      }),
-    ],
-    season: {
-      _id: ObjectId('5ebc62b0d09245d2a7c63477'),
-      name: '1',
-      season_type: 'REG',
-      league: {
-        _id: ObjectId('5ebc62b1d09245d2a7c63516'),
-      },
+const mockClosedMatch = mockDoc({
+  _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
+  week: 1,
+  game_ids: [
+    '5ebc62afd09245d2a7c6333f',
+    '5ebc62afd09245d2a7c63338',
+    '5ebc62afd09245d2a7c6335e',
+    '5ebc62afd09245d2a7c63350',
+  ],
+  best_of: 5,
+  teams: mockTeams,
+  games: [
+    mockDoc({
+      _id: ObjectId('5ebc62afd09245d2a7c6333f'),
+      ballchasing_id: '9aee7f5f-7d75-40b0-8116-a8e1e2c9d4c5',
+    }),
+    mockDoc({
+      _id: ObjectId('5ebc62afd09245d2a7c63338'),
+      ballchasing_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+    }),
+    mockDoc({
+      _id: ObjectId('5ebc62afd09245d2a7c6335e'),
+      ballchasing_id: '2493a4bd-aeb5-49ba-8cac-059cc99865c1',
+    }),
+    mockDoc({
+      _id: ObjectId('5ebc62afd09245d2a7c63350'),
+      ballchasing_id: '111c0144-7219-426a-8263-8cff260d030d',
+    }),
+  ],
+  season: {
+    _id: ObjectId('5ebc62b0d09245d2a7c63477'),
+    name: '1',
+    season_type: 'REG',
+    league: {
+      _id: ObjectId('5ebc62b1d09245d2a7c63516'),
     },
-  }),
-]
+  },
+})
 const mockOpenMatch = [
   mockDoc({
     _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
@@ -171,10 +170,14 @@ games.Model = Game
 const matches = require('../model/mongodb/matches')
 jest.mock('../model/mongodb/matches')
 const matchesFindMock = jest.fn()
+const matchesFindByIdMock = jest.fn()
 class Match {
   constructor() {}
 }
 Match.find = jest.fn(() => ({ populate: jest.fn(() => ({ populate: matchesFindMock })) }))
+Match.findById = jest.fn(() => ({
+  populate: jest.fn(() => ({ populate: jest.fn(() => ({ populate: matchesFindByIdMock })) })),
+}))
 matches.Model = Match
 const players = require('../model/mongodb/players')
 jest.mock('../model/mongodb/players')
@@ -198,9 +201,9 @@ describe('process-match', () => {
     playerGames.upsert.mockClear()
   })
   it('should process a match with a match_id', async () => {
-    players.Model.find.mockResolvedValueOnce(mockPlayers)
-    teams.Model.find.mockResolvedValueOnce(mockTeams)
-    matchesFindMock.mockResolvedValueOnce(mockClosedMatch)
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindByIdMock.mockResolvedValue(mockClosedMatch)
     const result = await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
       game_ids: [
@@ -221,8 +224,8 @@ describe('process-match', () => {
     })
     expect(teamGames.upsert.mock.calls.length).toBe(1)
     expect(playerGames.upsert.mock.calls.length).toBe(1)
-    expect(mockClosedMatch[0]).toHaveProperty('players_to_teams')
-    expect(mockClosedMatch[0].players_to_teams).toEqual([
+    expect(mockClosedMatch).toHaveProperty('players_to_teams')
+    expect(mockClosedMatch.players_to_teams).toEqual([
       {
         player_id: new ObjectId('5ec04239d09245d2a7d4fa26'),
         team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
@@ -242,9 +245,9 @@ describe('process-match', () => {
     ])
   })
   it('should process team stats', async () => {
-    players.Model.find.mockResolvedValueOnce(mockPlayers)
-    teams.Model.find.mockResolvedValueOnce(mockTeams)
-    matchesFindMock.mockResolvedValueOnce(mockClosedMatch)
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue(mockClosedMatch)
     await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
       game_ids: [
@@ -305,9 +308,9 @@ describe('process-match', () => {
     })
   })
   it('should process player stats', async () => {
-    players.Model.find.mockResolvedValueOnce(mockPlayers)
-    teams.Model.find.mockResolvedValueOnce(mockTeams)
-    matchesFindMock.mockResolvedValueOnce(mockClosedMatch)
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue(mockClosedMatch)
     await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
       game_ids: [
@@ -372,7 +375,7 @@ describe('process-match', () => {
   it('should process a new match', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
-    matchesFindMock.mockResolvedValueOnce(mockOpenMatch)
+    matchesFindMock.mockResolvedValue(mockOpenMatch)
     const result = await processMatch({
       game_ids: [
         'd2d31639-1e42-4f0b-9537-545d8d19f63b',
@@ -389,7 +392,7 @@ describe('process-match', () => {
   it('should not add stats for games which are not played by league teams', async () => {
     players.Model.find.mockResolvedValue([mockPlayers[0]])
     const mockTeam = { _id: new ObjectId() }
-    teams.Model.find.mockResolvedValueOnce([mockTeam])
+    teams.Model.find.mockResolvedValue([mockTeam])
     await expect(
       processMatch({
         game_ids: [
@@ -400,16 +403,14 @@ describe('process-match', () => {
         ],
       }),
     ).rejects.toEqual(
-      new Error(
-        `expected to process match between two teams but got 1. Teams: ${mockTeam._id.toHexString()}. Games: d2d31639-1e42-4f0b-9537-545d8d19f63b, 1c76f735-5d28-4dcd-a0f2-bd9a5b129772, 2bfd1be8-b29e-4ce8-8d75-49499354d8e0, 4ed12225-7251-4d63-8bb6-15338c60bcf2`,
-      ),
+      new Error(`expected to process match between two teams but got 1. Teams: ${mockTeam._id.toHexString()}.`),
     )
   })
   it('should throw an error if the match does not meet best_of requirements', async () => {
-    players.Model.find.mockResolvedValueOnce(mockPlayers)
-    teams.Model.find.mockResolvedValueOnce(mockTeams)
-    ballchasing.getReplays.mockResolvedValueOnce([replays[0], replays[1], replays[3]])
-    matchesFindMock.mockResolvedValueOnce(mockOpenMatch)
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    ballchasing.getReplays.mockResolvedValue([replays[0], replays[1], replays[3]])
+    matchesFindMock.mockResolvedValue(mockOpenMatch)
     await expect(
       processMatch({
         game_ids: [
@@ -421,12 +422,11 @@ describe('process-match', () => {
     ).rejects.toEqual(new Error('expected a team to with the best of 5 match, but winning team has only 2'))
   })
   it('should throw an error if exactly one match is not returned', async () => {
-    players.Model.find.mockResolvedValueOnce(mockPlayers)
-    teams.Model.find.mockResolvedValueOnce(mockTeams)
-    matchesFindMock.mockResolvedValueOnce([])
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([])
     await expect(
       processMatch({
-        match_id: '5ebc62b0d09245d2a7c6340c',
         game_ids: [
           'd2d31639-1e42-4f0b-9537-545d8d19f63b',
           '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
