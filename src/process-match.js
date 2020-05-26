@@ -31,7 +31,11 @@ const buildPlayersQuery = games => {
   }
 }
 
-const buildTeamsQueryFromPlayers = teamIds => {
+const buildTeamsQueryFromPlayers = players => {
+  /**
+   * @todo for any players which played but do not have a mapped team, push alert to discord
+   */
+  const teamIds = players.filter(p => !!p.team_id).map(({ team_id }) => team_id.toHexString())
   const unique = [...new Set(teamIds)]
   return { $or: unique.map(id => ({ _id: id })) }
 }
@@ -52,9 +56,7 @@ const getMatchInfoById = async matchId => {
 }
 
 const getMatchInfoByPlayers = async players => {
-  const teams = await Teams.find(
-    buildTeamsQueryFromPlayers(players.filter(p => !!p.team_id).map(({ team_id }) => team_id.toHexString())),
-  )
+  const teams = await Teams.find(buildTeamsQueryFromPlayers(players))
   if (teams.length !== 2) {
     throw new Error(
       `expected to process match between two teams but got ${teams.length}. Teams: ${teams

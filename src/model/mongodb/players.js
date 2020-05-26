@@ -4,7 +4,16 @@ const createModel = require('../../services/mongodb')
 const schema = {
   old_id: { type: String, required: true },
   discord_id: { type: String },
-  team_id: { type: Schema.Types.ObjectId },
+  team_history: {
+    type: [
+      {
+        team_id: { type: Schema.Types.ObjectId, required: true },
+        date_joined: { type: Date, required: true },
+        date_left: Date,
+      },
+    ],
+    default: [],
+  },
   old_team_id: { type: String },
   screen_name: { type: String },
   league_id: { type: Schema.Types.ObjectId },
@@ -26,6 +35,9 @@ const Model = createModel('Player', schema, schema => {
     ...schema.toJSON,
     transform: function(doc, ret) {
       delete ret.accounts
+      if (ret.team_history && ret.team_id[0]) {
+        ret.team_id = ret.team_history[0].team_id
+      }
     },
   })
 })

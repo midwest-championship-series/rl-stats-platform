@@ -168,6 +168,10 @@ functions:
   init-step-function:
     handler: lambdas/init-step-function.handler
     name: ${self:service}-init-step-function-${self:provider.stage}
+
+  migrate:
+    handler: lambdas/migrate.handler
+    name: ${self:service}-migrate-${self:provider.stage}
   
   adjust-data:
     handler: lambdas/adjust-data.handler

@@ -20,7 +20,6 @@ const Model = createModel(
     players_to_teams: {
       type: [
         {
-          // type: { player_id: Schema.Types.ObjectId, team_id: Schema.Types.ObjectId },
           player_id: Schema.Types.ObjectId,
           team_id: Schema.Types.ObjectId,
         },
