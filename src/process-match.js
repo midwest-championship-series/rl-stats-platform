@@ -3,6 +3,7 @@ const { Model: Players } = require('./model/mongodb/players')
 const { Model: Teams } = require('./model/mongodb/teams')
 const { Model: Games } = require('./model/mongodb/games')
 const { Model: Matches } = require('./model/mongodb/matches')
+const { Model: Leagues } = require('./model/mongodb/leagues')
 const teamGames = require('./model/sheets/team-games')
 const playerGames = require('./model/sheets/player-games')
 const processMatch = require('./producers')
@@ -52,7 +53,7 @@ const getMatchInfoById = async matchId => {
       path: 'season',
       populate: { path: 'league' },
     })
-  return { match, teams: match.teams }
+  return { match, teams: match.teams, season: match.season, league: match.season.league }
 }
 
 const getMatchInfoByPlayers = async players => {
@@ -75,19 +76,23 @@ const getMatchInfoByPlayers = async players => {
       `expected to get one match but got ${matches.length} for teams: ${teams.map(t => t._id.toHexString())}`,
     )
   const match = matches[0]
-  return { match, teams }
+  return { match, teams, season: match.season, league: match.season.league }
 }
 
 /**
  * takes a match and game ids and updates stat data
  * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
  */
-module.exports = async ({ match_id, game_ids }) => {
+module.exports = async ({ league_id, match_id, game_ids }) => {
+  // const league = await Leagues.findById(league_id)
+  // if (!league) throw new Error(`no league found for id: ${league_id}`)
   const reportGames = await ballchasing.getReplays({ game_ids })
   const players = await Players.find(buildPlayersQuery(reportGames))
   if (players.length < 1) throw new Error(`no players found for games: ${game_ids.join(', ')}`)
 
-  const { match, teams } = await (match_id ? getMatchInfoById(match_id) : getMatchInfoByPlayers(players))
+  const { league, season, match, teams } = await (match_id
+    ? getMatchInfoById(match_id)
+    : getMatchInfoByPlayers(players))
   let games
   if (!match.games || match.games.length < 1) {
     // create games
@@ -97,7 +102,14 @@ module.exports = async ({ match_id, game_ids }) => {
   } else {
     games = match.games
   }
-  const { teamStats, playerStats, playerTeamMap } = processMatch(reportGames, { match, games, teams, players })
+  const { teamStats, playerStats, playerTeamMap } = processMatch(reportGames, {
+    league,
+    season,
+    match,
+    games,
+    teams,
+    players,
+  })
   await teamGames.upsert({ data: teamStats })
   await playerGames.upsert({ data: playerStats })
 

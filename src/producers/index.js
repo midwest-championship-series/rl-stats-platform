@@ -4,15 +4,15 @@ const colors = ['blue', 'orange']
 
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
-const assignLeagueIds = (game, { match, players, teams, games }) => {
+const assignLeagueIds = (game, { league, season, match, players, teams, games }) => {
   const playerTeamMap = []
   game.game_id = games.find(g => g.ballchasing_id === game.id)._id.toHexString()
   game.match_id = match._id.toHexString()
   game.match_type = match.season.season_type
   game.week = match.week
   game.season = match.season.name
-  game.season_id = match.season._id.toHexString()
-  game.league_id = match.season.league._id.toHexString()
+  game.season_id = season._id.toHexString()
+  game.league_id = league._id.toHexString()
 
   colors.forEach(color => {
     const teamPlayer = players.find(player => {
