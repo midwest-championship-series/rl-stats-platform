@@ -500,22 +500,21 @@ describe('process-match', () => {
       ms_zero_boost: 52950,
       ms_full_boost: 23460,
     })
-    // playerStats.data
-    //   .filter(stat => stat.game_id === '5ebc62afd09245d2a7c63338' && stat.player_id !== '5ec04239d09245d2a7d4fa26')
     findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })
       .filter(stat => stat.player_id !== '5ec04239d09245d2a7d4fa26')
       .forEach(stat => {
         expect(stat).toMatchObject({ mvps: 0 })
       })
-    // expect(playerStats.data[13]).toMatchObject({
-    //   team_id: '5ebc62a9d09245d2a7c62e86',
-    //   mvps: 0,
-    // })
-    // expect(playerStats.data[15]).toMatchObject({
-    //   team_id: '5ebc62a9d09245d2a7c62eb3',
-    //   game_id_win: undefined,
-    //   match_id_win: undefined,
-    // })
+    findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' }).forEach(stat => {
+      if (stat.team_id === '5ebc62a9d09245d2a7c62eb3') {
+        expect(stat).toMatchObject({ game_id_win: undefined, match_id_win: undefined })
+      } else {
+        expect(stat).toMatchObject({
+          game_id_win: '5ebc62afd09245d2a7c63338',
+          match_id_win: '5ebc62b0d09245d2a7c6340c',
+        })
+      }
+    })
   })
   it('should process a new match', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
