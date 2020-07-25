@@ -5,18 +5,10 @@ const Model = createModel(
   'Match',
   {
     old_id: { type: String, required: true },
-    team_ids: [
-      {
-        type: Schema.Types.ObjectId,
-        required: true,
-        validate: [
-          function(val) {
-            return val.length === 2
-          },
-          '{PATH} expected to be length of two',
-        ],
-      },
-    ],
+    team_ids: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Team' }],
+      required: true,
+    },
     players_to_teams: {
       type: [
         {
@@ -32,6 +24,9 @@ const Model = createModel(
     best_of: { type: Number },
   },
   schema => {
+    schema.path('team_ids').validate(function(val) {
+      return val.length === 2
+    })
     schema.virtual('games', {
       ref: 'Game',
       localField: 'game_ids',

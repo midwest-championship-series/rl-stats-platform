@@ -135,6 +135,7 @@ module.exports = async filters => {
     await game.save()
   }
   match.players_to_teams = playerTeamMap
+  match.team_ids = teams.map(t => t._id)
   await match.save()
   return { match_id: match._id.toHexString(), game_ids: games.map(({ _id }) => _id.toHexString()) }
 }
