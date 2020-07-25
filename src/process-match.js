@@ -7,6 +7,7 @@ const { Model: Leagues } = require('./model/mongodb/leagues')
 const teamGames = require('./model/sheets/team-games')
 const playerGames = require('./model/sheets/player-games')
 const processMatch = require('./producers')
+const { getPlayerTeamsAtDate } = require('./producers/common')
 
 const validateFilters = ({ league_id, match_id, game_ids }) => {
   if (match_id) return
@@ -43,21 +44,9 @@ const buildTeamsQueryFromPlayers = (players, matchDate) => {
   /**
    * @todo for any players which played but do not have a mapped team, push alert to discord
    */
-  for (let player of players) {
-    const currentTeam = player.team_history.find(
-      item => item.date_joined < matchDate && (!item.date_left || item.date_left > matchDate),
-    )
-    if (currentTeam) {
-      player.team_id = currentTeam.team_id
-    }
-  }
   const teamIds = players.reduce((result, player) => {
     if (player.team_history && player.team_history.length > 0) {
-      result.push(
-        ...player.team_history
-          .filter(item => item.date_joined < matchDate && (!item.date_left || item.date_left > matchDate))
-          .map(item => item.team_id.toHexString()),
-      )
+      result.push(...getPlayerTeamsAtDate(player, matchDate).map(item => item.team_id.toHexString()))
     }
     return result
   }, [])

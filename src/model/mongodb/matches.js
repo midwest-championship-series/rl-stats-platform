@@ -20,8 +20,8 @@ const Model = createModel(
     players_to_teams: {
       type: [
         {
-          player_id: Schema.Types.ObjectId,
-          team_id: Schema.Types.ObjectId,
+          player_id: { type: Schema.Types.ObjectId, required: true },
+          team_id: { type: Schema.Types.ObjectId, required: true },
         },
       ],
     },

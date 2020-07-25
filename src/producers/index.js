@@ -1,14 +1,9 @@
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
+const { getPlayerTeamsAtDate } = require('./common')
+
 const colors = ['blue', 'orange']
-
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
-
-const getPlayerTeamsAtDate = (player, matchDate) => {
-  return player.team_history.filter(
-    item => item.date_joined < matchDate && (!item.date_left || item.date_left > matchDate),
-  )
-}
 
 const assignLeagueIds = (game, { league, season, match, players, teams, games }) => {
   const playerTeamMap = []
