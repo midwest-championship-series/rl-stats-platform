@@ -113,7 +113,7 @@ module.exports = async filters => {
   let games
   if (!match.games || match.games.length < 1) {
     // create games
-    games = reportGames.map(g => new Games({ ballchasing_id: g.id, status: 'closed' }))
+    games = reportGames.map(g => new Games({ ballchasing_id: g.id, status: 'closed', date_time_played: g.date }))
     // update match
     match.game_ids = games.map(g => g._id)
   } else {
