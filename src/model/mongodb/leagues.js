@@ -16,6 +16,13 @@ const Model = createModel('League', schema, schema => {
     localField: 'season_ids',
     foreignField: '_id',
   })
+  /** named this way due to current_season already being a property - will remove current_season in the future and rename this virtual */
+  schema.virtual('current_season_object', {
+    ref: 'Season',
+    localField: 'current_season_id',
+    foreignField: '_id',
+    justOne: true,
+  })
 })
 
 module.exports = {

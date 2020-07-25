@@ -8,6 +8,13 @@ const teamGames = require('./model/sheets/team-games')
 const playerGames = require('./model/sheets/player-games')
 const processMatch = require('./producers')
 
+const validateFilters = ({ league_id, match_id, game_ids }) => {
+  if (match_id) return
+  if (!league_id || !game_ids) throw new Error('no league id passed for new match')
+}
+
+const getEarliestGameDate = games => new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
+
 /**
  * takes games from ballchasing and returns a mongodb query for all of the players' ids
  */
@@ -23,7 +30,7 @@ const buildPlayersQuery = games => {
       }, [])
       .map(({ id }) => ({ platform: id.platform, platform_id: id.id }))
       .reduce((result, item) => {
-        if (!result.some(r => r.platform === item.platform && r.id === item.platform_id)) {
+        if (!result.some(r => r.platform === item.platform && r.platform_id === item.platform_id)) {
           result.push(item)
         }
         return result
@@ -32,11 +39,28 @@ const buildPlayersQuery = games => {
   }
 }
 
-const buildTeamsQueryFromPlayers = players => {
+const buildTeamsQueryFromPlayers = (players, matchDate) => {
   /**
    * @todo for any players which played but do not have a mapped team, push alert to discord
    */
-  const teamIds = players.filter(p => !!p.team_id).map(({ team_id }) => team_id.toHexString())
+  for (let player of players) {
+    const currentTeam = player.team_history.find(
+      item => item.date_joined < matchDate && (!item.date_left || item.date_left > matchDate),
+    )
+    if (currentTeam) {
+      player.team_id = currentTeam.team_id
+    }
+  }
+  const teamIds = players.reduce((result, player) => {
+    if (player.team_history && player.team_history.length > 0) {
+      result.push(
+        ...player.team_history
+          .filter(item => item.date_joined < matchDate && (!item.date_left || item.date_left > matchDate))
+          .map(item => item.team_id.toHexString()),
+      )
+    }
+    return result
+  }, [])
   const unique = [...new Set(teamIds)]
   return { $or: unique.map(id => ({ _id: id })) }
 }
@@ -56,8 +80,12 @@ const getMatchInfoById = async matchId => {
   return { match, teams: match.teams, season: match.season, league: match.season.league }
 }
 
-const getMatchInfoByPlayers = async players => {
-  const teams = await Teams.find(buildTeamsQueryFromPlayers(players))
+const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
+  const league = await Leagues.findById(leagueId).populate('current_season_object')
+  const seasonTeams = league.current_season_object.team_ids
+  const teams = (await Teams.find(buildTeamsQueryFromPlayers(players, matchDate))).filter(team =>
+    seasonTeams.id(team._id),
+  )
   if (teams.length !== 2) {
     throw new Error(
       `expected to process match between two teams but got ${teams.length}. Teams: ${teams
@@ -83,16 +111,16 @@ const getMatchInfoByPlayers = async players => {
  * takes a match and game ids and updates stat data
  * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
  */
-module.exports = async ({ league_id, match_id, game_ids }) => {
-  // const league = await Leagues.findById(league_id)
-  // if (!league) throw new Error(`no league found for id: ${league_id}`)
+module.exports = async filters => {
+  validateFilters(filters)
+  const { league_id, match_id, game_ids } = filters
   const reportGames = await ballchasing.getReplays({ game_ids })
   const players = await Players.find(buildPlayersQuery(reportGames))
   if (players.length < 1) throw new Error(`no players found for games: ${game_ids.join(', ')}`)
 
   const { league, season, match, teams } = await (match_id
-    ? getMatchInfoById(match_id)
-    : getMatchInfoByPlayers(players))
+    ? getMatchInfoById(match_id) // this is a reprocessed match
+    : getMatchInfoByPlayers(league_id, players, getEarliestGameDate(reportGames))) // this is a new match
   let games
   if (!match.games || match.games.length < 1) {
     // create games

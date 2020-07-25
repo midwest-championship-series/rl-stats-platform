@@ -35,7 +35,7 @@ const Model = createModel('Player', schema, schema => {
     ...schema.toJSON,
     transform: function(doc, ret) {
       delete ret.accounts
-      if (ret.team_history && ret.team_id[0]) {
+      if (ret.team_history && ret.team_history[0]) {
         ret.team_id = ret.team_history[0].team_id
       }
     },

@@ -12,6 +12,7 @@ const processPlayer = (game, player) => {
   return {
     player_id: player.league_id,
     player_name: player.name,
+    screen_name: player.name,
     team_id: player.team_id,
     team_name: player.team_name,
     team_color: player.team_color,
@@ -52,7 +53,13 @@ module.exports = game => {
   // assign match mvp
   const winners = playerStats.filter(p => p.wins > 0)
   const mvpScore = Math.max(...winners.map(p => p.score))
-  winners.forEach(p => (p.mvps = p.score === mvpScore ? 1 : 0))
+  playerStats.forEach(p => {
+    if (p.wins > 0) {
+      p.mvps = p.score === mvpScore ? 1 : 0
+    } else {
+      p.mvps = 0
+    }
+  })
   // return only players which have ids in our system
   return playerStats.filter(p => !!p.player_id)
 }

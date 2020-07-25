@@ -31,7 +31,7 @@ custom:
 provider:
   name: aws
   runtime: nodejs12.x
-  profile: personal
+  profile: rl-stats
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
   endpointType: REGIONAL

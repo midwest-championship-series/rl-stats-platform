@@ -4,6 +4,12 @@ const colors = ['blue', 'orange']
 
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
+const getPlayerTeamsAtDate = (player, matchDate) => {
+  return player.team_history.filter(
+    item => item.date_joined < matchDate && (!item.date_left || item.date_left > matchDate),
+  )
+}
+
 const assignLeagueIds = (game, { league, season, match, players, teams, games }) => {
   const playerTeamMap = []
   game.game_id = games.find(g => g.ballchasing_id === game.id)._id.toHexString()
@@ -22,7 +28,8 @@ const assignLeagueIds = (game, { league, season, match, players, teams, games })
         })
       })
     })
-    game[color].team = teams.find(t => t._id.equals(teamPlayer.team_id))
+    const playerTeams = getPlayerTeamsAtDate(teamPlayer, new Date(game.date))
+    game[color].team = teams.find(t => playerTeams.some(({ team_id }) => t._id.equals(team_id)))
     if (!game[color].team) throw new Error(`no team found for ${color}`)
   })
   // assign team_id and player_id to players
