@@ -38,6 +38,7 @@ const matchGetters = {
 }
 
 module.exports = async (collection, criteria) => {
+  if (!matchGetters[collection]) throw new Error(`no query implemented for collection: ${collection}`)
   const messages = (await matchGetters[collection](criteria))
     .filter(match => match.games && match.games.length > 0)
     .map(match => ({
