@@ -111,7 +111,7 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /games/_report
+          path: /platform/games/_report
           method: post
           private: true
           cors: true
@@ -122,10 +122,14 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /games/_reprocess
+          path: /platform/{collection}/_reprocess
           method: post
           private: true
           cors: true
+          request:
+            parameters:
+              path:
+                collection: true
   
   process-match:
     handler: lambdas/process-match.handler
