@@ -8,7 +8,7 @@ const schema = {
     type: [
       {
         team_id: { type: Schema.Types.ObjectId, required: true },
-        date_joined: { type: Date, required: true },
+        date_joined: { type: Date, required: true, default: Date.now },
         date_left: Date,
       },
     ],
