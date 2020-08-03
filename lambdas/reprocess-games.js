@@ -3,8 +3,11 @@ require('../src/model/mongodb')
 
 const handler = async event => {
   try {
-    const { queryStringParameters } = event
-    const reportedGames = await reprocessGames(queryStringParameters)
+    const {
+      queryStringParameters,
+      pathParameters: { collection },
+    } = event
+    const reportedGames = await reprocessGames(collection, queryStringParameters)
     return {
       statusCode: 200,
       body: JSON.stringify(reportedGames),

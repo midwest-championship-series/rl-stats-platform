@@ -26,52 +26,52 @@ describe('season standings', () => {
     expect(mockRequest).toHaveProperty('context')
     expect(mockRequest.context).toMatchObject([
       {
-        _id: '5ebc62aad09245d2a7c62ef9',
+        team_id: '5ebc62aad09245d2a7c62ef9',
         match_wins: 2,
         game_differential: 6,
       },
       {
-        _id: '5ebc62aad09245d2a7c62efc',
+        team_id: '5ebc62aad09245d2a7c62efc',
         match_wins: 2,
         game_differential: 4,
       },
       {
-        _id: '5ebc62aad09245d2a7c62eed',
+        team_id: '5ebc62aad09245d2a7c62eed',
         match_wins: 2,
         game_differential: 3,
       },
       {
-        _id: '5ebc62a9d09245d2a7c62e5a',
+        team_id: '5ebc62a9d09245d2a7c62e5a',
         match_wins: 2,
         game_differential: 1,
       },
       {
-        _id: '5ebc62a9d09245d2a7c62e82',
+        team_id: '5ebc62a9d09245d2a7c62e82',
         match_wins: 2,
         game_differential: 1,
       },
       {
-        _id: '5ebc62a9d09245d2a7c62eb3',
+        team_id: '5ebc62a9d09245d2a7c62eb3',
         match_wins: 1,
         game_differential: 0,
       },
       {
-        _id: '5ebc62a9d09245d2a7c62e86',
+        team_id: '5ebc62a9d09245d2a7c62e86',
         match_wins: 1,
         game_differential: 0,
       },
       {
-        _id: '5ebc62aad09245d2a7c62ef8',
+        team_id: '5ebc62aad09245d2a7c62ef8',
         match_wins: 1,
         game_differential: -1,
       },
       {
-        _id: '5ebc62a9d09245d2a7c62eba',
+        team_id: '5ebc62a9d09245d2a7c62eba',
         match_wins: 0,
         game_differential: -6,
       },
       {
-        _id: '5ebc62a9d09245d2a7c62eae',
+        team_id: '5ebc62a9d09245d2a7c62eae',
         match_wins: 0,
         game_differential: -8,
       },

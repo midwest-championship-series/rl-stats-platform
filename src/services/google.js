@@ -82,7 +82,6 @@ class Table {
       const { table, localField, foreignField, as } = this.populations.find(p => p.table === popName)
       if (!table) throw new Error(`no population on table ${this.name} for ${popName}`)
       const results = await table.get()
-      console.log(results)
     }
   }
 

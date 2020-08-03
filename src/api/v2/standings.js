@@ -12,13 +12,17 @@ module.exports = async (req, res, next) => {
   const season = await Seasons.findById(season_id)
     .populate('teams')
     .lean()
+
+  if (!season) {
+    res.status(404)
+    return next()
+  }
   req.context = season.teams
     .map(team => {
       const wins = makeUnique(recordsByTeam[team._id].map(r => r.game_id_win)).length
       const played = makeUnique(recordsByTeam[team._id].map(r => r.game_id)).length
-      if (played > 100) console.log('team', team)
       return {
-        _id: team._id,
+        team_id: team._id,
         match_wins: makeUnique(recordsByTeam[team._id].map(r => r.match_id_win)).length,
         game_differential: wins - (played - wins),
       }
@@ -34,7 +38,7 @@ module.exports = async (req, res, next) => {
       if (matchWin) return matchWin
       const gameDiff = b.game_differential - a.game_differential
       if (gameDiff) return gameDiff
-      const gamesAgainst = recordsByTeam[b._id].filter(r => r.opponent_team_id === a._id)
+      const gamesAgainst = recordsByTeam[b.team_id].filter(r => r.opponent_team_id === a.team_id)
       const gamesWonAgainst = gamesAgainst.filter(r => !!r.game_id_win).length
       const gamesLostAgainst = gamesAgainst.length - gamesWonAgainst
       return gamesWonAgainst - gamesLostAgainst

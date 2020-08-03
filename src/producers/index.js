@@ -1,17 +1,19 @@
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
-const colors = ['blue', 'orange']
+const { getPlayerTeamsAtDate } = require('./common')
 
+const colors = ['blue', 'orange']
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
 
-const assignLeagueIds = (game, { match, players, teams, games }) => {
+const assignLeagueIds = (game, { league, season, match, players, teams, games }) => {
+  const playerTeamMap = []
   game.game_id = games.find(g => g.ballchasing_id === game.id)._id.toHexString()
   game.match_id = match._id.toHexString()
   game.match_type = match.season.season_type
   game.week = match.week
   game.season = match.season.name
-  game.season_id = match.season._id.toHexString()
-  game.league_id = match.season.league._id.toHexString()
+  game.season_id = season._id.toHexString()
+  game.league_id = league._id.toHexString()
 
   colors.forEach(color => {
     const teamPlayer = players.find(player => {
@@ -21,7 +23,8 @@ const assignLeagueIds = (game, { match, players, teams, games }) => {
         })
       })
     })
-    game[color].team = teams.find(t => t._id.equals(teamPlayer.team_id))
+    const playerTeams = getPlayerTeamsAtDate(teamPlayer, new Date(game.date))
+    game[color].team = teams.find(t => playerTeams.some(({ team_id }) => t._id.equals(team_id)))
     if (!game[color].team) throw new Error(`no team found for ${color}`)
   })
   // assign team_id and player_id to players
@@ -39,9 +42,11 @@ const assignLeagueIds = (game, { match, players, teams, games }) => {
       if (leaguePlayer) {
         player.league_id = leaguePlayer._id.toHexString()
         player.name = leaguePlayer.screen_name
+        playerTeamMap.push({ player_id: leaguePlayer._id, team_id: game[color].team._id })
       }
     })
   })
+  return { playerTeamMap }
 }
 
 const assignMatchWin = (games, match) => {
@@ -69,15 +74,23 @@ const assignMatchWin = (games, match) => {
 
 module.exports = (games, leagueInfo) => {
   const sortedGames = games.sort((a, b) => new Date(a.date) - new Date(b.date))
+  let playersToTeams = []
   let gameNumber = 1
   for (let game of sortedGames) {
     game.game_number = gameNumber
-    assignLeagueIds(game, leagueInfo)
+    const { playerTeamMap } = assignLeagueIds(game, leagueInfo)
+    playersToTeams = playersToTeams.concat(playerTeamMap)
     gameNumber++
   }
   assignMatchWin(games, leagueInfo.match)
   return {
     teamStats: games.reduce((result, game) => result.concat(teamStats(game)), []),
     playerStats: games.reduce((result, game) => result.concat(playerStats(game)), []),
+    playerTeamMap: playersToTeams.reduce((result, item) => {
+      if (!result.find(i => i.player_id === item.player_id)) {
+        result.push(item)
+      }
+      return result
+    }, []),
   }
 }

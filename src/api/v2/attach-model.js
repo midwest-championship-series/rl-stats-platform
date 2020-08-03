@@ -39,10 +39,10 @@ module.exports = Model => {
 
   router.put('/:id', async (req, res, next) => {
     const doc = await Model.findById(req.params.id).exec()
-    if (!model) {
+    if (!doc) {
       return res.status(404).send()
     }
-    for (let property of req.body) {
+    for (let property in req.body) {
       doc[property] = req.body[property]
     }
     req.context = await doc.save()
