@@ -2,7 +2,7 @@ const { Schema } = require('mongoose')
 const createModel = require('../../services/mongodb')
 
 const schema = {
-  old_id: { type: String, required: true },
+  old_id: { type: String },
   discord_id: { type: String },
   team_history: {
     type: [
@@ -34,7 +34,7 @@ const Model = createModel('Player', schema, schema => {
   schema.set('toJSON', {
     ...schema.toJSON,
     transform: function(doc, ret) {
-      delete ret.accounts
+      /** @todo remove ret.accounts */
       if (ret.team_history && ret.team_history[0]) {
         ret.team_id = ret.team_history[0].team_id
       }
