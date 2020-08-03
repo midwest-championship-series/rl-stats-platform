@@ -14,6 +14,7 @@ const schema = {
     ],
     default: [],
   },
+  team_id: { type: Schema.Types.ObjectId },
   old_team_id: { type: String },
   screen_name: { type: String },
   league_id: { type: Schema.Types.ObjectId },
