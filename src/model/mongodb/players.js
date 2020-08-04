@@ -2,7 +2,6 @@ const { Schema } = require('mongoose')
 const createModel = require('../../services/mongodb')
 
 const schema = {
-  old_id: { type: String },
   discord_id: { type: String },
   team_history: {
     type: [
@@ -14,11 +13,8 @@ const schema = {
     ],
     default: [],
   },
-  team_id: { type: Schema.Types.ObjectId },
-  old_team_id: { type: String },
   screen_name: { type: String },
   league_id: { type: Schema.Types.ObjectId },
-  old_league_id: { type: String },
   accounts: {
     type: [
       {
@@ -29,6 +25,11 @@ const schema = {
     ],
     default: [],
   },
+  /** @deprecated all the below properties are deprecated 8/3/2020 */
+  old_id: { type: String },
+  old_league_id: { type: String },
+  team_id: { type: Schema.Types.ObjectId },
+  old_team_id: { type: String },
 }
 
 const Model = createModel('Player', schema, schema => {
