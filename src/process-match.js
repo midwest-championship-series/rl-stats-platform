@@ -55,7 +55,7 @@ const buildTeamsQueryFromPlayers = (players, matchDate) => {
 }
 
 const buildMatchesQuery = teams => {
-  return { $and: teams.map(t => ({ team_ids: t._id })) }
+  return { $and: teams.map(t => ({ team_ids: t._id })), status: 'open' }
 }
 
 const getMatchInfoById = async matchId => {
@@ -73,7 +73,7 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
   const league = await Leagues.findById(leagueId).populate('current_season_object')
   const seasonTeams = league.current_season_object.team_ids
   const teams = (await Teams.find(buildTeamsQueryFromPlayers(players, matchDate))).filter(team =>
-    seasonTeams.id(team._id),
+    seasonTeams.some(id => id.equals(team._id)),
   )
   if (teams.length !== 2) {
     throw new Error(
