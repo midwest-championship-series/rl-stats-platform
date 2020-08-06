@@ -29,8 +29,10 @@ const handler = async () => {
       match_ids: [],
     })
     mncs.season_ids.push(season2._id)
-    await mncs.save()
   }
+  mncs.current_season_id = season2._id
+  mncs.current_season = '2'
+  await mncs.save()
   const mncsMatchesToCreate = []
   schedule.mncs.forEach((week, index) => {
     const weekNum = index + 1
