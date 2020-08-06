@@ -82,6 +82,10 @@ const handler = async () => {
   }
   const clmnSeason = clmn.seasons[0]
   const clmnTeams = await Teams.find({ name: { $in: schedule.clmnTeams } })
+  console.log(
+    'clmn teams',
+    clmnTeams.map(t => t.name),
+  )
   if (clmnTeams.length !== 12) throw new Error(`clmn teams not equal to 12, instead ${clmnTeams.length}`)
   const clmnTeamToId = clmnTeams.reduce((result, team) => {
     return {
