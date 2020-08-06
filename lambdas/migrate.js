@@ -1,6 +1,7 @@
 require('../src/model/mongodb')
 const { Model: Matches } = require('../src/model/mongodb/matches')
 const { Model: Teams } = require('../src/model/mongodb/teams')
+const { Model: Players } = require('../src/model/mongodb/players')
 const { Model: Leagues } = require('../src/model/mongodb/leagues')
 const { Model: Seasons } = require('../src/model/mongodb/seasons')
 const schedule = require('./schedule')
@@ -58,7 +59,6 @@ const handler = async () => {
   season2.match_ids = season2.match_ids.concat((mncsMatches && mncsMatches.map(m => m._id)) || [])
   await season2.save()
   console.log('created MNCS matches', mncsMatches && mncsMatches.length)
-
   // clmn
   let [clmn] = await Leagues.find({ name: 'clmn' }).populate({
     path: 'seasons',
@@ -112,6 +112,20 @@ const handler = async () => {
   clmnSeason.match_ids = clmnSeason.match_ids.concat((clmnMatches && clmnMatches.map(m => m._id)) || [])
   await clmnSeason.save()
   console.log('created CLMN matches', clmnMatches && clmnMatches.length)
+
+  // adjust linked players
+  const updateAfter = new Date('2020-08-01T17:40:53.656+00:00')
+  const players = await Players.find({
+    'team_history.date_joined': { $gte: updateAfter },
+  })
+  for (let player of players) {
+    player.team_history.forEach(h => {
+      if (h.date_joined > updateAfter) {
+        h.date_joined = new Date('2020-07-12T17:40:53.656+00:00')
+      }
+    })
+    await player.save()
+  }
 }
 
 module.exports = { handler }
