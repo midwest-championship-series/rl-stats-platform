@@ -4,7 +4,6 @@ const createModel = require('../../services/mongodb')
 const Model = createModel(
   'Match',
   {
-    old_id: { type: String, required: true },
     team_ids: {
       type: [{ type: Schema.Types.ObjectId, ref: 'Team' }],
       required: true,
@@ -17,11 +16,13 @@ const Model = createModel(
         },
       ],
     },
-    old_team_ids: [{ type: String }],
     week: { type: Number, required: true },
     status: { type: String, default: 'open' },
     game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
     best_of: { type: Number },
+    /** @deprecated all the below properties are deprecated 8/3/2020 */
+    old_id: { type: String },
+    old_team_ids: [{ type: String }],
   },
   schema => {
     schema.path('team_ids').validate(function(val) {

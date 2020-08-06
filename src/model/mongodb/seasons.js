@@ -7,6 +7,11 @@ const Model = createModel(
     name: { type: String, required: true },
     season_type: { type: String, required: true },
     match_ids: [{ type: Schema.Types.ObjectId, required: true }],
+    /**
+     * these are denormalized fields which adjusted periodically based on what teams/players have played
+     * or are scheduled to play in this season's matches
+     * Note: player_ids only contains players which actually played in the season
+     */
     team_ids: [{ type: Schema.Types.ObjectId, required: true }],
     player_ids: [{ type: Schema.Types.ObjectId, required: true }],
   },
