@@ -36,6 +36,8 @@ const handler = async () => {
     const weekNum = index + 1
     week.forEach(match => {
       const teamIds = match.teams.map(t => mncsTeamToId[t.toLowerCase()])
+      if (teamIds.length !== 2)
+        throw new Error(`teams not found to match teams ${match.teams.map(t => t.name).join(', ')}`)
       if (season2.matches) {
         const stringIds = teamIds.map(id => id.toHexString())
         const existingMatch = season2.matches.find(m => {
