@@ -243,23 +243,18 @@ teams.Model = {
 const leagues = require('../model/mongodb/leagues')
 const leaguesFindByIdMock = jest.fn().mockResolvedValue({
   current_season_object: {
-    team_ids: {
-      id: id => {
-        const ids = [
-          new ObjectId('5ebc62a9d09245d2a7c62e5a'),
-          new ObjectId('5ebc62a9d09245d2a7c62e82'),
-          new ObjectId('5ebc62a9d09245d2a7c62e86'),
-          new ObjectId('5ebc62a9d09245d2a7c62eba'),
-          new ObjectId('5ebc62a9d09245d2a7c62eb3'),
-          new ObjectId('5ebc62a9d09245d2a7c62eae'),
-          new ObjectId('5ebc62aad09245d2a7c62eed'),
-          new ObjectId('5ebc62aad09245d2a7c62ef8'),
-          new ObjectId('5ebc62aad09245d2a7c62ef9'),
-          new ObjectId('5ebc62aad09245d2a7c62efc'),
-        ]
-        return ids.find(item => item.equals(id))
-      },
-    },
+    team_ids: [
+      new ObjectId('5ebc62a9d09245d2a7c62e5a'),
+      new ObjectId('5ebc62a9d09245d2a7c62e82'),
+      new ObjectId('5ebc62a9d09245d2a7c62e86'),
+      new ObjectId('5ebc62a9d09245d2a7c62eba'),
+      new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+      new ObjectId('5ebc62a9d09245d2a7c62eae'),
+      new ObjectId('5ebc62aad09245d2a7c62eed'),
+      new ObjectId('5ebc62aad09245d2a7c62ef8'),
+      new ObjectId('5ebc62aad09245d2a7c62ef9'),
+      new ObjectId('5ebc62aad09245d2a7c62efc'),
+    ],
   },
 })
 leagues.Model = {
