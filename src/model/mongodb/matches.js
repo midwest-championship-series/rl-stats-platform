@@ -21,7 +21,7 @@ const Model = createModel(
     game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
     best_of: { type: Number },
     /** @deprecated all the below properties are deprecated 8/3/2020 */
-    old_id: { type: String, required: true },
+    old_id: { type: String },
     old_team_ids: [{ type: String }],
   },
   schema => {

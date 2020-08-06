@@ -3,13 +3,13 @@ const createModel = require('../../services/mongodb')
 
 const schema = {
   name: { type: String },
-  league_id: { type: Schema.Types.ObjectId },
-  league: { type: String }, // should go away in favor of league_id
   discord_id: { type: String },
   hex_color: { type: String },
   /** @deprecated all the below properties are deprecated 8/3/2020 */
-  old_id: { type: String, required: true },
-  old_league_id: { type: String, required: true },
+  league_id: { type: Schema.Types.ObjectId },
+  league: { type: String }, // should go away in favor of league_id
+  old_id: { type: String },
+  old_league_id: { type: String },
 }
 
 const Model = createModel('Team', schema)
