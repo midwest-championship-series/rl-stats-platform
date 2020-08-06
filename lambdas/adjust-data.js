@@ -13,7 +13,7 @@ const handler = async () => {
     if (!currentSeason) throw new Error(`no current season found for league: ${league.name}`)
     const sortedMatches = currentSeason.matches.sort((a, b) => a.week - b.week)
     const lastPlayedMatch = sortedMatches.find(m => m.status !== 'closed')
-    league.current_week = (lastPlayedMatch && lastPlayedMatch.week) || sortedMatches.reverse()[0]
+    league.current_week = (lastPlayedMatch && lastPlayedMatch.week) || sortedMatches.reverse()[0].week
     await league.save()
     for (let season of league.seasons) {
       season.team_ids = season.matches.reduce((result, match) => {
