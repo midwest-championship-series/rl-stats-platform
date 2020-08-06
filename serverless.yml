@@ -176,6 +176,7 @@ functions:
   migrate:
     handler: lambdas/migrate.handler
     name: ${self:service}-migrate-${self:provider.stage}
+    timeout: 300
   
   adjust-data:
     handler: lambdas/adjust-data.handler
