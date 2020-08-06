@@ -115,15 +115,20 @@ const handler = async () => {
 
   // adjust linked players
   const updateAfter = new Date('2020-08-01T17:40:53.656+00:00')
+  const transactionDate = new Date('2020-07-12T17:40:53.656+00:00')
   const players = await Players.find({
-    'team_history.date_joined': { $gte: updateAfter },
+    $or: [{ 'team_history.date_joined': { $gte: updateAfter } }, { 'team_history.date_left': { $gte: updateAfter } }],
   })
   for (let player of players) {
     player.team_history.forEach(h => {
       if (h.date_joined > updateAfter) {
-        h.date_joined = new Date('2020-07-12T17:40:53.656+00:00')
+        h.date_joined = transactionDate
+      }
+      if (h.date_left > updateAfter) {
+        h.date_left = transactionDate
       }
     })
+    console.log('saving player', player.screen_name, player.team_history)
     await player.save()
   }
 }
