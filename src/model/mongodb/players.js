@@ -13,6 +13,7 @@ const schema = {
     ],
     default: [],
   },
+  avatar: { type: String }, // url with discord avatar url, to which a ?size=128 parameter can be added with desired size
   screen_name: { type: String },
   league_id: { type: Schema.Types.ObjectId },
   accounts: {
@@ -20,7 +21,6 @@ const schema = {
       {
         platform: { type: String },
         platform_id: { type: String },
-        screen_name: { type: String },
       },
     ],
     default: [],
