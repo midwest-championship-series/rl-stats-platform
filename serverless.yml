@@ -53,7 +53,8 @@ provider:
     GAMES_QUEUE_URL:
       Ref: GamesQueue
     MONGODB_PASSWORD: ${ssm:${self:provider.stage}-mnrl-db-pass~true}
-    MONGODB_HOST:  ${self:custom.dbHost.${self:provider.stage}, self:custom.dbHost.notprod}
+    MONGODB_HOST: ${self:custom.dbHost.${self:provider.stage}, self:custom.dbHost.notprod}
+    MNRL_BOT_URL: https://rl-rank-bot.herokuapp.com
   iamRoleStatements:
     - Effect: Allow
       Action:
