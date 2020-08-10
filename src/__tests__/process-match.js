@@ -282,6 +282,7 @@ describe('process-match', () => {
         '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
         '4ed12225-7251-4d63-8bb6-15338c60bcf2',
       ],
+      unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
     expect(result).toMatchObject({
       match_id: '5ebc62b0d09245d2a7c6340c',
@@ -526,6 +527,7 @@ describe('process-match', () => {
     })
     expect(result).toMatchObject({
       match_id: '5ebc62b0d09245d2a7c6340c',
+      unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
     expect(result.game_ids).toHaveLength(4)
   })

@@ -7,12 +7,21 @@ const handler = async event => {
   const messages = event.Records.map(r => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
   for (let message of messages) {
     try {
-      const { match, teams } = await processMatch(message)
+      const { league, match, teams, unlinkedPlayers } = await processMatch(message)
       const reportMessage = `successfully processed week ${match.week} match between ${teams
         .map(t => t.name)
         .join(' and ')}`
       if (message.reply_to_channel) {
         await sendToChannel(message.reply_to_channel, reportMessage)
+      }
+      if (unlinkedPlayers.length > 0) {
+        let unlinkedPlayerReport = `unlinked players found in ${league.name} week ${
+          match.week
+        } match between ${teams.map(t => t.name).join(' and ')}`
+        unlinkedPlayers.forEach(p => {
+          unlinkedPlayerReport += `\nname: ${p.name}, platform: ${p.platform}, platform_id: ${p.platform_id}`
+        })
+        await reportError(unlinkedPlayerReport)
       }
     } catch (err) {
       console.error(`error occurred while processing message:`, message, err)

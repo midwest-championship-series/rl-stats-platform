@@ -18,34 +18,49 @@ const validateFilters = ({ league_id, match_id, game_ids }) => {
 
 const getEarliestGameDate = games => new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
 
+const getUniqueGamePlayers = games => {
+  return games
+    .reduce((result, game) => {
+      return result.concat(
+        ['blue', 'orange'].reduce((players, color) => {
+          return players.concat(game[color].players)
+        }, []),
+      )
+    }, [])
+    .reduce((result, item) => {
+      if (!result.some(r => r.id.platform === item.id.platform && r.id.id === item.id.id)) {
+        result.push(item)
+      }
+      return result
+    }, [])
+}
+
+const getUnlinkedPlayers = (linked, all) => {
+  const linkedAccounts = linked.reduce((result, player) => {
+    return result.concat(player.accounts)
+  }, [])
+  return all
+    .map(p => ({ name: p.name, platform: p.id.platform, platform_id: p.id.id }))
+    .filter(p => !linkedAccounts.some(acc => p.platform === acc.platform && p.platform_id === acc.platform_id))
+}
+
 /**
  * takes games from ballchasing and returns a mongodb query for all of the players' ids
  */
 const buildPlayersQuery = games => {
   return {
-    $or: games
-      .reduce((result, game) => {
-        return result.concat(
-          ['blue', 'orange'].reduce((players, color) => {
-            return players.concat(game[color].players)
-          }, []),
-        )
-      }, [])
-      .map(({ id }) => ({ platform: id.platform, platform_id: id.id }))
-      .reduce((result, item) => {
-        if (!result.some(r => r.platform === item.platform && r.platform_id === item.platform_id)) {
-          result.push(item)
-        }
-        return result
-      }, [])
-      .map(item => ({ accounts: { $elemMatch: item } })),
+    $or: getUniqueGamePlayers(games).map(player => ({
+      accounts: {
+        $elemMatch: {
+          platform: player.id.platform,
+          platform_id: player.id.id,
+        },
+      },
+    })),
   }
 }
 
 const buildTeamsQueryFromPlayers = (players, matchDate) => {
-  /**
-   * @todo for any players which played but do not have a mapped team, push alert to discord
-   */
   const teamIds = players.reduce((result, player) => {
     if (player.team_history && player.team_history.length > 0) {
       result.push(...getPlayerTeamsAtDate(player, matchDate).map(item => item.team_id.toHexString()))
@@ -151,6 +166,8 @@ module.exports = async filters => {
   match.players_to_teams = playerTeamMap
   match.team_ids = teams.map(t => t._id)
   await match.save()
+
+  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(reportGames))
   return {
     match_id: match._id.toHexString(),
     game_ids: games.map(({ _id }) => _id.toHexString()),
@@ -160,5 +177,6 @@ module.exports = async filters => {
     games,
     teams,
     players,
+    unlinkedPlayers,
   }
 }
