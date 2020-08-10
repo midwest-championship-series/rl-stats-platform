@@ -460,6 +460,8 @@ describe('process-match', () => {
     ).toMatchObject({
       player_id: '5ec04239d09245d2a7d4fa26',
       player_name: 'Calster',
+      player_platform: 'steam',
+      player_platform_id: '76561198059743159',
       screen_name: 'Calster',
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
