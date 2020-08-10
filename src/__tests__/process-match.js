@@ -561,7 +561,7 @@ describe('process-match', () => {
           '111c0144-7219-426a-8263-8cff260d030d',
         ],
       }),
-    ).rejects.toEqual(new Error('expected a team to with the best of 5 match, but winning team has only 2'))
+    ).rejects.toEqual(new Error('expected a team to win the best of 5 match, but winning team has only 2'))
   })
   it('should throw an error if exactly one match is not returned', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
@@ -591,6 +591,6 @@ describe('process-match', () => {
           '4ed12225-7251-4d63-8bb6-15338c60bcf2',
         ],
       }),
-    ).rejects.toEqual(new Error('no league id passed for new match'))
+    ).rejects.toEqual(new Error('no league id or game ids passed for new match'))
   })
 })
