@@ -38,6 +38,7 @@ describe('report-games', () => {
         'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
         '877f66a5-23c9-4397-9c47-97c9870351c0',
       ],
+      reply_to_channel: '692994579305332806',
     })
     expect(aws.sqs.sendMessage).toHaveBeenCalledWith('fake queue url', {
       league_id: '5ebc62b1d09245d2a7c63516',
@@ -47,6 +48,7 @@ describe('report-games', () => {
         'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
         '877f66a5-23c9-4397-9c47-97c9870351c0',
       ],
+      reply_to_channel: '692994579305332806',
       match_id: undefined,
     })
     expect(result).toMatchObject({

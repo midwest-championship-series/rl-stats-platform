@@ -8,42 +8,59 @@ const teamGames = require('./model/sheets/team-games')
 const playerGames = require('./model/sheets/player-games')
 const processMatch = require('./producers')
 const { getPlayerTeamsAtDate } = require('./producers/common')
+const { RecoverableError, UnRecoverableError } = require('./util/errors')
 
 const validateFilters = ({ league_id, match_id, game_ids }) => {
   if (match_id) return
-  if (!league_id || !game_ids) throw new Error('no league id passed for new match')
+  if (!league_id || !game_ids)
+    throw new UnRecoverableError('INVALID_CRITERIA', 'no league id or game ids passed for new match')
 }
 
 const getEarliestGameDate = games => new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
+
+const getUniqueGamePlayers = games => {
+  return games
+    .reduce((result, game) => {
+      return result.concat(
+        ['blue', 'orange'].reduce((players, color) => {
+          return players.concat(game[color].players)
+        }, []),
+      )
+    }, [])
+    .reduce((result, item) => {
+      if (!result.some(r => r.id.platform === item.id.platform && r.id.id === item.id.id)) {
+        result.push(item)
+      }
+      return result
+    }, [])
+}
+
+const getUnlinkedPlayers = (linked, all) => {
+  const linkedAccounts = linked.reduce((result, player) => {
+    return result.concat(player.accounts)
+  }, [])
+  return all
+    .map(p => ({ name: p.name, platform: p.id.platform, platform_id: p.id.id }))
+    .filter(p => !linkedAccounts.some(acc => p.platform === acc.platform && p.platform_id === acc.platform_id))
+}
 
 /**
  * takes games from ballchasing and returns a mongodb query for all of the players' ids
  */
 const buildPlayersQuery = games => {
   return {
-    $or: games
-      .reduce((result, game) => {
-        return result.concat(
-          ['blue', 'orange'].reduce((players, color) => {
-            return players.concat(game[color].players)
-          }, []),
-        )
-      }, [])
-      .map(({ id }) => ({ platform: id.platform, platform_id: id.id }))
-      .reduce((result, item) => {
-        if (!result.some(r => r.platform === item.platform && r.platform_id === item.platform_id)) {
-          result.push(item)
-        }
-        return result
-      }, [])
-      .map(item => ({ accounts: { $elemMatch: item } })),
+    $or: getUniqueGamePlayers(games).map(player => ({
+      accounts: {
+        $elemMatch: {
+          platform: player.id.platform,
+          platform_id: player.id.id,
+        },
+      },
+    })),
   }
 }
 
 const buildTeamsQueryFromPlayers = (players, matchDate) => {
-  /**
-   * @todo for any players which played but do not have a mapped team, push alert to discord
-   */
   const teamIds = players.reduce((result, player) => {
     if (player.team_history && player.team_history.length > 0) {
       result.push(...getPlayerTeamsAtDate(player, matchDate).map(item => item.team_id.toHexString()))
@@ -76,11 +93,9 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
     seasonTeams.some(id => id.equals(team._id)),
   )
   if (teams.length !== 2) {
-    throw new Error(
-      `expected to process match between two teams but got ${teams.length}. Teams: ${teams
-        .map(t => t._id.toHexString())
-        .join(', ')}.`,
-    )
+    let errMsg = `expected to process match between two teams but got ${teams.length}.`
+    if (teams.length > 0) errMsg += ` Teams: ${teams.map(t => t._id.toHexString()).join(', ')}.`
+    throw new UnRecoverableError('MATCH_TEAM_COUNT', errMsg)
   }
   const matches = await Matches.find(buildMatchesQuery(teams))
     .populate('games')
@@ -88,10 +103,13 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
       path: 'season',
       populate: { path: 'league' },
     })
-  if (matches.length !== 1)
-    throw new Error(
-      `expected to get one match but got ${matches.length} for teams: ${teams.map(t => t._id.toHexString())}`,
-    )
+  if (matches.length !== 1) {
+    const errMsg = `expected to get one match but got ${matches.length} for teams: ${teams.map(t =>
+      t._id.toHexString(),
+    )}`
+    throw new UnRecoverableError('INCORRECT_MATCH_COUNT', errMsg)
+  }
+
   const match = matches[0]
   return { match, teams, season: match.season, league: match.season.league }
 }
@@ -103,9 +121,17 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
 module.exports = async filters => {
   validateFilters(filters)
   const { league_id, match_id, game_ids } = filters
-  const reportGames = await ballchasing.getReplays({ game_ids })
+  let reportGames
+  try {
+    reportGames = await ballchasing.getReplays({ game_ids })
+  } catch (err) {
+    throw new RecoverableError(err.message)
+  }
   const players = await Players.find(buildPlayersQuery(reportGames))
-  if (players.length < 1) throw new Error(`no players found for games: ${game_ids.join(', ')}`)
+  if (players.length < 1) {
+    const errMsg = `no players found for games: ${game_ids.join(', ')}`
+    throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
+  }
 
   const { league, season, match, teams } = await (match_id
     ? getMatchInfoById(match_id) // this is a reprocessed match
@@ -127,8 +153,11 @@ module.exports = async filters => {
     teams,
     players,
   })
-  await teamGames.upsert({ data: teamStats })
-  await playerGames.upsert({ data: playerStats })
+  try {
+    await Promise.all([teamGames.upsert({ data: teamStats }), playerGames.upsert({ data: playerStats })])
+  } catch (err) {
+    throw new RecoverableError(err.message)
+  }
 
   for (let game of games) {
     game.date_time_processed = Date.now()
@@ -137,5 +166,17 @@ module.exports = async filters => {
   match.players_to_teams = playerTeamMap
   match.team_ids = teams.map(t => t._id)
   await match.save()
-  return { match_id: match._id.toHexString(), game_ids: games.map(({ _id }) => _id.toHexString()) }
+
+  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(reportGames))
+  return {
+    match_id: match._id.toHexString(),
+    game_ids: games.map(({ _id }) => _id.toHexString()),
+    league,
+    season,
+    match,
+    games,
+    teams,
+    players,
+    unlinkedPlayers,
+  }
 }

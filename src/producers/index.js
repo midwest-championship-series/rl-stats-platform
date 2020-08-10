@@ -1,6 +1,7 @@
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
 const { getPlayerTeamsAtDate } = require('./common')
+const { UnRecoverableError } = require('../util/errors')
 
 const colors = ['blue', 'orange']
 const getOpponentColor = color => colors.filter(c => c !== color)[0]
@@ -16,6 +17,10 @@ const assignLeagueIds = (game, { league, season, match, players, teams, games })
   game.league_id = league._id.toHexString()
 
   colors.forEach(color => {
+    if (game[color].players.length !== 3) {
+      const errMsg = `invalid teams for game: ${game.id}. Expected 3 players but got ${game[color].players.length}.`
+      throw new UnRecoverableError('BAD_PLAYER_COUNT', errMsg)
+    }
     const teamPlayer = players.find(player => {
       return game[color].players.some(({ id }) => {
         return player.accounts.some(({ platform, platform_id }) => {
@@ -23,9 +28,14 @@ const assignLeagueIds = (game, { league, season, match, players, teams, games })
         })
       })
     })
-    const playerTeams = getPlayerTeamsAtDate(teamPlayer, new Date(game.date))
-    game[color].team = teams.find(t => playerTeams.some(({ team_id }) => t._id.equals(team_id)))
-    if (!game[color].team) throw new Error(`no team found for ${color}`)
+    if (teamPlayer) {
+      const playerTeams = getPlayerTeamsAtDate(teamPlayer, new Date(game.date))
+      game[color].team = teams.find(t => playerTeams.some(({ team_id }) => t._id.equals(team_id)))
+    }
+    if (!game[color].team) {
+      const errMsg = `no team found for ${color} in match ${game.match_id}`
+      throw new UnRecoverableError('NO_TEAM_IDENTIFIED', errMsg)
+    }
   })
   // assign team_id and player_id to players
   colors.forEach(color => {
@@ -64,7 +74,8 @@ const assignMatchWin = (games, match) => {
     teamWins.length > 1 ? (teamWins[0].wins > teamWins[1].wins ? teamWins[0].id : teamWins[1].id) : teamWins[0].id
   const maxWins = Math.max(...teamWins.map(t => t.wins))
   if (match.best_of && maxWins < match.best_of / 2) {
-    throw new Error(`expected a team to with the best of ${match.best_of} match, but winning team has only ${maxWins}`)
+    const errMsg = `expected a team to win the best of ${match.best_of} match, but winning team has only ${maxWins}`
+    throw new UnRecoverableError('BEST_OF_NOT_MET', errMsg)
   }
   games.forEach(game => {
     const winnerColor = colors.find(color => game[color].team._id === winnerId)

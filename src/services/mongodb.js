@@ -32,6 +32,7 @@ const connect = () => {
       socketTimeoutMS: 120000,
       useNewUrlParser: true,
       retryWrites: true,
+      useUnifiedTopology: true,
     })
   }
   return mongoose

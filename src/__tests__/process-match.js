@@ -282,6 +282,7 @@ describe('process-match', () => {
         '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
         '4ed12225-7251-4d63-8bb6-15338c60bcf2',
       ],
+      unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
     expect(result).toMatchObject({
       match_id: '5ebc62b0d09245d2a7c6340c',
@@ -526,6 +527,7 @@ describe('process-match', () => {
     })
     expect(result).toMatchObject({
       match_id: '5ebc62b0d09245d2a7c6340c',
+      unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
     expect(result.game_ids).toHaveLength(4)
   })
@@ -561,7 +563,7 @@ describe('process-match', () => {
           '111c0144-7219-426a-8263-8cff260d030d',
         ],
       }),
-    ).rejects.toEqual(new Error('expected a team to with the best of 5 match, but winning team has only 2'))
+    ).rejects.toEqual(new Error('expected a team to win the best of 5 match, but winning team has only 2'))
   })
   it('should throw an error if exactly one match is not returned', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
@@ -591,6 +593,6 @@ describe('process-match', () => {
           '4ed12225-7251-4d63-8bb6-15338c60bcf2',
         ],
       }),
-    ).rejects.toEqual(new Error('no league id passed for new match'))
+    ).rejects.toEqual(new Error('no league id or game ids passed for new match'))
   })
 })

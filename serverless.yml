@@ -55,6 +55,7 @@ provider:
     MONGODB_PASSWORD: ${ssm:${self:provider.stage}-mnrl-db-pass~true}
     MONGODB_HOST: ${self:custom.dbHost.${self:provider.stage}, self:custom.dbHost.notprod}
     MNRL_BOT_URL: https://rl-rank-bot.herokuapp.com
+    ERROR_CHANNEL_ID: '692994579305332806'
   iamRoleStatements:
     - Effect: Allow
       Action:
