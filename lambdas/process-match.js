@@ -19,7 +19,7 @@ const handler = async event => {
       if (err instanceof RecoverableError) {
         throw err // this will put the message back on the queue for re-processing
       } else {
-        if (!err.code) {
+        if (!err.code || !message.reply_to_channel) {
           // this is an error which we have not planned for
           await reportError(err)
         }
