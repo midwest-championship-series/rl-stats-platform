@@ -12,6 +12,8 @@ const processPlayer = (game, player) => {
   return {
     player_id: player.league_id,
     player_name: player.name,
+    player_platform: player.id.platform,
+    player_platform_id: player.id.id,
     screen_name: player.name,
     team_id: player.team_id,
     team_name: player.team_name,
