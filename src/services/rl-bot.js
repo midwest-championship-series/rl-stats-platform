@@ -8,7 +8,9 @@ const reportError = error => {
 }
 
 const sendToChannel = (channelId, message) => {
-  return axios.post([botUrl, 'api', 'v1', 'channels', channelId].join('/'), { message })
+  return axios.post([botUrl, 'api', 'v1', 'channels', channelId].join('/'), {
+    message: `${process.env.SERVERLESS_STAGE}:\n${message}`,
+  })
 }
 
 module.exports = {

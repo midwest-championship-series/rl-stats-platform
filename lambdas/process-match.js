@@ -19,7 +19,7 @@ const handler = async event => {
           match.week
         } match between ${teams.map(t => t.name).join(' and ')}`
         unlinkedPlayers.forEach(p => {
-          unlinkedPlayerReport += `\nname: ${p.name}, platform: ${p.platform}, platform_id: ${p.platform_id}`
+          unlinkedPlayerReport += `\nname: ${p.name} !linkplayer ${p.platform}:${p.platform_id}`
         })
         await reportError(unlinkedPlayerReport)
       }
