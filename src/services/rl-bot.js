@@ -8,8 +8,9 @@ const reportError = error => {
 }
 
 const sendToChannel = (channelId, message) => {
+  const stageMsg = process.env.SERVERLESS_STAGE !== 'prod' ? `${process.env.SERVERLESS_STAGE}:\n` : ''
   return axios.post([botUrl, 'api', 'v1', 'channels', channelId].join('/'), {
-    message: `${process.env.SERVERLESS_STAGE}:\n${message}`,
+    message: `${stageMsg}${message}`,
   })
 }
 
