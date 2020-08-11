@@ -1,14 +1,8 @@
+const { Model: Players } = require('./model/mongodb/players')
 const { Model: Matches } = require('./model/mongodb/matches')
 const { Model: Seasons } = require('./model/mongodb/seasons')
 const { Model: Leagues } = require('./model/mongodb/leagues')
 const sqs = require('./services/aws').sqs
-
-// Array.prototype.reduceSubArray =
-
-// const modelMap = {
-//   matches: Matches,
-//   seasons: Seasons,
-// }
 
 const reduceArray = (docs, prop) => {
   return docs.reduce((result, item) => {
@@ -23,17 +17,30 @@ const matchGetters = {
   },
   seasons: criteria => {
     return Seasons.find({ ...criteria })
-      .populate('matches')
-      .populate('games')
+      .populate({
+        path: 'matches',
+        populate: { path: 'games' },
+      })
       .then(seasons => reduceArray(seasons, 'matches'))
   },
   leagues: criteria => {
     return Leagues.find({ ...criteria })
-      .populate('seasons')
-      .populate('matches')
-      .populate('games')
+      .populate({
+        path: 'seasons',
+        populate: {
+          path: 'matches',
+          populate: { path: 'games' },
+        },
+      })
       .then(leagues => reduceArray(leagues, 'seasons'))
       .then(seasons => reduceArray(seasons, 'matches'))
+  },
+  players: criteria => {
+    return Players.find({ ...criteria }).then(players => {
+      return Matches.find({
+        'players_to_teams.player_id': { $in: players.map(p => p._id) },
+      }).populate('games')
+    })
   },
 }
 
