@@ -17,7 +17,7 @@ const handler = async event => {
       if (unlinkedPlayers.length > 0) {
         let unlinkedPlayerReport = `unlinked players found in ${league.name} week ${
           match.week
-        } match between ${teams.map(t => t.name).join(' and ')}`
+        } match between ${teams.map(t => t.name).join(' and ')} match id: ${match._id}`
         unlinkedPlayers.forEach(p => {
           unlinkedPlayerReport += `\nname: ${p.name} !linkplayer ${p.platform}:${p.platform_id}`
         })

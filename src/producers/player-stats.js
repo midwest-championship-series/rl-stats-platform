@@ -63,5 +63,5 @@ module.exports = game => {
     }
   })
   // return only players which have ids in our system
-  return playerStats.filter(p => !!p.player_id)
+  return playerStats
 }
