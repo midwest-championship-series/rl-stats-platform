@@ -25,6 +25,7 @@ const schema = {
     ],
     default: [],
   },
+  permissions: [{ type: String }],
   /** @deprecated all the below properties are deprecated 8/3/2020 */
   old_id: { type: String },
   old_league_id: { type: String },
