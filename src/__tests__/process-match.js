@@ -282,7 +282,6 @@ describe('process-match', () => {
         '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
         '4ed12225-7251-4d63-8bb6-15338c60bcf2',
       ],
-      unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
     expect(result).toMatchObject({
       match_id: '5ebc62b0d09245d2a7c6340c',
@@ -292,6 +291,7 @@ describe('process-match', () => {
         '5ebc62afd09245d2a7c6335e',
         '5ebc62afd09245d2a7c63350',
       ],
+      unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
     expect(players.Model.find).toHaveBeenCalledWith({
       $or: [
@@ -450,11 +450,13 @@ describe('process-match', () => {
     })
     expect(playerGames.upsert.mock.calls.length).toBe(1)
     const playerStats = playerGames.upsert.mock.calls[0][0]
+    expect(playerStats).toHaveProperty('data')
     const findPlayerStats = criteria => {
       return playerStats.data.filter(stat => Object.keys(criteria).every(key => stat[key] === criteria[key]))
     }
-    expect(playerStats).toHaveProperty('data')
-    expect(playerStats.data).toHaveLength(20)
+    // ensure there are 6 player records per game
+    expect(playerStats.data).toHaveLength(24)
+    expect(findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })).toHaveLength(6)
     expect(
       findPlayerStats({ player_id: '5ec04239d09245d2a7d4fa26', game_id: '5ebc62afd09245d2a7c63338' })[0],
     ).toMatchObject({
@@ -513,6 +515,17 @@ describe('process-match', () => {
         })
       }
     })
+    const noLeagueIdRecords = findPlayerStats({ player_platform_id: '76561198118651841' })
+    expect(noLeagueIdRecords).toHaveLength(4)
+    noLeagueIdRecords.forEach(r =>
+      expect(r).toMatchObject({
+        player_id: undefined,
+        player_name: 'MARKsman.',
+        screen_name: 'MARKsman.',
+        player_platform: 'steam',
+        player_platform_id: '76561198118651841',
+      }),
+    )
   })
   it('should process a new match', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
