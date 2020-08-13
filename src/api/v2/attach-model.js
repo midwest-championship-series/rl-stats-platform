@@ -1,5 +1,7 @@
 const express = require('express')
 
+const docsHandler = require('./docs')
+
 const populateQuery = (query, populations) => {
   if (populations) {
     populations.forEach(p => {
@@ -26,6 +28,8 @@ const populateQuery = (query, populations) => {
 
 module.exports = Model => {
   const router = express.Router()
+
+  router.get('/_docs', docsHandler(Model))
 
   router.get('/', async (req, res, next) => {
     req.context = await populateQuery(Model.find(req.query), req.populate).exec()
