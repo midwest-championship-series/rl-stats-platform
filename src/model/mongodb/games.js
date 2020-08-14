@@ -10,9 +10,6 @@ const Model = createModel(
     // winner_id: { type: Schema.Types.ObjectId },
     date_time_played: { type: Date },
     date_time_processed: { type: Date },
-    /** @deprecated all the below properties are deprecated 8/3/2020 */
-    old_id: { type: String },
-    old_match_id: { type: String },
   },
   schema => {
     schema.virtual('match', {
@@ -24,17 +21,4 @@ const Model = createModel(
   },
 )
 
-module.exports = {
-  get: ({ criteria }) => Model.find(criteria).exec(),
-  add: ({ data }) =>
-    Promise.all(
-      data.map(d =>
-        Model.findOneAndUpdate(
-          { old_id: d.old_id },
-          { $set: d },
-          { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
-        ).exec(),
-      ),
-    ),
-  Model,
-}
+module.exports = { Model }

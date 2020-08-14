@@ -242,7 +242,7 @@ teams.Model = {
 }
 const leagues = require('../model/mongodb/leagues')
 const leaguesFindByIdMock = jest.fn().mockResolvedValue({
-  current_season_object: {
+  current_season: {
     team_ids: [
       new ObjectId('5ebc62a9d09245d2a7c62e5a'),
       new ObjectId('5ebc62a9d09245d2a7c62e82'),

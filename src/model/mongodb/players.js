@@ -15,7 +15,6 @@ const schema = {
   },
   avatar: { type: String }, // url with discord avatar url, to which a ?size=128 parameter can be added with desired size
   screen_name: { type: String },
-  league_id: { type: Schema.Types.ObjectId },
   accounts: {
     type: [
       {
@@ -26,36 +25,8 @@ const schema = {
     default: [],
   },
   permissions: [{ type: String }],
-  /** @deprecated all the below properties are deprecated 8/3/2020 */
-  old_id: { type: String },
-  old_league_id: { type: String },
-  team_id: { type: Schema.Types.ObjectId },
-  old_team_id: { type: String },
 }
 
-const Model = createModel('Player', schema, schema => {
-  schema.set('toJSON', {
-    ...schema.toJSON,
-    transform: function(doc, ret) {
-      /** @todo remove ret.accounts */
-      if (ret.team_history && ret.team_history[0]) {
-        ret.team_id = ret.team_history[0].team_id
-      }
-    },
-  })
-})
+const Model = createModel('Player', schema)
 
-module.exports = {
-  get: ({ criteria }) => Model.find(criteria).exec(),
-  add: ({ data }) =>
-    Promise.all(
-      data.map(d =>
-        Model.findOneAndUpdate(
-          { old_id: d.old_id },
-          { $set: d },
-          { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
-        ).exec(),
-      ),
-    ),
-  Model,
-}
+module.exports = { Model }
