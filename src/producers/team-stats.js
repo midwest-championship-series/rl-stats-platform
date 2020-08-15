@@ -25,9 +25,9 @@ const processTeam = (game, color) => {
     game_date: game.date,
     game_number: game.game_number.toString(),
     map_name: game.map_name,
-    wins: stats.goals > stats.opponent_goals ? 1 : 0,
+    wins: game.winning_team_id.equals(game[color].team._id) ? 1 : 0,
     match_id_win: game[color].match_id_win,
-    game_id_win: stats.goals > stats.opponent_goals ? game.game_id : undefined,
+    game_id_win: game.winning_team_id.equals(game[color].team._id) ? game.game_id : undefined,
     ms_played: game.duration * 1000,
     ...stats,
   }

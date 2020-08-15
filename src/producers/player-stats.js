@@ -31,8 +31,8 @@ const processPlayer = (game, player) => {
     game_date: game.date,
     map_name: game.map_name,
     match_id_win: game[player.team_color].match_id_win,
-    game_id_win: teamStats.goals > opponentTeamStats.goals ? game.game_id : undefined,
-    wins: teamStats.goals > opponentTeamStats.goals ? 1 : 0,
+    game_id_win: game.winning_team_id.equals(player.team_id) ? game.game_id : undefined,
+    wins: game.winning_team_id.equals(player.team_id) ? 1 : 0,
     ms_played: (player.end_time - player.start_time) * 1000,
     ...stats,
   }

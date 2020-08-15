@@ -6,8 +6,7 @@ const Model = createModel(
   {
     ballchasing_id: { type: String, required: true },
     status: { type: String, default: 'open' },
-    /** @todo add winner_ids to games */
-    // winner_id: { type: Schema.Types.ObjectId },
+    winning_team_id: { type: Schema.Types.ObjectId },
     date_time_played: { type: Date },
     date_time_processed: { type: Date },
   },
