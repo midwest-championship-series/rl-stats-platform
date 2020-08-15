@@ -17,7 +17,7 @@ const handler = async event => {
         wins: games.filter(g => !g.winning_team_id.equals(match.winning_team_id)).length,
       }
       let reportMessage = `successfully processed week ${match.week} match\n\n`
-      reportMessage += `${winner.team.name} defeats ${loser.team.name} (${winner.wins}-${loser.wins})`
+      reportMessage += `${winner.team.name} defeated ${loser.team.name} (${winner.wins}-${loser.wins})`
       if (message.reply_to_channel) {
         await sendToChannel(message.reply_to_channel, reportMessage)
       }
