@@ -42,7 +42,7 @@ const query = Model => {
   console.log('getting stuff')
   let description = `Query helpers are available on some models in order to support queries which are not possible via a direct match. `
   description += `They are placed in the query parameters on the GET /v2/${Model.collection.collectionName} endpoint. Each query helper has its own description of how it operates.`
-  const orDescription = `'or' allows you to specify fields which exist in the query string, but should be considered optional rather than mandatory. `
+  let orDescription = `'or' allows you to specify fields which exist in the query string, but should be considered optional rather than mandatory. `
   orDescription += `For example, if you want to find all of the matches with status: 'open' OR week: 6, you could retrieve it with `
   orDescription += `GET /v2/matches?status=open&week=6&or=status&or=week Note that 'or' should always be specified for multiple parameters, otherwise it is not being useful`
   orDescription += `\n\n`

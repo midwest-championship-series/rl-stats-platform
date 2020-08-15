@@ -10,6 +10,9 @@ class InvalidQueryError extends Error {
 }
 
 const buildQuery = (query, params) => {
+  if (params.populate) {
+    delete params.populate
+  }
   if (params.or) {
     if (typeof params.or === 'string') {
       params.or = [params.or]
