@@ -6,4 +6,17 @@ const mongooseValidation = (err, req, res, next) => {
   }
 }
 
-module.exports = [mongooseValidation]
+const queryValidation = (err, req, res, next) => {
+  if (err.name === 'InvalidQueryError') {
+    return res.status(400).send({ name: err.name, message: err.message })
+  } else {
+    next()
+  }
+}
+
+const defaultError = (err, req, res, next) => {
+  console.error(err)
+  return res.status(500).send({ error: process.env.SERVERLESS_STAGE === 'prod' ? err.name : err })
+}
+
+module.exports = [mongooseValidation, queryValidation, defaultError]

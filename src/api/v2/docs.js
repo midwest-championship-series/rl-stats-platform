@@ -1,7 +1,6 @@
 const virtuals = Model => {
   const modelVirtuals = Model.schema.virtuals
   const res = Object.keys(modelVirtuals).reduce((result, item) => {
-    // result[item] = Object.assign({}, modelVirtuals[item])
     result[item] = { ...modelVirtuals[item], ...modelVirtuals[item].options }
     delete result[item].getters
     delete result[item].setters
@@ -39,11 +38,32 @@ const core = Model => {
   }
 }
 
+const query = Model => {
+  console.log('getting stuff')
+  let description = `Query helpers are available on some models in order to support queries which are not possible via a direct match. `
+  description += `They are placed in the query parameters on the GET /v2/${Model.collection.collectionName} endpoint. Each query helper has its own description of how it operates.`
+  const orDescription = `'or' allows you to specify fields which exist in the query string, but should be considered optional rather than mandatory. `
+  orDescription += `For example, if you want to find all of the matches with status: 'open' OR week: 6, you could retrieve it with `
+  orDescription += `GET /v2/matches?status=open&week=6&or=status&or=week Note that 'or' should always be specified for multiple parameters, otherwise it is not being useful`
+  orDescription += `\n\n`
+  orDescription += `If you want to do an 'or' operation on the same field, you do not need to use the 'or' query helper. You can simply specify multiple values for the `
+  orDescription += `property in your query, e.g. GET /v2/matches?_id=5ec935988c0dd900074686a5&_id=5ec935988c0dd900074686b1 returns matches with either of those ids. `
+  orDescription += `The rest of the properties not specified in 'or' are defaulted to an 'and' condition, and will need to evaluate to true in order to be returned.`
+  return {
+    description,
+    or: {
+      path: 'or',
+      description: orDescription,
+    },
+  }
+}
+
 module.exports = Model => {
   return async (req, res, next) => {
     const docs = {
       core: core(Model),
       virtuals: virtuals(Model),
+      query: query(Model),
     }
     return res.status(200).send(docs)
   }
