@@ -29,7 +29,7 @@ const handler = async () => {
   ])
   const gamesUpdated = await unsetProperties(Games, ['old_id', 'old_match_id'])
   const leaguesUpdated = await unsetProperties(Leagues, ['current_season'])
-  const matchesModified = await unsetProperties(Matches, ['team_ids', 'old_id', 'old_team_ids'])
+  const matchesModified = await unsetProperties(Matches, ['old_id', 'old_team_ids'])
   const teamsModified = await unsetProperties(Teams, ['league_id', 'old_id', 'old_league_id', 'league'])
   return { playersUpdated, gamesUpdated, leaguesUpdated, matchesModified, teamsModified }
 }
