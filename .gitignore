@@ -29,3 +29,6 @@ node_modules
 *.creds.*
 .env
 config*
+
+# temporary files
+tmp/

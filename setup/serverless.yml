@@ -5,7 +5,7 @@ custom: ${file(../config.yml)}
 provider:
   name: aws
   runtime: nodejs12.x
-  profile: personal
+  profile: rl-stats
   region: ${opt:region, 'us-east-1'}
   versionFunctions: false
   stage: prod # there is only one stage for setup, don't want it deployed more than once per region/account
