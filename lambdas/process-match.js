@@ -7,10 +7,17 @@ const handler = async event => {
   const messages = event.Records.map(r => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
   for (let message of messages) {
     try {
-      const { league, match, teams, unlinkedPlayers } = await processMatch(message)
-      const reportMessage = `successfully processed week ${match.week} match between ${teams
-        .map(t => t.name)
-        .join(' and ')}`
+      const { league, match, games, teams, unlinkedPlayers } = await processMatch(message)
+      const winner = {
+        team: teams.find(t => match.winning_team_id.equals(t._id)),
+        wins: games.filter(g => g.winning_team_id.equals(match.winning_team_id)).length,
+      }
+      const loser = {
+        team: teams.find(t => !match.winning_team_id.equals(t._id)),
+        wins: games.filter(g => !g.winning_team_id.equals(match.winning_team_id)).length,
+      }
+      let reportMessage = `successfully processed week ${match.week} match\n\n`
+      reportMessage += `${winner.team.name} defeats ${loser.team.name} (${winner.wins}-${loser.wins})`
       if (message.reply_to_channel) {
         await sendToChannel(message.reply_to_channel, reportMessage)
       }
