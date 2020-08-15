@@ -4,6 +4,10 @@ const createModel = require('../../services/mongodb')
 const Model = createModel(
   'Match',
   {
+    team_ids: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Team' }],
+      required: true,
+    },
     players_to_teams: {
       type: [
         {
@@ -20,6 +24,9 @@ const Model = createModel(
     winning_team_id: { type: Schema.Types.ObjectId },
   },
   schema => {
+    schema.path('team_ids').validate(function(val) {
+      return val.length === 2
+    }, 'expected `{PATH}` to contain two unique team ids')
     schema.path('players_to_teams').validate(function(val) {
       return [...new Set(val.map(({ team_id }) => team_id.toHexString()))].length === 2
     }, 'expected `{PATH}` to contain two unique team ids')
@@ -30,7 +37,7 @@ const Model = createModel(
     })
     schema.virtual('teams', {
       ref: 'Team',
-      localField: 'players_to_teams.team_id',
+      localField: 'team_ids',
       foreignField: '_id',
     })
     schema.virtual('players', {
