@@ -1,5 +1,33 @@
 const express = require('express')
 
+const docsHandler = require('./docs')
+
+class InvalidQueryError extends Error {
+  constructor(msg) {
+    super(msg)
+    this.name = 'InvalidQueryError'
+  }
+}
+
+const buildQuery = (query, params) => {
+  if (params.or) {
+    if (typeof params.or === 'string') {
+      params.or = [params.or]
+    }
+    params.or.forEach(p => {
+      const orQuery = {}
+      if (!params[p]) {
+        throw new InvalidQueryError(`${p} is listed as an 'or' parameter but does not exist in query params`)
+      }
+      orQuery[p] = params[p]
+      query = query.or(orQuery)
+      delete params[p]
+    })
+    delete params.or
+  }
+  return query.where(params)
+}
+
 const populateQuery = (query, populations) => {
   if (populations) {
     populations.forEach(p => {
@@ -27,8 +55,10 @@ const populateQuery = (query, populations) => {
 module.exports = Model => {
   const router = express.Router()
 
+  router.get('/_docs', docsHandler(Model))
+
   router.get('/', async (req, res, next) => {
-    req.context = await populateQuery(Model.find(req.query), req.populate).exec()
+    req.context = await populateQuery(buildQuery(Model.find(), req.query), req.populate).exec()
     next()
   })
 

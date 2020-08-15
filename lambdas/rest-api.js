@@ -5,9 +5,6 @@ const app = express()
 require('../src/model/mongodb')
 
 app.use(bodyParser.json())
-app.get('/healthcheck', (req, res, next) => {
-  return res.status(200).send({ status: 'ok' })
-})
 app.use('/', require('../src/api'))
 
 // or as a promise

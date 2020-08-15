@@ -4,10 +4,6 @@ const createModel = require('../../services/mongodb')
 const Model = createModel(
   'Match',
   {
-    team_ids: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'Team' }],
-      required: true,
-    },
     players_to_teams: {
       type: [
         {
@@ -15,19 +11,17 @@ const Model = createModel(
           team_id: { type: Schema.Types.ObjectId, required: true },
         },
       ],
+      required: true,
     },
     week: { type: Number, required: true },
     status: { type: String, default: 'open' },
     game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
     best_of: { type: Number },
-    /** @deprecated all the below properties are deprecated 8/3/2020 */
-    old_id: { type: String },
-    old_team_ids: [{ type: String }],
   },
   schema => {
-    schema.path('team_ids').validate(function(val) {
-      return val.length === 2
-    })
+    schema.path('players_to_teams').validate(function(val) {
+      return [...new Set(val.map(({ team_id }) => team_id.toHexString()))].length === 2
+    }, 'expected `{PATH}` to contain two unique team ids')
     schema.virtual('games', {
       ref: 'Game',
       localField: 'game_ids',
@@ -35,7 +29,7 @@ const Model = createModel(
     })
     schema.virtual('teams', {
       ref: 'Team',
-      localField: 'team_ids',
+      localField: 'players_to_teams.team_id',
       foreignField: '_id',
     })
     schema.virtual('players', {
@@ -48,18 +42,6 @@ const Model = createModel(
       localField: '_id',
       foreignField: 'match_ids',
       justOne: true,
-    })
-    schema.set('toJSON', {
-      virtuals: true,
-      transform: function(doc, ret) {
-        if (ret.players && ret.teams) {
-          ret.teams.forEach(t => {
-            t.match_players = ret.players_to_teams
-              .filter(({ team_id }) => t._id.equals(team_id))
-              .map(({ player_id }) => ret.players.find(p => p._id.equals(player_id)))
-          })
-        }
-      },
     })
     schema.pre('validate', function() {
       const minGames = Math.ceil(this.best_of / 2)
@@ -79,17 +61,4 @@ const Model = createModel(
   },
 )
 
-module.exports = {
-  get: ({ criteria }) => Model.find(criteria).exec(),
-  add: ({ data }) =>
-    Promise.all(
-      data.map(d =>
-        Model.findOneAndUpdate(
-          { old_id: d.old_id },
-          { $set: d },
-          { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
-        ).exec(),
-      ),
-    ),
-  Model,
-}
+module.exports = { Model }

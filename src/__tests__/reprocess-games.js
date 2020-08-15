@@ -19,11 +19,11 @@ matches.Model = {
 }
 const seasonsFindMock = jest.fn()
 seasons.Model = {
-  find: jest.fn(() => ({ populate: jest.fn(() => ({ populate: seasonsFindMock })) })),
+  find: jest.fn(() => ({ populate: seasonsFindMock })),
 }
 const leaguesFindMock = jest.fn()
 leagues.Model = {
-  find: jest.fn(() => ({ populate: jest.fn(() => ({ populate: jest.fn(() => ({ populate: leaguesFindMock })) })) })),
+  find: jest.fn(() => ({ populate: leaguesFindMock })),
 }
 
 const mockMatches = [

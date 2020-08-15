@@ -40,17 +40,4 @@ const Model = createModel(
   },
 )
 
-module.exports = {
-  get: ({ criteria }) => Model.find(criteria).exec(),
-  add: ({ data }) =>
-    Promise.all(
-      data.map(d =>
-        Model.findOneAndUpdate(
-          { name: d.name, season_type: d.season_type },
-          { $set: d },
-          { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
-        ).exec(),
-      ),
-    ),
-  Model,
-}
+module.exports = { Model }

@@ -87,8 +87,8 @@ const getMatchInfoById = async matchId => {
 }
 
 const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
-  const league = await Leagues.findById(leagueId).populate('current_season_object')
-  const seasonTeams = league.current_season_object.team_ids
+  const league = await Leagues.findById(leagueId).populate('current_season')
+  const seasonTeams = league.current_season.team_ids
   const teams = (await Teams.find(buildTeamsQueryFromPlayers(players, matchDate))).filter(team =>
     seasonTeams.some(id => id.equals(team._id)),
   )
