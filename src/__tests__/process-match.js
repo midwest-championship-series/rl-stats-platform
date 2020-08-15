@@ -293,6 +293,8 @@ describe('process-match', () => {
       ],
       unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
+    expect(result.games).toHaveLength(4)
+    expect(result.games[0].winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62e86'))
     expect(players.Model.find).toHaveBeenCalledWith({
       $or: [
         {
@@ -348,6 +350,8 @@ describe('process-match', () => {
     expect(matches.Model.findById).toHaveBeenCalledWith('5ebc62b0d09245d2a7c6340c')
     expect(teamGames.upsert.mock.calls.length).toBe(1)
     expect(playerGames.upsert.mock.calls.length).toBe(1)
+    expect(mockClosedMatch).toHaveProperty('winning_team_id')
+    expect(mockClosedMatch.winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62e86'))
     expect(mockClosedMatch).toHaveProperty('players_to_teams')
     expect(mockClosedMatch.players_to_teams).toEqual([
       {

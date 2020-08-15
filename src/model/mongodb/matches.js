@@ -17,6 +17,7 @@ const Model = createModel(
     status: { type: String, default: 'open' },
     game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
     best_of: { type: Number },
+    winning_team_id: { type: Schema.Types.ObjectId },
   },
   schema => {
     schema.path('players_to_teams').validate(function(val) {

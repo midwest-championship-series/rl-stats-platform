@@ -59,27 +59,38 @@ const assignLeagueIds = (game, { league, season, match, players, teams, games })
   return { playerTeamMap }
 }
 
-const assignMatchWin = (games, match) => {
-  const teamWins = games.reduce((result, game) => {
+const assignWins = (games, match, leagueGames) => {
+  const orangeId = games[0].orange.team._id
+  const blueId = games[0].blue.team._id
+  const wins = {
+    [orangeId]: 0,
+    [blueId]: 0,
+  }
+  games.forEach(game => {
     const winner = game.orange.stats.core.goals > game.blue.stats.core.goals ? 'orange' : 'blue'
-    const winningTeam = result.find(r => r.id === game[winner].team._id)
-    if (!winningTeam) {
-      result.push({ id: game[winner].team._id, wins: 1 })
-    } else {
-      winningTeam.wins++
-    }
-    return result
-  }, [])
-  const winnerId =
-    teamWins.length > 1 ? (teamWins[0].wins > teamWins[1].wins ? teamWins[0].id : teamWins[1].id) : teamWins[0].id
-  const maxWins = Math.max(...teamWins.map(t => t.wins))
+    const winnerId = game[winner].team._id
+    game.winning_team_id = winnerId
+    wins[winnerId]++
+  })
+  if (wins[orangeId] === wins[blueId]) {
+    throw new UnRecoverableError('BEST_OF_NOT_MET', `both teams should not have win count equal to ${wins[orangeId]}`)
+  }
+
+  const winnerId = wins[orangeId] > wins[blueId] ? orangeId : blueId
+  const maxWins = Math.max(wins[orangeId], wins[blueId])
+  match.winning_team_id = winnerId
   if (match.best_of && maxWins < match.best_of / 2) {
     const errMsg = `expected a team to win the best of ${match.best_of} match, but winning team has only ${maxWins}`
     throw new UnRecoverableError('BEST_OF_NOT_MET', errMsg)
   }
   games.forEach(game => {
-    const winnerColor = colors.find(color => game[color].team._id === winnerId)
+    const winnerColor = colors.find(color => game[color].team._id.equals(winnerId))
     game[winnerColor].match_id_win = game.match_id
+  })
+  // map the wins back to the games which will be saved in the db
+  leagueGames.forEach(game => {
+    const dataGame = games.find(g => game._id.equals(g.game_id))
+    game.winning_team_id = dataGame.winning_team_id
   })
 }
 
@@ -93,7 +104,7 @@ module.exports = (games, leagueInfo) => {
     playersToTeams = playersToTeams.concat(playerTeamMap)
     gameNumber++
   }
-  assignMatchWin(games, leagueInfo.match)
+  assignWins(games, leagueInfo.match, leagueInfo.games)
   return {
     teamStats: games.reduce((result, game) => result.concat(teamStats(game)), []),
     playerStats: games.reduce((result, game) => result.concat(playerStats(game)), []),
