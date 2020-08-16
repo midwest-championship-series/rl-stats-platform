@@ -39,7 +39,6 @@ const core = Model => {
 }
 
 const query = Model => {
-  console.log('getting stuff')
   let description = `Query helpers are available on some models in order to support queries which are not possible via a direct match. `
   description += `They are placed in the query parameters on the GET /v2/${Model.collection.collectionName} endpoint. Each query helper has its own description of how it operates.`
   let orDescription = `'or' allows you to specify fields which exist in the query string, but should be considered optional rather than mandatory. `
