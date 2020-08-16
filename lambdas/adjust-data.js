@@ -16,25 +16,27 @@ const handler = async () => {
     league.current_week = (lastPlayedMatch && lastPlayedMatch.week) || sortedMatches.reverse()[0].week
     await league.save()
     for (let season of league.seasons) {
-      season.team_ids = season.matches.reduce((result, match) => {
+      const allTeams = season.matches.reduce((result, match) => {
         for (let id of match.team_ids) {
-          console.log('id', id)
           if (!result.some(x => x.equals(id))) {
             result.push(id)
           }
         }
         return result
       }, [])
-      season.player_ids = season.matches.reduce((result, match) => {
+      const allPlayers = season.matches.reduce((result, match) => {
         if (match.players_to_teams) {
-          for (let id of match.players_to_teams) {
-            if (!result.some(x => x.equals(id))) {
-              result.push(id)
+          for (let map of match.players_to_teams) {
+            const playerId = map.player_id
+            if (playerId && !result.some(x => x.equals(playerId))) {
+              result.push(playerId)
             }
           }
         }
         return result
       }, [])
+      season.team_ids = [...allTeams]
+      season.player_ids = [...allPlayers]
       await season.save()
     }
   }
