@@ -1,27 +1,19 @@
 require('../src/model/mongodb')
 const processMatch = require('../src/process-match')
-const { sendToChannel, reportError } = require('../src/services/rl-bot')
+const { sendToChannel, sendEmbedToChannel, reportError } = require('../src/services/rl-bot')
 const { RecoverableError } = require('../src/util/errors')
+const getSummary = require('../src/match-summary')
 
 const handler = async event => {
   const messages = event.Records.map(r => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
   for (let message of messages) {
     try {
-      const { league, match, games, teams, unlinkedPlayers } = await processMatch(message)
-      const winner = {
-        team: teams.find(t => match.winning_team_id.equals(t._id)),
-        wins: games.filter(g => g.winning_team_id.equals(match.winning_team_id)).length,
-      }
-      const loser = {
-        team: teams.find(t => !match.winning_team_id.equals(t._id)),
-        wins: games.filter(g => !g.winning_team_id.equals(match.winning_team_id)).length,
-      }
-      let reportMessage = `successfully processed week ${match.week} match\n\n`
-      reportMessage += `${winner.team.name} defeated ${loser.team.name} (${winner.wins}-${loser.wins})`
+      const data = await processMatch(message)
       if (message.reply_to_channel) {
-        await sendToChannel(message.reply_to_channel, reportMessage)
+        await sendEmbedToChannel(message.reply_to_channel, getSummary(data))
       }
-      if (unlinkedPlayers.length > 0) {
+      if (data.unlinkedPlayers.length > 0) {
+        const { unlinkedPlayers, teams, match, league } = data
         let unlinkedPlayerReport = `unlinked players found in ${league.name} week ${
           match.week
         } match between ${teams.map(t => t.name).join(' and ')} match id: ${match._id}`

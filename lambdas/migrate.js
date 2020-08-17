@@ -1,37 +1,33 @@
 require('../src/model/mongodb')
-const { Players, Teams, Games, Leagues, Matches } = require('../src/model/mongodb')
-
-const unsetProperties = async (Model, properties) => {
-  const $or = properties.map(p => ({ [p]: { $exists: true } }))
-  const $unset = properties.reduce((result, property) => {
-    result[property] = ''
-    return result
-  }, {})
-  const { nModified } = await Model.update(
-    {
-      $or,
-    },
-    {
-      $unset,
-    },
-    { multi: true, strict: false },
-  )
-  return nModified
-}
+const { Leagues } = require('../src/model/mongodb')
 
 const handler = async () => {
-  const playersUpdated = await unsetProperties(Players, [
-    'old_id',
-    'old_league_id',
-    'old_team_id',
-    'league_id',
-    'team_id',
-  ])
-  const gamesUpdated = await unsetProperties(Games, ['old_id', 'old_match_id'])
-  const leaguesUpdated = await unsetProperties(Leagues, ['current_season'])
-  const matchesModified = await unsetProperties(Matches, ['old_id', 'old_team_ids'])
-  const teamsModified = await unsetProperties(Teams, ['league_id', 'old_id', 'old_league_id', 'league'])
-  return { playersUpdated, gamesUpdated, leaguesUpdated, matchesModified, teamsModified }
+  const [mncs] = await Leagues.find({ name: 'mncs' })
+  const [clmn] = await Leagues.find({ name: 'clmn' })
+  mncs.urls = [
+    { name: 'stats', url: 'https://datastudio.google.com/s/gYDmjMXTvZk' },
+    {
+      name: 'logo',
+      url: 'https://cdn.discordapp.com/attachments/692994579305332806/744778007314563092/mncs_logo_clear.webp',
+    },
+    {
+      name: 'twitch',
+      url: 'https://www.twitch.tv/mnchampionshipseries',
+    },
+  ]
+  clmn.urls = [
+    { name: 'stats', url: 'https://datastudio.google.com/s/pnBKdF95Vg8' },
+    {
+      name: 'logo',
+      url: 'https://cdn.discordapp.com/attachments/692994579305332806/744778007314563092/mncs_logo_clear.webp',
+    },
+    {
+      name: 'twitch',
+      url: 'https://www.twitch.tv/mnchampionshipseries',
+    },
+  ]
+  await mncs.save()
+  await clmn.save()
 }
 
 module.exports = { handler }
