@@ -34,6 +34,9 @@ module.exports = data => {
   const groupedTeamStats = group(teamStats, 'team_id')
   const winner = teams.find(t => match.winning_team_id.equals(t._id))
   const loser = teams.find(t => !match.winning_team_id.equals(t._id))
+  const twitchUrl = league.urls && league.urls.find(u => u.name === 'twitch')
+  const statsUrl = league.urls && league.urls.find(u => u.name === 'stats')
+  const thumbUrl = league.urls && league.urls.find(u => u.name === 'logo')
 
   return {
     title: `${league.name.toUpperCase()} week ${match.week} ${teams.map(t => t.name).join(' vs ')}`,
@@ -41,13 +44,13 @@ module.exports = data => {
       groupedTeamStats[loser._id.toHexString()].wins
     })`,
     color: league.hex_color || '6caddf',
-    url: 'https://www.twitch.tv/videos',
+    url: twitchUrl && twitchUrl.url,
     author: {
       name: 'Minnesota Championship Series',
-      url: 'https://datastudio.google.com/s/gYDmjMXTvZk',
+      url: statsUrl && statsUrl.url,
     },
     thumbnail: {
-      url: 'https://cdn.discordapp.com/attachments/692994579305332806/744778007314563092/mncs_logo_clear.webp',
+      url: thumbUrl && thumbUrl.url,
     },
     fields: [
       {

@@ -4,7 +4,21 @@ const matchSummary = require('../match-summary')
 describe('match-summary', () => {
   it('should generate a match summary embed', () => {
     const data = {
-      league: { name: 'mncs', hex_color: '6caddf' },
+      league: {
+        name: 'mncs',
+        hex_color: '6caddf',
+        urls: [
+          { name: 'stats', url: 'https://datastudio.google.com/s/gYDmjMXTvZk' },
+          {
+            name: 'logo',
+            url: 'https://cdn.discordapp.com/attachments/692994579305332806/744778007314563092/mncs_logo_clear.webp',
+          },
+          {
+            name: 'twitch',
+            url: 'https://www.twitch.tv/mnchampionshipseries',
+          },
+        ],
+      },
       teams: [
         {
           _id: new ObjectId('5ec9358e8c0dd900074685c5'),
@@ -34,7 +48,7 @@ describe('match-summary', () => {
       title: `MNCS week 4 Bloomington Maulers vs St. Cloud Flyers`,
       description: `Bloomington Maulers defeated St. Cloud Flyers (3-1)`,
       color: '6caddf',
-      url: 'https://www.twitch.tv/videos',
+      url: 'https://www.twitch.tv/mnchampionshipseries',
       author: {
         name: 'Minnesota Championship Series',
         url: 'https://datastudio.google.com/s/gYDmjMXTvZk',
