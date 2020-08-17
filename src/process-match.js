@@ -178,5 +178,8 @@ module.exports = async filters => {
     teams,
     players,
     unlinkedPlayers,
+    teamStats,
+    playerStats,
+    playerTeamMap,
   }
 }

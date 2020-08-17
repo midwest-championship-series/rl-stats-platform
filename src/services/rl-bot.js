@@ -14,7 +14,12 @@ const sendToChannel = (channelId, message) => {
   })
 }
 
+const sendEmbedToChannel = (channelId, embed) => {
+  return axios.post([botUrl, 'api', 'v1', 'channels', channelId].join('/'), { embed })
+}
+
 module.exports = {
   reportError,
+  sendEmbedToChannel,
   sendToChannel,
 }
