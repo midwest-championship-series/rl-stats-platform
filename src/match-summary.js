@@ -30,7 +30,7 @@ const createSummaryField = (team, groupedStats) => {
 }
 
 module.exports = data => {
-  const { league, match, games, teams, teamStats } = data
+  const { league, match, teams, teamStats } = data
   const groupedTeamStats = group(teamStats, 'team_id')
   const winner = teams.find(t => match.winning_team_id.equals(t._id))
   const loser = teams.find(t => !match.winning_team_id.equals(t._id))

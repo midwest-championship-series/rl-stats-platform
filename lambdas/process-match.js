@@ -3,6 +3,7 @@ const processMatch = require('../src/process-match')
 const { sendToChannel, sendEmbedToChannel, reportError } = require('../src/services/rl-bot')
 const { RecoverableError } = require('../src/util/errors')
 const getSummary = require('../src/match-summary')
+const stage = process.env.SERVERLESS_STAGE
 
 const handler = async event => {
   const messages = event.Records.map(r => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
@@ -10,7 +11,19 @@ const handler = async event => {
     try {
       const data = await processMatch(message)
       if (message.reply_to_channel) {
-        await sendEmbedToChannel(message.reply_to_channel, getSummary(data))
+        await sendToChannel(
+          message.reply_to_channel,
+          `match processed successfully - match results posted to ${data.league.report_channel_ids
+            .map(c => `<#${c}>`)
+            .join(', ')}`,
+        )
+        for (let channel of data.league.report_channel_ids) {
+          if (stage === 'prod') {
+            await sendEmbedToChannel(channel, getSummary(data))
+          } else {
+            console.log('stubbing embed send')
+          }
+        }
       }
       if (data.unlinkedPlayers.length > 0) {
         const { unlinkedPlayers, teams, match, league } = data
