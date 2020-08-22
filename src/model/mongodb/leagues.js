@@ -7,6 +7,7 @@ const schema = {
   current_week: { type: String },
   season_ids: [{ type: Schema.Types.ObjectId }],
   command_channel_ids: [{ type: String, unique: true }],
+  report_channel_ids: [{ type: String, required: true }],
   urls: {
     type: [
       {
