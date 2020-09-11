@@ -28,6 +28,9 @@ const Model = createModel(
       return val.length === 2
     }, 'expected `{PATH}` to contain two unique team ids')
     schema.path('players_to_teams').validate(function(val) {
+      if (val.length === 0) {
+        return true
+      }
       return [...new Set(val.map(({ team_id }) => team_id.toHexString()))].length === 2
     }, 'expected `{PATH}` to contain two unique team ids')
     schema.virtual('games', {
