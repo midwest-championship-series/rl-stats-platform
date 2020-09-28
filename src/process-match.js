@@ -104,9 +104,8 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
       populate: { path: 'league' },
     })
   if (matches.length !== 1) {
-    const errMsg = `expected to get one match but got ${matches.length} for teams: ${teams.map(t =>
-      t._id.toHexString(),
-    )}`
+    let errMsg = `expected to get one match but got ${matches.length} for teams: ${teams.map(t => t.name).join(', ')}`
+    errMsg += `match ids: ${matches.map(m => m._id.toHexString()).join(', ')}`
     throw new UnRecoverableError('INCORRECT_MATCH_COUNT', errMsg)
   }
 
