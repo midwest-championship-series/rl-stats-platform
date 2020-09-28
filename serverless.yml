@@ -34,6 +34,7 @@ provider:
   profile: rl-stats
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
+  versionFunctions: false
   endpointType: REGIONAL
   memorySize: 256
   vpc:

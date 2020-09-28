@@ -21,17 +21,29 @@ const assignLeagueIds = (game, { league, season, match, players, teams, games })
       const errMsg = `invalid teams for game: ${game.id}. Expected 3 players but got ${game[color].players.length}.`
       throw new UnRecoverableError('BAD_PLAYER_COUNT', errMsg)
     }
-    const teamPlayer = players.find(player => {
+    const teamPlayers = players.filter(player => {
       return game[color].players.some(({ id }) => {
         return player.accounts.some(({ platform, platform_id }) => {
           return id.platform === platform && id.id === platform_id
         })
       })
     })
-    if (teamPlayer) {
-      const playerTeams = getPlayerTeamsAtDate(teamPlayer, new Date(game.date))
-      game[color].team = teams.find(t => playerTeams.some(({ team_id }) => t._id.equals(team_id)))
+    if (!teamPlayers) {
+      const errMsg = `no players found for team: ${color}`
+      throw new UnRecoverableError('NO_PLAYERS_IDENTIFIED', errMsg)
     }
+    // get all team ids that players have at match date
+    const playerTeams = [
+      ...new Set(
+        teamPlayers
+          .reduce((result, player) => {
+            result.push(...getPlayerTeamsAtDate(player, new Date(game.date)))
+            return result
+          }, [])
+          .map(team => team.team_id),
+      ),
+    ]
+    game[color].team = teams.find(t => playerTeams.some(team_id => t._id.equals(team_id)))
     if (!game[color].team) {
       const errMsg = `no team found for ${color} in match ${game.match_id}`
       throw new UnRecoverableError('NO_TEAM_IDENTIFIED', errMsg)
