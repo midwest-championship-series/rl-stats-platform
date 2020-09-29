@@ -97,15 +97,21 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
     if (teams.length > 0) errMsg += ` Teams: ${teams.map(t => t._id.toHexString()).join(', ')}.`
     throw new UnRecoverableError('MATCH_TEAM_COUNT', errMsg)
   }
-  const matches = await Matches.find(buildMatchesQuery(teams))
-    .populate('games')
-    .populate({
-      path: 'season',
-      populate: { path: 'league' },
-    })
+  const matches = (
+    await Matches.find(buildMatchesQuery(teams))
+      .populate('games')
+      .populate({
+        path: 'season',
+        populate: { path: 'league' },
+      })
+  ).filter(m => m.season && m.season.league && m.season.league._id.equals(leagueId))
+
+  /** @todo figure out if date could be used to make this filter better */
   if (matches.length !== 1) {
-    let errMsg = `expected to get one match but got ${matches.length} for teams: ${teams.map(t => t.name).join(', ')}`
-    errMsg += `match ids: ${matches.map(m => m._id.toHexString()).join(', ')}`
+    let errMsg = `expected to get one match but got ${matches.length} between teams: ${teams
+      .map(t => t.name)
+      .join(', ')}`
+    if (matches.length > 1) errMsg += `\nmatch ids: ${matches.map(m => m._id.toHexString()).join(', ')}`
     throw new UnRecoverableError('INCORRECT_MATCH_COUNT', errMsg)
   }
 
