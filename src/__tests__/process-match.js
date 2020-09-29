@@ -179,7 +179,7 @@ const mockClosedMatch = mockDoc({
     },
   },
 })
-const mockOpenMatch = [
+const mockOpenMatch = () =>
   mockDoc({
     _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
     week: 1,
@@ -193,8 +193,7 @@ const mockOpenMatch = [
         _id: ObjectId('5ebc62b1d09245d2a7c63516'),
       },
     },
-  }),
-]
+  })
 
 // mocks
 jest.mock('../services/mongodb')
@@ -534,7 +533,7 @@ describe('process-match', () => {
   it('should process a new match', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
-    matchesFindMock.mockResolvedValue(mockOpenMatch)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
     const result = await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
       game_ids: [
@@ -549,6 +548,22 @@ describe('process-match', () => {
       unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
     expect(result.game_ids).toHaveLength(4)
+  })
+  it('should process a match when teams are scheduled in multiple leagues', async () => {
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    const mockMatches = [mockOpenMatch(), mockOpenMatch()]
+    mockMatches[0].season.league._id = new ObjectId()
+    matchesFindMock.mockResolvedValue(mockMatches)
+    await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_ids: [
+        'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+        '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+        '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
+        '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+      ],
+    })
   })
   it('should not add stats for games which are not played by league teams', async () => {
     players.Model.find.mockResolvedValue([mockPlayers[0]])
@@ -572,7 +587,7 @@ describe('process-match', () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     ballchasing.getReplays.mockResolvedValue([replays[0], replays[1], replays[3]])
-    matchesFindMock.mockResolvedValue(mockOpenMatch)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
     await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
@@ -599,7 +614,27 @@ describe('process-match', () => {
         ],
       }),
     ).rejects.toEqual(
-      new Error('expected to get one match but got 0 for teams: 5ebc62a9d09245d2a7c62e86,5ebc62a9d09245d2a7c62eb3'),
+      new Error('expected to get one match but got 0 between teams: Duluth Superiors, Burnsville Inferno'),
+    )
+  })
+  it('should throw an error if there is more than one match scheduled for the league', async () => {
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch(), mockOpenMatch()])
+    await expect(
+      processMatch({
+        league_id: '5ebc62b1d09245d2a7c63516',
+        game_ids: [
+          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
+          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+        ],
+      }),
+    ).rejects.toEqual(
+      new Error(
+        'expected to get one match but got 2 between teams: Duluth Superiors, Burnsville Inferno\nmatch ids: 5ebc62b0d09245d2a7c6340c, 5ebc62b0d09245d2a7c6340c',
+      ),
     )
   })
   it('should throw an error if no league id is passed', async () => {
