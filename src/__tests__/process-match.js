@@ -232,6 +232,7 @@ const players = require('../model/mongodb/players')
 jest.mock('../model/mongodb/players')
 players.Model = {
   find: jest.fn(),
+  onTeams: jest.fn(),
 }
 const teams = require('../model/mongodb/teams')
 jest.mock('../model/mongodb/teams')
@@ -565,6 +566,72 @@ describe('process-match', () => {
       ],
     })
   })
+  it.only('should process a forfeit', async () => {
+    Match.findById = jest.fn(() => ({
+      populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
+    }))
+    players.Model.onTeams.mockResolvedValue(mockPlayers.slice(0, 3))
+    matchesFindByIdMock.mockResolvedValue({
+      ...mockClosedMatch,
+      games: [],
+      game_ids: [],
+    })
+    const dateSpy = jest.spyOn(Date, 'now')
+    const results = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      match_id: '5f2c5e4e08c88e00084b44a6',
+      forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+      reply_to_channel: '692994579305332806',
+    })
+    const teamStats = teamGames.upsert.mock.calls[0][0]
+    expect(teamStats.data).toHaveLength(6)
+    expect(teamStats.data[0]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
+      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_forfeit_win: undefined,
+      game_id: undefined,
+      game_id_win: undefined,
+      game_number: undefined,
+      map_name: undefined,
+      wins: 0,
+    })
+    // expects tests to have run in less than 10 ms
+    const dateDiff = Math.abs(new Date(teamStats.data[0].game_date) - Date.now())
+    expect(dateDiff).toBeLessThan(10)
+    expect(teamStats.data[1]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62eb3',
+      team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+      opponent_team_name: 'Duluth Superiors',
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id_forfeit_loss: undefined,
+      game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id: undefined,
+      game_id_win: undefined,
+      game_number: undefined,
+      map_name: undefined,
+      wins: 1,
+    })
+    expect(teamStats.data[4]).toMatchObject({
+      game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+    })
+  })
+  it.skip('should process a forfeit with a different best_of condition', () => {})
+  it.skip('should fail if forfeit match does not have best_of condition', () => {})
   it('should not add stats for games which are not played by league teams', async () => {
     players.Model.find.mockResolvedValue([mockPlayers[0]])
     const mockTeam = { _id: new ObjectId('5ebc62a9d09245d2a7c62e5a') }

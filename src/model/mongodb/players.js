@@ -27,6 +27,18 @@ const schema = {
   permissions: [{ type: String }],
 }
 
-const Model = createModel('Player', schema)
+const Model = createModel('Player', schema, schema => {
+  schema.query.onTeam = function(teamId, date) {
+    return this.find({
+      team_history: {
+        $elemMatch: {
+          team_id: teamId,
+          date_joined: { $gte: date },
+          date_left: { $gte: date },
+        },
+      },
+    })
+  }
+})
 
 module.exports = { Model }

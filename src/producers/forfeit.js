@@ -1,0 +1,58 @@
+const { getPlayerTeamsAtDate } = require('./common')
+
+module.exports = params => {
+  const { league, season, match, teams, players, forfeit_team_id } = params
+  const context = {
+    league_id: league._id.toHexString(),
+    season_id: season._id.toHexString(),
+    season: season.name,
+    match_type: season.season_type,
+    match_id: match._id.toHexString(),
+    week: match.week,
+    game_id: undefined,
+    game_id_win: undefined,
+    game_date: new Date().toISOString(),
+    game_number: undefined,
+    map_name: undefined,
+  }
+  const teamStats = genTeamStats(params, context)
+
+  return {
+    teamStats,
+    playerStats: genPlayerStats(teamStats, players),
+  }
+}
+
+const genTeamStats = (params, context) => {
+  const { league, season, match, teams, players, forfeit_team_id } = params
+  const teamStats = []
+  /**
+   * best of condition ensures that there are 2 team-game records per game, one for each team, and that
+   * the number of forfeited games is correct
+   */
+  const bestOfCondition = Math.ceil(match.best_of / 2) * 2
+  for (let i = 0; i < bestOfCondition; i++) {
+    const team = teams[i % 2]
+    const opponent = teams[(i + 1) % 2]
+    const gameNumber = Math.floor(i / 2) + 1
+    const forfeitId = `match:${match._id.toHexString()}:game:${gameNumber}`
+    teamStats.push({
+      ...context,
+      team_id: team._id.toHexString(),
+      team_name: team.name,
+      opponent_team_id: opponent._id.toHexString(),
+      opponent_team_name: opponent.name,
+      game_id_forfeit_win: team._id.toHexString() !== forfeit_team_id ? forfeitId : undefined,
+      game_id_forfeit_loss: team._id.toHexString() === forfeit_team_id ? forfeitId : undefined,
+      wins: team._id.toHexString() === forfeit_team_id ? 0 : 1,
+    })
+  }
+  return teamStats
+}
+
+const genPlayerStats = (teamStats, players) => {
+  // players.forEach(p => {
+  //   console.log(getPlayerTeamsAtDate(p, new Date('2020-03-02T05:00:00.000Z')))
+  // })
+  return []
+}

@@ -61,7 +61,7 @@ describe('report-games', () => {
     })
   })
   it('should report a forfeit', async () => {
-    const result = await reportGames({
+    await reportGames({
       league_id: '5ebc62b1d09245d2a7c63516',
       match_id: '5f2c5e4e08c88e00084b44a6',
       forfeit_team_id: '5ec9358e8c0dd900074685c3',
@@ -75,11 +75,6 @@ describe('report-games', () => {
     })
   })
   it('should validate forfeit', async () => {
-    const root = {
-      league_id: '5ebc62b1d09245d2a7c63516',
-      match_id: '5f2c5e4e08c88e00084b44a6',
-      forfeit_team_id: '5ec9358e8c0dd900074685c3',
-    }
     const expectedErr = new Error('need league_id, forfeit_team_id and match_id to process forfeit')
     await expect(
       reportGames({
