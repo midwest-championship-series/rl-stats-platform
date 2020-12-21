@@ -191,6 +191,7 @@ const handleReplays = async filters => {
 }
 
 const handleForfeit = async filters => {
+  const forfeit_date = new Date()
   const { forfeit_team_id, match_id } = filters
   const match = await Matches.findById(match_id)
     .populate('teams')
@@ -200,7 +201,7 @@ const handleForfeit = async filters => {
         path: 'league',
       },
     })
-  const players = await Players.onTeams(forfeit_team_id, Date.now())
+  const players = await Players.find().onTeams(match.team_ids, forfeit_date)
   const { teams, season } = match
   const league = season.league
   if (!match.best_of) {
@@ -213,6 +214,7 @@ const handleForfeit = async filters => {
     teams,
     players,
     forfeit_team_id,
+    forfeit_date,
   })
 
   try {

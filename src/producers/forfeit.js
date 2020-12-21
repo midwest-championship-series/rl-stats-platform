@@ -1,7 +1,7 @@
 const { getPlayerTeamsAtDate } = require('./common')
 
 module.exports = params => {
-  const { league, season, match, teams, players, forfeit_team_id } = params
+  const { league, season, match, teams, players, forfeit_date } = params
   const context = {
     league_id: league._id.toHexString(),
     season_id: season._id.toHexString(),
@@ -11,7 +11,7 @@ module.exports = params => {
     week: match.week,
     game_id: undefined,
     game_id_win: undefined,
-    game_date: new Date().toISOString(),
+    game_date: forfeit_date.toISOString(),
     game_number: undefined,
     map_name: undefined,
   }
@@ -19,12 +19,12 @@ module.exports = params => {
 
   return {
     teamStats,
-    playerStats: genPlayerStats(teamStats, players),
+    playerStats: genPlayerStats(forfeit_date, teamStats, players),
   }
 }
 
 const genTeamStats = (params, context) => {
-  const { league, season, match, teams, players, forfeit_team_id } = params
+  const { match, teams, forfeit_team_id } = params
   const teamStats = []
   /**
    * best of condition ensures that there are 2 team-game records per game, one for each team, and that
@@ -50,9 +50,18 @@ const genTeamStats = (params, context) => {
   return teamStats
 }
 
-const genPlayerStats = (teamStats, players) => {
-  // players.forEach(p => {
-  //   console.log(getPlayerTeamsAtDate(p, new Date('2020-03-02T05:00:00.000Z')))
-  // })
-  return []
+const genPlayerStats = (forfeit_date, teamStats, players) => {
+  const playerStats = []
+  teamStats.forEach(teamStat => {
+    players.forEach(player => {
+      if (getPlayerTeamsAtDate(player, forfeit_date).some(history => history.team_id.equals(teamStat.team_id))) {
+        playerStats.push({
+          ...teamStat,
+          player_id: player._id.toHexString(),
+          player_name: player.screen_name,
+        })
+      }
+    })
+  })
+  return playerStats
 }
