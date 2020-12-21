@@ -232,6 +232,8 @@ const handleForfeit = async filters => {
     players,
     teamStats,
     playerStats,
+    forfeit_team_id,
+    forfeit_date,
   }
 }
 

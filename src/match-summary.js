@@ -29,7 +29,7 @@ const createSummaryField = (team, groupedStats) => {
   }
 }
 
-module.exports = data => {
+const matchSummary = data => {
   const { league, match, teams, teamStats } = data
   const groupedTeamStats = group(teamStats, 'team_id')
   const winner = teams.find(t => match.winning_team_id.equals(t._id))
@@ -65,5 +65,40 @@ module.exports = data => {
     footer: {
       text: 'Stats by Tero & MNCS Stats Team',
     },
+  }
+}
+
+const forfeitSummary = data => {
+  const { league, match, teams, forfeit_team_id } = data
+  const loser = teams.find(t => t._id.equals(forfeit_team_id))
+  const winner = teams.find(t => t._id.toHexString() !== loser._id.toHexString())
+  const twitchUrl = league.urls && league.urls.find(u => u.name === 'twitch')
+  const statsUrl = league.urls && league.urls.find(u => u.name === 'stats')
+  const thumbUrl = league.urls && league.urls.find(u => u.name === 'logo')
+
+  return {
+    title: `${league.name.toUpperCase()} week ${match.week} ${teams.map(t => t.name).join(' vs ')}`,
+    description: `${loser.name} forfeited to ${winner.name}. Bad ${loser.name} :slight_frown:`,
+    color: league.hex_color || '6caddf',
+    url: twitchUrl && twitchUrl.url,
+    author: {
+      name: 'Minnesota Championship Series',
+      url: statsUrl && statsUrl.url,
+    },
+    thumbnail: {
+      url: thumbUrl && thumbUrl.url,
+    },
+    image: winner.avatar ? { url: winner.avatar } : undefined,
+    footer: {
+      text: 'Stats by Tero & MNCS Stats Team',
+    },
+  }
+}
+
+module.exports = data => {
+  if (data.forfeit_team_id) {
+    return forfeitSummary(data)
+  } else {
+    return matchSummary(data)
   }
 }

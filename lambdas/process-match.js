@@ -25,7 +25,7 @@ const handler = async event => {
           }
         }
       }
-      if (data.unlinkedPlayers.length > 0) {
+      if (data.unlinkedPlayers && data.unlinkedPlayers.length > 0) {
         const { unlinkedPlayers, teams, match, league } = data
         let unlinkedPlayerReport = `unlinked players found in ${league.name} week ${
           match.week

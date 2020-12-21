@@ -11,7 +11,7 @@ const handleForfeit = async params => {
 }
 
 const handleGamesReport = async params => {
-  const { league_id, game_ids, reply_to_channel, forfeit_team_id } = params
+  const { league_id, game_ids, reply_to_channel } = params
   if (!league_id || !game_ids || game_ids.length < 1) throw new Error('request requires league_id and game_ids')
   /**
    * if games with these ballchasing ids have already been reported, throw an error - we only want new games to

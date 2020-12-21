@@ -8,7 +8,10 @@ const handler = async (event, context) => {
     console.info('processing report', data)
     const reportedGames = await reportGames(data)
     if (data.reply_to_channel) {
-      await sendToChannel(data.reply_to_channel, `${reportedGames.recorded_ids.length} games queued for processing`)
+      const message = data.forfeit_team_id
+        ? 'forfeit queued for processing'
+        : `${reportedGames.recorded_ids.length} games queued for processing`
+      await sendToChannel(data.reply_to_channel, message)
     }
     return {
       statusCode: 200,
