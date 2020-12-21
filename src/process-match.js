@@ -145,7 +145,7 @@ const handleReplays = async filters => {
   let games
   if (!match.games || match.games.length < 1) {
     // create games
-    games = reportGames.map(g => new Games({ ballchasing_id: g.id, status: 'closed', date_time_played: g.date }))
+    games = reportGames.map(g => new Games({ ballchasing_id: g.id, date_time_played: g.date }))
     // update match
     match.game_ids = games.map(g => g._id)
   } else {
@@ -170,7 +170,6 @@ const handleReplays = async filters => {
     await game.save()
   }
   match.players_to_teams = playerTeamMap
-  match.team_ids = teams.map(t => t._id)
   await match.save()
 
   const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(reportGames))
@@ -222,6 +221,9 @@ const handleForfeit = async filters => {
   } catch (err) {
     throw new RecoverableError(err.message)
   }
+
+  match.forfeited_by_team = forfeit_team_id
+  await match.save()
 
   return {
     match_id: match._id.toHexString(),
