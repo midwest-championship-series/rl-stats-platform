@@ -71,11 +71,11 @@ const mockPlayers = [
       {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
         date_joined: new Date('2020-03-01T05:00:00.000Z'),
-        date_left: new Date('2020-03-10T05:00:00.000Z'),
+        date_left: new Date('2020-08-10T05:00:00.000Z'),
       },
       {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62e5a'),
-        date_joined: new Date('2020-03-10T05:00:00.000Z'),
+        date_joined: new Date('2020-08-10T05:00:00.000Z'),
       },
     ],
   },
@@ -672,6 +672,26 @@ describe('process-match', () => {
       map_name: undefined,
       wins: 1,
     })
+  })
+  it('should process a forfeit with a scheduled date', async () => {
+    Match.findById = jest.fn(() => ({
+      populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
+    }))
+    players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
+    matchesFindByIdMock.mockResolvedValue({
+      ...mockClosedMatch,
+      games: [],
+      game_ids: [],
+      scheduled_datetime: new Date('2020-05-10T05:00:00.000Z'),
+    })
+    const results = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      match_id: '5f2c5e4e08c88e00084b44a6',
+      forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+      reply_to_channel: '692994579305332806',
+    })
+    const playerStats = playerGames.upsert.mock.calls[0][0]
+    expect(playerStats.data).toHaveLength(15)
   })
   it('should process a forfeit with a different best_of condition', async () => {
     Match.findById = jest.fn(() => ({

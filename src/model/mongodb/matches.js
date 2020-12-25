@@ -23,6 +23,7 @@ const Model = createModel(
     best_of: { type: Number },
     forfeited_by_team: { type: Schema.Types.ObjectId },
     winning_team_id: { type: Schema.Types.ObjectId },
+    scheduled_datetime: { type: Date },
   },
   schema => {
     schema.path('team_ids').validate(function(val) {
