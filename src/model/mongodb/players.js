@@ -27,6 +27,34 @@ const schema = {
   permissions: [{ type: String }],
 }
 
-const Model = createModel('Player', schema)
+const Model = createModel('Player', schema, schema => {
+  schema.query.onTeams = function(teamIds, date) {
+    const query = {
+      $or: [],
+    }
+    // return this.find(query)
+    teamIds.forEach(teamId => {
+      query.$or.push({
+        team_history: {
+          $elemMatch: {
+            team_id: teamId,
+            date_joined: { $lte: date },
+            date_left: { $gte: date },
+          },
+        },
+      })
+      query.$or.push({
+        team_history: {
+          $elemMatch: {
+            team_id: teamId,
+            date_joined: { $lte: date },
+            date_left: { $exists: false },
+          },
+        },
+      })
+    })
+    return this.find(query)
+  }
+})
 
 module.exports = { Model }

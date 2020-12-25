@@ -71,11 +71,11 @@ const mockPlayers = [
       {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
         date_joined: new Date('2020-03-01T05:00:00.000Z'),
-        date_left: new Date('2020-03-10T05:00:00.000Z'),
+        date_left: new Date('2020-08-10T05:00:00.000Z'),
       },
       {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62e5a'),
-        date_joined: new Date('2020-03-10T05:00:00.000Z'),
+        date_joined: new Date('2020-08-10T05:00:00.000Z'),
       },
     ],
   },
@@ -232,6 +232,7 @@ const players = require('../model/mongodb/players')
 jest.mock('../model/mongodb/players')
 players.Model = {
   find: jest.fn(),
+  onTeams: jest.fn(),
 }
 const teams = require('../model/mongodb/teams')
 jest.mock('../model/mongodb/teams')
@@ -564,6 +565,175 @@ describe('process-match', () => {
         '4ed12225-7251-4d63-8bb6-15338c60bcf2',
       ],
     })
+  })
+  it('should process a forfeit', async () => {
+    Match.findById = jest.fn(() => ({
+      populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
+    }))
+    players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
+    matchesFindByIdMock.mockResolvedValue({
+      ...mockClosedMatch,
+      games: [],
+      game_ids: [],
+    })
+    const results = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      match_id: '5f2c5e4e08c88e00084b44a6',
+      forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+      reply_to_channel: '692994579305332806',
+    })
+    const teamStats = teamGames.upsert.mock.calls[0][0]
+    expect(teamStats.data).toHaveLength(6)
+    expect(teamStats.data[0]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
+      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_forfeit_win: undefined,
+      game_id: undefined,
+      game_id_win: undefined,
+      game_number: undefined,
+      map_name: undefined,
+      wins: 0,
+    })
+    // requires tests to have run in less than 1 s
+    const dateDiff = Math.abs(new Date(teamStats.data[0].game_date) - Date.now())
+    expect(dateDiff).toBeLessThan(1000)
+    expect(teamStats.data[1]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62eb3',
+      team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+      opponent_team_name: 'Duluth Superiors',
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id_forfeit_loss: undefined,
+      game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id: undefined,
+      game_id_win: undefined,
+      game_number: undefined,
+      map_name: undefined,
+      wins: 1,
+    })
+    expect(teamStats.data[4]).toMatchObject({
+      game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+    })
+    const playerStats = playerGames.upsert.mock.calls[0][0]
+    expect(playerStats.data).toHaveLength(12)
+    expect(playerStats.data[0]).toMatchObject({
+      player_id: '5ec04239d09245d2a7d4fa26',
+      player_name: 'Calster',
+      team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
+      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_forfeit_win: undefined,
+      game_id: undefined,
+      game_id_win: undefined,
+      game_number: undefined,
+      map_name: undefined,
+      wins: 0,
+    })
+    expect(playerStats.data[2]).toMatchObject({
+      player_id: '5ec04239d09245d2a7d4fa4f',
+      player_name: 'Pace.',
+      team_id: '5ebc62a9d09245d2a7c62eb3',
+      team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+      opponent_team_name: 'Duluth Superiors',
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id_forfeit_loss: undefined,
+      game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id: undefined,
+      game_id_win: undefined,
+      game_number: undefined,
+      map_name: undefined,
+      wins: 1,
+    })
+  })
+  it('should process a forfeit with a scheduled date', async () => {
+    Match.findById = jest.fn(() => ({
+      populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
+    }))
+    players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
+    matchesFindByIdMock.mockResolvedValue({
+      ...mockClosedMatch,
+      games: [],
+      game_ids: [],
+      scheduled_datetime: new Date('2020-05-10T05:00:00.000Z'),
+    })
+    const results = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      match_id: '5f2c5e4e08c88e00084b44a6',
+      forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+      reply_to_channel: '692994579305332806',
+    })
+    const playerStats = playerGames.upsert.mock.calls[0][0]
+    expect(playerStats.data).toHaveLength(15)
+  })
+  it('should process a forfeit with a different best_of condition', async () => {
+    Match.findById = jest.fn(() => ({
+      populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
+    }))
+    players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
+    matchesFindByIdMock.mockResolvedValue({
+      ...mockClosedMatch,
+      best_of: 1,
+      games: [],
+      game_ids: [],
+    })
+    const results = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      match_id: '5f2c5e4e08c88e00084b44a6',
+      forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+      reply_to_channel: '692994579305332806',
+    })
+    const teamStats = teamGames.upsert.mock.calls[0][0]
+    const playerStats = playerGames.upsert.mock.calls[0][0]
+    expect(teamStats.data).toHaveLength(2)
+    expect(playerStats.data).toHaveLength(4)
+  })
+  it('should fail if forfeit match does not have best_of condition', async () => {
+    Match.findById = jest.fn(() => ({
+      populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
+    }))
+    players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
+    matchesFindByIdMock.mockResolvedValue({
+      ...mockClosedMatch,
+      best_of: undefined,
+      games: [],
+      game_ids: [],
+    })
+    await expect(
+      processMatch({
+        league_id: '5ebc62b1d09245d2a7c63516',
+        match_id: '5f2c5e4e08c88e00084b44a6',
+        forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+        reply_to_channel: '692994579305332806',
+      }),
+    ).rejects.toEqual(new Error('forfeited match must have best_of property'))
   })
   it('should not add stats for games which are not played by league teams', async () => {
     players.Model.find.mockResolvedValue([mockPlayers[0]])

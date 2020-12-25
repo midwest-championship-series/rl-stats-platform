@@ -1,7 +1,17 @@
 const { Model: Games } = require('./model/mongodb/games')
 const sqs = require('./services/aws').sqs
 
-module.exports = async ({ league_id, game_ids, reply_to_channel }) => {
+const handleForfeit = async params => {
+  const { league_id, forfeit_team_id, match_id } = params
+  if (!league_id || !forfeit_team_id || !match_id) {
+    throw new Error('need league_id, forfeit_team_id and match_id to process forfeit')
+  }
+  await sqs.sendMessage(process.env.GAMES_QUEUE_URL, params)
+  return { recorded_match: match_id }
+}
+
+const handleGamesReport = async params => {
+  const { league_id, game_ids, reply_to_channel } = params
   if (!league_id || !game_ids || game_ids.length < 1) throw new Error('request requires league_id and game_ids')
   /**
    * if games with these ballchasing ids have already been reported, throw an error - we only want new games to
@@ -16,4 +26,12 @@ module.exports = async ({ league_id, game_ids, reply_to_channel }) => {
   if (reply_to_channel) queueData.reply_to_channel = reply_to_channel
   await sqs.sendMessage(process.env.GAMES_QUEUE_URL, queueData)
   return { recorded_ids: gameIdsToProcess }
+}
+
+module.exports = async params => {
+  if (params.forfeit_team_id) {
+    return handleForfeit(params)
+  } else {
+    return handleGamesReport(params)
+  }
 }

@@ -7,6 +7,7 @@ const { Model: Leagues } = require('./model/mongodb/leagues')
 const teamGames = require('./model/sheets/team-games')
 const playerGames = require('./model/sheets/player-games')
 const processMatch = require('./producers')
+const processForfeit = require('./producers/forfeit')
 const { getPlayerTeamsAtDate } = require('./producers/common')
 const { RecoverableError, UnRecoverableError } = require('./util/errors')
 
@@ -119,11 +120,11 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
   return { match, teams, season: match.season, league: match.season.league }
 }
 
-/**
- * takes a match and game ids and updates stat data
- * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
- */
-module.exports = async filters => {
+const uploadStats = (teamStats, playerStats) => {
+  return Promise.all([teamGames.upsert({ data: teamStats }), playerGames.upsert({ data: playerStats })])
+}
+
+const handleReplays = async filters => {
   validateFilters(filters)
   const { league_id, match_id, game_ids } = filters
   let reportGames
@@ -144,7 +145,7 @@ module.exports = async filters => {
   let games
   if (!match.games || match.games.length < 1) {
     // create games
-    games = reportGames.map(g => new Games({ ballchasing_id: g.id, status: 'closed', date_time_played: g.date }))
+    games = reportGames.map(g => new Games({ ballchasing_id: g.id, date_time_played: g.date }))
     // update match
     match.game_ids = games.map(g => g._id)
   } else {
@@ -159,7 +160,7 @@ module.exports = async filters => {
     players,
   })
   try {
-    await Promise.all([teamGames.upsert({ data: teamStats }), playerGames.upsert({ data: playerStats })])
+    await uploadStats(teamStats, playerStats)
   } catch (err) {
     throw new RecoverableError(err.message)
   }
@@ -169,7 +170,6 @@ module.exports = async filters => {
     await game.save()
   }
   match.players_to_teams = playerTeamMap
-  match.team_ids = teams.map(t => t._id)
   await match.save()
 
   const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(reportGames))
@@ -186,5 +186,67 @@ module.exports = async filters => {
     teamStats,
     playerStats,
     playerTeamMap,
+  }
+}
+
+const handleForfeit = async filters => {
+  const { forfeit_team_id, match_id } = filters
+  const match = await Matches.findById(match_id)
+    .populate('teams')
+    .populate({
+      path: 'season',
+      populate: {
+        path: 'league',
+      },
+    })
+  const forfeit_date = match.scheduled_datetime || new Date()
+  const players = await Players.find().onTeams(match.team_ids, forfeit_date)
+  const { teams, season } = match
+  const league = season.league
+  if (!match.best_of) {
+    throw new UnRecoverableError('MISSING_BEST_OF', 'forfeited match must have best_of property')
+  }
+  const { teamStats, playerStats } = processForfeit({
+    league,
+    season,
+    match,
+    teams,
+    players,
+    forfeit_team_id,
+    forfeit_date,
+  })
+
+  try {
+    await uploadStats(teamStats, playerStats)
+  } catch (err) {
+    throw new RecoverableError(err.message)
+  }
+
+  match.forfeited_by_team = forfeit_team_id
+  await match.save()
+
+  return {
+    match_id: match._id.toHexString(),
+    league,
+    season,
+    match,
+    teams,
+    players,
+    teamStats,
+    playerStats,
+    forfeit_team_id,
+    forfeit_date,
+  }
+}
+
+/**
+ * takes a match and game ids and updates stat data
+ * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
+ */
+module.exports = async filters => {
+  if (filters.forfeit_team_id) {
+    return handleForfeit(filters)
+  } else {
+    return handleReplays(filters)
   }
 }

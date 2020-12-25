@@ -21,7 +21,9 @@ const Model = createModel(
     status: { type: String, default: 'open' },
     game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
     best_of: { type: Number },
+    forfeited_by_team: { type: Schema.Types.ObjectId },
     winning_team_id: { type: Schema.Types.ObjectId },
+    scheduled_datetime: { type: Date },
   },
   schema => {
     schema.path('team_ids').validate(function(val) {
@@ -67,6 +69,10 @@ const Model = createModel(
         } else {
           this.status = 'closed'
         }
+      }
+      if (this.forfeited_by_team) {
+        this.status = 'closed'
+        this.winning_team_id = this.team_ids.filter(id => id.toHexString() !== this.forfeited_by_team.toHexString())[0]
       }
     })
   },
