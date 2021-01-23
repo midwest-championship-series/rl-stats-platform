@@ -1,47 +1,23 @@
 require('../src/model/mongodb')
-const { Leagues } = require('../src/model/mongodb')
-const { Seasons } = require('../src/model/mongodb')
+const { Players } = require('../src/model/mongodb')
 
 const handler = async () => {
-  console.log('beginning migration')
-  let [nsi] = await Leagues.find({ name: 'nsi' }).populate('seasons')
-  let season1 = nsi && nsi.seasons[0]
-  if (!nsi) {
-    console.log('no nsi found')
-    season1 = new Seasons({
-      match_ids: [],
-      name: '1',
-      season_type: 'TRN',
+  const s2StartDate = new Date('2020-07-01T03:23:24.269+00:00')
+  const s2LastGameDate = new Date('2020-10-11T20:48:15.000+00:00')
+  const s3DraftDate = new Date('2020-12-17T00:00:00.807+00:00')
+
+  const players = await Players.find()
+  for (let player of players) {
+    player.team_history.forEach(h => {
+      if (h.date_joined < s2LastGameDate) {
+        h.date_left = s2LastGameDate
+      }
+      if (h.date_joined > s3DraftDate) {
+        h.date_joined = s3DraftDate
+      }
     })
-    nsi = new Leagues({
-      command_channel_ids: ['751320476231663647'],
-      report_channel_ids: ['746431144442069134'],
-      season_ids: [season1._id],
-      name: 'nsi',
-      urls: [
-        {
-          _id: '5f3b43e844d99c00082965e3',
-          name: 'stats',
-          url: 'https://datastudio.google.com/s/gYDmjMXTvZk',
-        },
-        {
-          _id: '5f3b43e844d99c00082965e4',
-          name: 'logo',
-          url: 'https://cdn.discordapp.com/attachments/692994579305332806/744778007314563092/mncs_logo_clear.webp',
-        },
-        {
-          _id: '5f3b43e844d99c00082965e5',
-          name: 'twitch',
-          url: 'https://www.twitch.tv/mnchampionshipseries',
-        },
-      ],
-    })
+    await player.save()
   }
-  console.log('saving data')
-  await nsi.save()
-  await season1.save()
-  console.log(season1._id)
-  console.log('finished')
 }
 
 module.exports = { handler }

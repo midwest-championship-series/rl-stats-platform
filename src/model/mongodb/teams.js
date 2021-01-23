@@ -6,6 +6,7 @@ const schema = {
   discord_id: { type: String },
   hex_color: { type: String },
   avatar: { type: String },
+  franchise_id: { type: Schema.Types.ObjectId },
 }
 
 const Model = createModel('Team', schema)
