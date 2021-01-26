@@ -1,0 +1,722 @@
+[
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "Minneapolis Miracles",
+    "scheduled_date": "1/23/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358d8c0dd900074685bd"
+  },
+  {
+    "team_1": "Bloomington Maulers",
+    "team_2": "St. Cloud Flyers",
+    "scheduled_date": "1/23/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c5",
+    "team_2_id": "5ec9358e8c0dd900074685c4"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "1/23/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "Duluth Superiors",
+    "team_2": "Minnetonka Barons",
+    "scheduled_date": "1/23/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bf",
+    "team_2_id": "5ec9358d8c0dd900074685c0"
+  },
+  {
+    "team_1": "St. Paul Senators",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "1/23/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685be",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "Bemidji Lumberjacks",
+    "team_2": "Bloomington Maulers",
+    "scheduled_date": "1/30/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c6",
+    "team_2_id": "5ec9358e8c0dd900074685c5"
+  },
+  {
+    "team_1": "Minnetonka Barons",
+    "team_2": "Hibbing Rangers",
+    "scheduled_date": "1/30/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c0",
+    "team_2_id": "5ec9358e8c0dd900074685c3"
+  },
+  {
+    "team_1": "Rochester Rhythm",
+    "team_2": "Duluth Superiors",
+    "scheduled_date": "1/30/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c2",
+    "team_2_id": "5ec9358d8c0dd900074685bf"
+  },
+  {
+    "team_1": "St. Cloud Flyers",
+    "team_2": "Burnsville Inferno",
+    "scheduled_date": "1/30/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c4",
+    "team_2_id": "5ec9358d8c0dd900074685c1"
+  },
+  {
+    "team_1": "Minneapolis Miracles",
+    "team_2": "St. Paul Senators",
+    "scheduled_date": "1/30/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bd",
+    "team_2_id": "5ec9358d8c0dd900074685be"
+  },
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "2/6/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "2/6/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "Duluth Superiors",
+    "team_2": "St. Cloud Flyers",
+    "scheduled_date": "2/6/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bf",
+    "team_2_id": "5ec9358e8c0dd900074685c4"
+  },
+  {
+    "team_1": "St. Paul Senators",
+    "team_2": "Bloomington Maulers",
+    "scheduled_date": "2/6/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685be",
+    "team_2_id": "5ec9358e8c0dd900074685c5"
+  },
+  {
+    "team_1": "Minneapolis Miracles",
+    "team_2": "Minnetonka Barons",
+    "scheduled_date": "2/6/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bd",
+    "team_2_id": "5ec9358d8c0dd900074685c0"
+  },
+  {
+    "team_1": "St. Cloud Flyers",
+    "team_2": "Hibbing Rangers",
+    "scheduled_date": "2/13/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c4",
+    "team_2_id": "5ec9358e8c0dd900074685c3"
+  },
+  {
+    "team_1": "Rochester Rhythm",
+    "team_2": "Minneapolis Miracles",
+    "scheduled_date": "2/13/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c2",
+    "team_2_id": "5ec9358d8c0dd900074685bd"
+  },
+  {
+    "team_1": "Minnetonka Barons",
+    "team_2": "St. Paul Senators",
+    "scheduled_date": "2/13/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c0",
+    "team_2_id": "5ec9358d8c0dd900074685be"
+  },
+  {
+    "team_1": "Bemidji Lumberjacks",
+    "team_2": "Duluth Superiors",
+    "scheduled_date": "2/13/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c6",
+    "team_2_id": "5ec9358d8c0dd900074685bf"
+  },
+  {
+    "team_1": "Bloomington Maulers",
+    "team_2": "Burnsville Inferno",
+    "scheduled_date": "2/13/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c5",
+    "team_2_id": "5ec9358d8c0dd900074685c1"
+  },
+  {
+    "team_1": "Duluth Superiors",
+    "team_2": "Bloomington Maulers",
+    "scheduled_date": "2/20/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bf",
+    "team_2_id": "5ec9358e8c0dd900074685c5"
+  },
+  {
+    "team_1": "St. Paul Senators",
+    "team_2": "Burnsville Inferno",
+    "scheduled_date": "2/20/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685be",
+    "team_2_id": "5ec9358d8c0dd900074685c1"
+  },
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "2/20/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "Minneapolis Miracles",
+    "team_2": "St. Cloud Flyers",
+    "scheduled_date": "2/20/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bd",
+    "team_2_id": "5ec9358e8c0dd900074685c4"
+  },
+  {
+    "team_1": "Minnetonka Barons",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "2/20/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c0",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "Rochester Rhythm",
+    "team_2": "St. Paul Senators",
+    "scheduled_date": "2/27/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c2",
+    "team_2_id": "5ec9358d8c0dd900074685be"
+  },
+  {
+    "team_1": "St. Cloud Flyers",
+    "team_2": "Minnetonka Barons",
+    "scheduled_date": "2/27/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c4",
+    "team_2_id": "5ec9358d8c0dd900074685c0"
+  },
+  {
+    "team_1": "Bemidji Lumberjacks",
+    "team_2": "Minneapolis Miracles",
+    "scheduled_date": "2/27/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c6",
+    "team_2_id": "5ec9358d8c0dd900074685bd"
+  },
+  {
+    "team_1": "Bloomington Maulers",
+    "team_2": "Hibbing Rangers",
+    "scheduled_date": "2/27/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c5",
+    "team_2_id": "5ec9358e8c0dd900074685c3"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "Duluth Superiors",
+    "scheduled_date": "2/27/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358d8c0dd900074685bf"
+  },
+  {
+    "team_1": "St. Paul Senators",
+    "team_2": "Duluth Superiors",
+    "scheduled_date": "3/6/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685be",
+    "team_2_id": "5ec9358d8c0dd900074685bf"
+  },
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "Burnsville Inferno",
+    "scheduled_date": "3/6/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358d8c0dd900074685c1"
+  },
+  {
+    "team_1": "Minneapolis Miracles",
+    "team_2": "Bloomington Maulers",
+    "scheduled_date": "3/6/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bd",
+    "team_2_id": "5ec9358e8c0dd900074685c5"
+  },
+  {
+    "team_1": "Minnetonka Barons",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "3/6/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c0",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "Rochester Rhythm",
+    "team_2": "St. Cloud Flyers",
+    "scheduled_date": "3/6/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c2",
+    "team_2_id": "5ec9358e8c0dd900074685c4"
+  },
+  {
+    "team_1": "Bemidji Lumberjacks",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "3/13/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c6",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "St. Cloud Flyers",
+    "team_2": "St. Paul Senators",
+    "scheduled_date": "3/13/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c4",
+    "team_2_id": "5ec9358d8c0dd900074685be"
+  },
+  {
+    "team_1": "Bloomington Maulers",
+    "team_2": "Minnetonka Barons",
+    "scheduled_date": "3/13/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c5",
+    "team_2_id": "5ec9358d8c0dd900074685c0"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "Minneapolis Miracles",
+    "scheduled_date": "3/13/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358d8c0dd900074685bd"
+  },
+  {
+    "team_1": "Duluth Superiors",
+    "team_2": "Hibbing Rangers",
+    "scheduled_date": "3/13/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bf",
+    "team_2_id": "5ec9358e8c0dd900074685c3"
+  },
+  {
+    "team_1": "Minnetonka Barons",
+    "team_2": "Burnsville Inferno",
+    "scheduled_date": "3/20/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c0",
+    "team_2_id": "5ec9358d8c0dd900074685c1"
+  },
+  {
+    "team_1": "Minneapolis Miracles",
+    "team_2": "Duluth Superiors",
+    "scheduled_date": "3/20/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bd",
+    "team_2_id": "5ec9358d8c0dd900074685bf"
+  },
+  {
+    "team_1": "St. Paul Senators",
+    "team_2": "Hibbing Rangers",
+    "scheduled_date": "3/20/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685be",
+    "team_2_id": "5ec9358e8c0dd900074685c3"
+  },
+  {
+    "team_1": "Rochester Rhythm",
+    "team_2": "Bloomington Maulers",
+    "scheduled_date": "3/20/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c2",
+    "team_2_id": "5ec9358e8c0dd900074685c5"
+  },
+  {
+    "team_1": "St. Cloud Flyers",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "3/20/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c4",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "Bemidji Lumberjacks",
+    "team_2": "St. Paul Senators",
+    "scheduled_date": "3/27/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c6",
+    "team_2_id": "5ec9358d8c0dd900074685be"
+  },
+  {
+    "team_1": "Minnetonka Barons",
+    "team_2": "Duluth Superiors",
+    "scheduled_date": "3/27/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c0",
+    "team_2_id": "5ec9358d8c0dd900074685bf"
+  },
+  {
+    "team_1": "Rochester Rhythm",
+    "team_2": "Burnsville Inferno",
+    "scheduled_date": "3/27/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c2",
+    "team_2_id": "5ec9358d8c0dd900074685c1"
+  },
+  {
+    "team_1": "St. Cloud Flyers",
+    "team_2": "Bloomington Maulers",
+    "scheduled_date": "3/27/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c4",
+    "team_2_id": "5ec9358e8c0dd900074685c5"
+  },
+  {
+    "team_1": "Minneapolis Miracles",
+    "team_2": "Hibbing Rangers",
+    "scheduled_date": "3/27/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bd",
+    "team_2_id": "5ec9358e8c0dd900074685c3"
+  },
+  {
+    "team_1": "St. Paul Senators",
+    "team_2": "Minneapolis Miracles",
+    "scheduled_date": "4/10/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685be",
+    "team_2_id": "5ec9358d8c0dd900074685bd"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "St. Cloud Flyers",
+    "scheduled_date": "4/10/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358e8c0dd900074685c4"
+  },
+  {
+    "team_1": "Duluth Superiors",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "4/10/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bf",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "Minnetonka Barons",
+    "scheduled_date": "4/10/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358d8c0dd900074685c0"
+  },
+  {
+    "team_1": "Bloomington Maulers",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "4/10/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c5",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "Minnetonka Barons",
+    "team_2": "Minneapolis Miracles",
+    "scheduled_date": "4/17/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c0",
+    "team_2_id": "5ec9358d8c0dd900074685bd"
+  },
+  {
+    "team_1": "Bloomington Maulers",
+    "team_2": "St. Paul Senators",
+    "scheduled_date": "4/17/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c5",
+    "team_2_id": "5ec9358d8c0dd900074685be"
+  },
+  {
+    "team_1": "St. Cloud Flyers",
+    "team_2": "Duluth Superiors",
+    "scheduled_date": "4/17/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c4",
+    "team_2_id": "5ec9358d8c0dd900074685bf"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "4/17/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "4/17/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "Bloomington Maulers",
+    "scheduled_date": "4/24/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358e8c0dd900074685c5"
+  },
+  {
+    "team_1": "Duluth Superiors",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "4/24/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bf",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "St. Paul Senators",
+    "team_2": "Minnetonka Barons",
+    "scheduled_date": "4/24/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685be",
+    "team_2_id": "5ec9358d8c0dd900074685c0"
+  },
+  {
+    "team_1": "Minneapolis Miracles",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "4/24/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bd",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "St. Cloud Flyers",
+    "scheduled_date": "4/24/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358e8c0dd900074685c4"
+  },
+  {
+    "team_1": "Rochester Rhythm",
+    "team_2": "Minnetonka Barons",
+    "scheduled_date": "5/1/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c2",
+    "team_2_id": "5ec9358d8c0dd900074685c0"
+  },
+  {
+    "team_1": "St. Cloud Flyers",
+    "team_2": "Minneapolis Miracles",
+    "scheduled_date": "5/1/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c4",
+    "team_2_id": "5ec9358d8c0dd900074685bd"
+  },
+  {
+    "team_1": "Bemidji Lumberjacks",
+    "team_2": "Hibbing Rangers",
+    "scheduled_date": "5/1/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c6",
+    "team_2_id": "5ec9358e8c0dd900074685c3"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "St. Paul Senators",
+    "scheduled_date": "5/1/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358d8c0dd900074685be"
+  },
+  {
+    "team_1": "Bloomington Maulers",
+    "team_2": "Duluth Superiors",
+    "scheduled_date": "5/1/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c5",
+    "team_2_id": "5ec9358d8c0dd900074685bf"
+  },
+  {
+    "team_1": "Duluth Superiors",
+    "team_2": "Burnsville Inferno",
+    "scheduled_date": "5/8/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bf",
+    "team_2_id": "5ec9358d8c0dd900074685c1"
+  },
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "Bloomington Maulers",
+    "scheduled_date": "5/8/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358e8c0dd900074685c5"
+  },
+  {
+    "team_1": "Minneapolis Miracles",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "5/8/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bd",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "Minnetonka Barons",
+    "team_2": "St. Cloud Flyers",
+    "scheduled_date": "5/8/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c0",
+    "team_2_id": "5ec9358e8c0dd900074685c4"
+  },
+  {
+    "team_1": "St. Paul Senators",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "5/8/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685be",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "St. Cloud Flyers",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "5/15/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c4",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "Bemidji Lumberjacks",
+    "team_2": "Minnetonka Barons",
+    "scheduled_date": "5/15/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c6",
+    "team_2_id": "5ec9358d8c0dd900074685c0"
+  },
+  {
+    "team_1": "Bloomington Maulers",
+    "team_2": "Minneapolis Miracles",
+    "scheduled_date": "5/15/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c5",
+    "team_2_id": "5ec9358d8c0dd900074685bd"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "Hibbing Rangers",
+    "scheduled_date": "5/15/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358e8c0dd900074685c3"
+  },
+  {
+    "team_1": "Duluth Superiors",
+    "team_2": "St. Paul Senators",
+    "scheduled_date": "5/15/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bf",
+    "team_2_id": "5ec9358d8c0dd900074685be"
+  },
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "Duluth Superiors",
+    "scheduled_date": "5/22/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358d8c0dd900074685bf"
+  },
+  {
+    "team_1": "Minneapolis Miracles",
+    "team_2": "Burnsville Inferno",
+    "scheduled_date": "5/22/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bd",
+    "team_2_id": "5ec9358d8c0dd900074685c1"
+  },
+  {
+    "team_1": "Minnetonka Barons",
+    "team_2": "Bloomington Maulers",
+    "scheduled_date": "5/22/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c0",
+    "team_2_id": "5ec9358e8c0dd900074685c5"
+  },
+  {
+    "team_1": "St. Paul Senators",
+    "team_2": "St. Cloud Flyers",
+    "scheduled_date": "5/22/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685be",
+    "team_2_id": "5ec9358e8c0dd900074685c4"
+  },
+  {
+    "team_1": "Rochester Rhythm",
+    "team_2": "Bemidji Lumberjacks",
+    "scheduled_date": "5/22/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c2",
+    "team_2_id": "5ec9358e8c0dd900074685c6"
+  },
+  {
+    "team_1": "Bemidji Lumberjacks",
+    "team_2": "St. Cloud Flyers",
+    "scheduled_date": "5/29/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c6",
+    "team_2_id": "5ec9358e8c0dd900074685c4"
+  },
+  {
+    "team_1": "Bloomington Maulers",
+    "team_2": "Rochester Rhythm",
+    "scheduled_date": "5/29/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c5",
+    "team_2_id": "5ec9358d8c0dd900074685c2"
+  },
+  {
+    "team_1": "Hibbing Rangers",
+    "team_2": "St. Paul Senators",
+    "scheduled_date": "5/29/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "5ec9358e8c0dd900074685c3",
+    "team_2_id": "5ec9358d8c0dd900074685be"
+  },
+  {
+    "team_1": "Duluth Superiors",
+    "team_2": "Minneapolis Miracles",
+    "scheduled_date": "5/29/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685bf",
+    "team_2_id": "5ec9358d8c0dd900074685bd"
+  },
+  {
+    "team_1": "Burnsville Inferno",
+    "team_2": "Minnetonka Barons",
+    "scheduled_date": "5/29/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "5ec9358d8c0dd900074685c1",
+    "team_2_id": "5ec9358d8c0dd900074685c0"
+  }
+]
