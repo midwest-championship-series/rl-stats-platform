@@ -62,7 +62,7 @@ const handler = async () => {
     let s3 = league.seasons.find(s => s.name === '3')
     if (!s3) {
       console.log(`${league.name} has no season 3`)
-      const s3 = new Seasons({
+      s3 = new Seasons({
         name: '3',
         season_type: 'REG',
         match_ids: [],
