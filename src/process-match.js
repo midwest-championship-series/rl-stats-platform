@@ -100,21 +100,13 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
   }
   const matches = (
     await Matches.find(buildMatchesQuery(teams))
+      .sort({ week: 'asc' })
       .populate('games')
       .populate({
         path: 'season',
         populate: { path: 'league' },
       })
   ).filter(m => m.season && m.season.league && m.season.league._id.equals(leagueId))
-
-  /** @todo figure out if date could be used to make this filter better */
-  if (matches.length !== 1) {
-    let errMsg = `expected to get one match but got ${matches.length} between teams: ${teams
-      .map(t => t.name)
-      .join(', ')}`
-    if (matches.length > 1) errMsg += `\nmatch ids: ${matches.map(m => m._id.toHexString()).join(', ')}`
-    throw new UnRecoverableError('INCORRECT_MATCH_COUNT', errMsg)
-  }
 
   const match = matches[0]
   return { match, teams, season: match.season, league: match.season.league }
