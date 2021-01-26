@@ -4,8 +4,8 @@ const fs = require('fs')
 const path = require('path')
 const { Teams, Matches, Leagues, Seasons } = require('../src/model/mongodb')
 
-const mncsSchedule = JSON.parse(fs.readFileSync(path.join(__dirname, '../temp/mncs-schedule.json')))
-const clmnSchedule = JSON.parse(fs.readFileSync(path.join(__dirname, '../temp/clmn-schedule.json')))
+const mncsSchedule = JSON.parse(fs.readFileSync(path.join(__dirname, 'mncs-schedule.json')))
+const clmnSchedule = JSON.parse(fs.readFileSync(path.join(__dirname, 'clmn-schedule.json')))
 
 const getTeams = schedule => {
   const teamIds = [
