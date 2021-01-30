@@ -223,7 +223,11 @@ const matchesFindByIdMock = jest.fn()
 class Match {
   constructor() {}
 }
-Match.find = jest.fn(() => ({ populate: jest.fn(() => ({ populate: matchesFindMock })) }))
+Match.find = jest.fn(() => ({
+  sort: jest.fn(() => ({
+    populate: jest.fn(() => ({ populate: matchesFindMock })),
+  })),
+}))
 Match.findById = jest.fn(() => ({
   populate: jest.fn(() => ({ populate: jest.fn(() => ({ populate: matchesFindByIdMock })) })),
 }))
@@ -769,7 +773,7 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(new Error('expected a team to win the best of 5 match, but winning team has only 2'))
   })
-  it('should throw an error if exactly one match is not returned', async () => {
+  it.only('should throw an error if less than one match is returned', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     matchesFindMock.mockResolvedValue([])
@@ -783,29 +787,7 @@ describe('process-match', () => {
           '4ed12225-7251-4d63-8bb6-15338c60bcf2',
         ],
       }),
-    ).rejects.toEqual(
-      new Error('expected to get one match but got 0 between teams: Duluth Superiors, Burnsville Inferno'),
-    )
-  })
-  it('should throw an error if there is more than one match scheduled for the league', async () => {
-    players.Model.find.mockResolvedValue(mockPlayers)
-    teams.Model.find.mockResolvedValue(mockTeams)
-    matchesFindMock.mockResolvedValue([mockOpenMatch(), mockOpenMatch()])
-    await expect(
-      processMatch({
-        league_id: '5ebc62b1d09245d2a7c63516',
-        game_ids: [
-          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
-        ],
-      }),
-    ).rejects.toEqual(
-      new Error(
-        'expected to get one match but got 2 between teams: Duluth Superiors, Burnsville Inferno\nmatch ids: 5ebc62b0d09245d2a7c6340c, 5ebc62b0d09245d2a7c6340c',
-      ),
-    )
+    ).rejects.toEqual(new Error('found 0 matches between teams: Duluth Superiors, Burnsville Inferno'))
   })
   it('should throw an error if no league id is passed', async () => {
     await expect(
