@@ -57,6 +57,7 @@ provider:
     MONGODB_HOST: ${self:custom.dbHost.${self:provider.stage}, self:custom.dbHost.notprod}
     MNRL_BOT_URL: https://rl-rank-bot.herokuapp.com
     ERROR_CHANNEL_ID: '692994579305332806'
+    ELASTIC_HOST: ${ssm:${self:provider.stage}-mnrl-elastic-host~true}
   iamRoleStatements:
     - Effect: Allow
       Action:

@@ -13,7 +13,7 @@ const handler = async event => {
       if (message.reply_to_channel) {
         await sendToChannel(
           message.reply_to_channel,
-          `match processed successfully - match results posted to ${data.league.report_channel_ids
+          `match ${data.match._id.toString()} processed successfully - match results posted to ${data.league.report_channel_ids
             .map(c => `<#${c}>`)
             .join(', ')}`,
         )

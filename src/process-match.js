@@ -10,6 +10,7 @@ const processMatch = require('./producers')
 const processForfeit = require('./producers/forfeit')
 const { getPlayerTeamsAtDate } = require('./producers/common')
 const { RecoverableError, UnRecoverableError } = require('./util/errors')
+const { indexDocs } = require('./services/elastic')
 
 const validateFilters = ({ league_id, match_id, game_ids }) => {
   if (match_id) return
@@ -115,7 +116,10 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
 }
 
 const uploadStats = (teamStats, playerStats) => {
-  return Promise.all([teamGames.upsert({ data: teamStats }), playerGames.upsert({ data: playerStats })])
+  return Promise.all([
+    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_team_stats`),
+    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_player_stats`),
+  ])
 }
 
 const handleReplays = async filters => {
