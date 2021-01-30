@@ -42,7 +42,12 @@ const handler = async event => {
       } else {
         if (!err.code || !message.reply_to_channel) {
           // this is an error which we have not planned for
-          await reportError(err)
+          const errContext = `encountered error while processing match with message: ${JSON.stringify(
+            message,
+            null,
+            2,
+          )}`
+          await reportError(err, errContext)
         }
         if (message.reply_to_channel) {
           await sendToChannel(message.reply_to_channel, err.message)
