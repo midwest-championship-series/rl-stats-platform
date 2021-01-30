@@ -13,7 +13,12 @@ const reduceArray = (docs, prop) => {
 
 const matchGetters = {
   matches: criteria => {
-    return Matches.find({ 'game_ids.0': { $exists: true }, ...criteria }).populate('games')
+    return Matches.find({
+      $or: [
+        { 'game_ids.0': { $exists: true }, ...criteria },
+        { forfeited_by_team: { $exists: true }, ...criteria },
+      ],
+    }).populate('games')
   },
   seasons: criteria => {
     return Seasons.find({ ...criteria })
@@ -47,11 +52,19 @@ const matchGetters = {
 module.exports = async (collection, criteria) => {
   if (!matchGetters[collection]) throw new Error(`no query implemented for collection: ${collection}`)
   const messages = (await matchGetters[collection](criteria))
-    .filter(match => match.games && match.games.length > 0)
-    .map(match => ({
-      match_id: match._id.toHexString(),
-      game_ids: match.games.map(g => g.ballchasing_id),
-    }))
+    .filter(match => (match.games && match.games.length > 0) || match.forfeited_by_team)
+    .map(match => {
+      const matchMessage = {
+        match_id: match._id.toHexString(),
+      }
+      if (match.games && match.games.length > 0) {
+        matchMessage.game_ids = match.games.map(g => g.ballchasing_id)
+      }
+      if (match.forfeited_by_team) {
+        matchMessage.forfeit_team_id = match.forfeited_by_team
+      }
+      return matchMessage
+    })
   await sqs.sendMessageBatch(process.env.GAMES_QUEUE_URL, messages)
   return { messages }
 }

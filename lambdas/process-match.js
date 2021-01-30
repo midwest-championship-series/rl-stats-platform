@@ -36,17 +36,13 @@ const handler = async event => {
         await reportError(unlinkedPlayerReport)
       }
     } catch (err) {
-      console.error(`error occurred while processing message:`, message, err)
+      const errContext = `encountered error while processing match with message: ${JSON.stringify(message, null, 2)}`
+      console.error(`error occurred while processing message:`, errContext, err)
       if (err instanceof RecoverableError) {
         throw err // this will put the message back on the queue for re-processing
       } else {
         if (!err.code || !message.reply_to_channel) {
           // this is an error which we have not planned for
-          const errContext = `encountered error while processing match with message: ${JSON.stringify(
-            message,
-            null,
-            2,
-          )}`
           await reportError(err, errContext)
         }
         if (message.reply_to_channel) {

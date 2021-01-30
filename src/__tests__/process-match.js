@@ -773,7 +773,7 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(new Error('expected a team to win the best of 5 match, but winning team has only 2'))
   })
-  it.only('should throw an error if less than one match is returned', async () => {
+  it('should throw an error if less than one match is returned', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     matchesFindMock.mockResolvedValue([])
