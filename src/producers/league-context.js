@@ -43,7 +43,9 @@ module.exports = (game, { league, season, match, players, teams, games }) => {
     ]
     game[color].team = teams.find(t => playerTeams.some(team_id => t._id.equals(team_id)))
     if (!game[color].team) {
-      const errMsg = `no team found for ${color} in match ${game.match_id}`
+      const errMsg = `no team found for ${color} in match ${game.match_id}. Teams identified are: ${playerTeams.join(
+        ', ',
+      )}`
       throw new UnRecoverableError('NO_TEAM_IDENTIFIED', errMsg)
     }
   })
