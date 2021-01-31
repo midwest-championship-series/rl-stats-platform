@@ -109,13 +109,11 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
       })
   ).filter(m => m.season && m.season.league && m.season.league._id.equals(leagueId))
 
-  if (!matches[0])
-    throw new UnRecoverableError('MATCH_COUNT', `found 0 matches between teams: ${teams.map(t => t.name).join(', ')}`)
   const match = matches[0]
   return { match, teams, season: match.season, league: match.season.league }
 }
 
-const uploadStats = (teamStats, playerStats) => {
+const uploadStats = async (teamStats, playerStats) => {
   return Promise.all([
     indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_team_stats`),
     indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_player_stats`),
@@ -162,12 +160,8 @@ const handleReplays = async filters => {
     teams,
     players,
   })
-  try {
-    console.info('uploading match stats')
-    await uploadStats(teamStats, playerStats)
-  } catch (err) {
-    throw new RecoverableError(err.message)
-  }
+  console.info('uploading match stats')
+  await uploadStats(teamStats, playerStats)
 
   for (let game of games) {
     game.date_time_processed = Date.now()

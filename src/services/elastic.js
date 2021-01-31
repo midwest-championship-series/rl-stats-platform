@@ -29,6 +29,7 @@ const indexDocs = async (documents, indexName) => {
     return acc.concat(indexer)
   }, [])
   const conn = await getConnection()
+  console.log(`indexing ${documents.length} documents to ${indexName} index`)
   return conn.bulk({ body })
 }
 
