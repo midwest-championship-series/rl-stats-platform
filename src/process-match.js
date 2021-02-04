@@ -110,6 +110,12 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
   ).filter(m => m.season && m.season.league && m.season.league._id.equals(leagueId))
 
   const match = matches[0]
+  if (!match) {
+    throw new UnRecoverableError(
+      'NO_MATCH_FOUND',
+      `found 0 matches between teams: ${teams.map(t => t.name).join(', ')}`,
+    )
+  }
   return { match, teams, season: match.season, league: match.season.league }
 }
 

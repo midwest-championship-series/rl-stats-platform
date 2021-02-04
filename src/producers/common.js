@@ -38,4 +38,8 @@ const getPlayerTeamsAtDate = (player, matchDate) => {
   )
 }
 
-module.exports = { getTeamStats, getPlayerStats, getPlayerTeamsAtDate, reduceStats }
+const getMatchGameId = (matchId, gameNumber) => {
+  return `match:${matchId}:game:${gameNumber}`
+}
+
+module.exports = { getTeamStats, getPlayerStats, getPlayerTeamsAtDate, reduceStats, getMatchGameId }

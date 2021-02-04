@@ -1,14 +1,13 @@
-const { getTeamStats, getPlayerStats, reduceStats } = require('./common')
+const { getPlayerStats, reduceStats, getMatchGameId } = require('./common')
 
 const processPlayer = (game, player) => {
-  const teamStats = getTeamStats(game, player.team_color)
-  const opponentTeamStats = getTeamStats(game, player.opponent_color)
   const ownStats = getPlayerStats(player)
   const modifiers = [
     { inName: 'inflicted', outName: 'demos_inflicted' },
     { inName: 'taken', outName: 'demos_taken' },
   ]
   const stats = reduceStats({ ownStats, game, modifiers })
+  const playerTeamWon = game.winning_team_id.equals(player.team_id)
   return {
     player_id: player.league_id,
     player_name: player.name,
@@ -31,8 +30,10 @@ const processPlayer = (game, player) => {
     game_date: game.date,
     map_name: game.map_name,
     match_id_win: game[player.team_color].match_id_win,
-    game_id_win: game.winning_team_id.equals(player.team_id) ? game.game_id : undefined,
-    wins: game.winning_team_id.equals(player.team_id) ? 1 : 0,
+    game_id_win_total: playerTeamWon ? getMatchGameId(game.match_id, game.game_number) : undefined,
+    game_id_win: playerTeamWon ? game.game_id : undefined,
+    game_id_loss_total: playerTeamWon ? undefined : getMatchGameId(game.match_id, game.game_number),
+    wins: playerTeamWon ? 1 : 0,
     ms_played: (player.end_time - player.start_time) * 1000,
     ...stats,
   }
