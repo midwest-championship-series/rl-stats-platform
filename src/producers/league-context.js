@@ -10,8 +10,9 @@ module.exports = (game, { league, season, match, players, teams, games }) => {
   game.match_id = match._id.toHexString()
   game.match_type = match.season.season_type
   game.week = match.week
-  game.season = match.season.name
+  game.season_name = match.season.name
   game.season_id = season._id.toHexString()
+  game.league_name = league.name
   game.league_id = league._id.toHexString()
 
   colors.forEach(color => {

@@ -176,6 +176,7 @@ const mockClosedMatch = mockDoc({
     season_type: 'REG',
     league: {
       _id: ObjectId('5ebc62b1d09245d2a7c63516'),
+      name: 'mncs',
     },
   },
 })
@@ -191,6 +192,7 @@ const mockOpenMatch = () =>
       season_type: 'REG',
       league: {
         _id: ObjectId('5ebc62b1d09245d2a7c63516'),
+        name: 'mncs',
       },
     },
   })
@@ -406,8 +408,9 @@ describe('process-match', () => {
       match_id_win: '5ebc62b0d09245d2a7c6340c',
       match_type: 'REG',
       week: 1,
-      season: '1',
+      season_name: '1',
       season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
       league_id: '5ebc62b1d09245d2a7c63516',
       game_id: '5ebc62afd09245d2a7c63338',
       game_id_win: '5ebc62afd09245d2a7c63338',
@@ -483,8 +486,9 @@ describe('process-match', () => {
       match_id_win: '5ebc62b0d09245d2a7c6340c',
       match_type: 'REG',
       week: 1,
-      season: '1',
+      season_name: '1',
       season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
       league_id: '5ebc62b1d09245d2a7c63516',
       game_id: '5ebc62afd09245d2a7c63338',
       game_id_win: '5ebc62afd09245d2a7c63338',

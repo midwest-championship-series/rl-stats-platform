@@ -121,8 +121,8 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
 
 const uploadStats = async (teamStats, playerStats) => {
   return Promise.all([
-    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_team_stats`),
-    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_player_stats`),
+    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`),
+    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`),
   ])
 }
 
