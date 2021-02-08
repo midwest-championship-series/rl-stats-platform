@@ -42,6 +42,8 @@ const genTeamStats = (params, context) => {
       team_name: team.name,
       opponent_team_id: opponent._id.toHexString(),
       opponent_team_name: opponent.name,
+      match_id_win: team._id.toHexString() !== forfeit_team_id ? match._id.toHexString() : undefined,
+      game_id_total: forfeitId,
       game_id_forfeit_win: team._id.toHexString() !== forfeit_team_id ? forfeitId : undefined,
       game_id_forfeit_loss: team._id.toHexString() === forfeit_team_id ? forfeitId : undefined,
       wins: team._id.toHexString() === forfeit_team_id ? 0 : 1,
