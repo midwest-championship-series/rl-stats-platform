@@ -119,20 +119,24 @@ const uploadStats = (teamStats, playerStats) => {
 }
 
 const handleReplays = async filters => {
+  console.info('validating filters')
   validateFilters(filters)
   const { league_id, match_id, game_ids } = filters
   let reportGames
   try {
+    console.info('retrieving replays')
     reportGames = await ballchasing.getReplays({ game_ids })
   } catch (err) {
     throw new RecoverableError(err.message)
   }
+  console.info('retrieving players')
   const players = await Players.find(buildPlayersQuery(reportGames))
   if (players.length < 1) {
     const errMsg = `no players found for games: ${game_ids.join(', ')}`
     throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
   }
 
+  console.info('retrieving league info')
   const { league, season, match, teams } = await (match_id
     ? getMatchInfoById(match_id) // this is a reprocessed match
     : getMatchInfoByPlayers(league_id, players, getEarliestGameDate(reportGames))) // this is a new match
@@ -145,6 +149,7 @@ const handleReplays = async filters => {
   } else {
     games = match.games
   }
+  console.info('processing match stats')
   const { teamStats, playerStats, playerTeamMap } = processMatch(reportGames, {
     league,
     season,
@@ -154,6 +159,7 @@ const handleReplays = async filters => {
     players,
   })
   try {
+    console.info('uploading match stats')
     await uploadStats(teamStats, playerStats)
   } catch (err) {
     throw new RecoverableError(err.message)
