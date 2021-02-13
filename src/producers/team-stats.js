@@ -1,4 +1,4 @@
-const { getTeamStats, reduceStats } = require('./common')
+const { getTeamStats, reduceStats, getMatchGameId } = require('./common')
 
 const processTeam = (game, color) => {
   const opponentColor = color === 'blue' ? 'orange' : 'blue'
@@ -9,25 +9,29 @@ const processTeam = (game, color) => {
     { inName: 'taken', outName: 'demos_taken' },
   ]
   const stats = reduceStats({ ownStats, game, modifiers, opponentStats })
+  const teamWon = game.winning_team_id.equals(game[color].team._id)
   return {
     team_id: game[color].team._id.toHexString(),
     team_name: game[color].team.name,
     opponent_team_id: game[opponentColor].team._id.toHexString(),
     opponent_team_name: game[opponentColor].team.name,
     team_color: color,
+    league_name: game.league_name,
     league_id: game.league_id,
     match_id: game.match_id,
     match_type: game.match_type,
-    season: game.season,
+    season_name: game.season_name,
     season_id: game.season_id,
     week: game.week,
     game_id: game.game_id,
     game_date: game.date,
     game_number: game.game_number.toString(),
     map_name: game.map_name,
-    wins: game.winning_team_id.equals(game[color].team._id) ? 1 : 0,
+    wins: teamWon ? 1 : 0,
     match_id_win: game[color].match_id_win,
-    game_id_win: game.winning_team_id.equals(game[color].team._id) ? game.game_id : undefined,
+    game_id_win: teamWon ? game.game_id : undefined,
+    game_id_win_total: teamWon ? getMatchGameId(game.match_id, game.game_number) : undefined,
+    game_id_loss_total: teamWon ? undefined : getMatchGameId(game.match_id, game.game_number),
     ms_played: game.duration * 1000,
     ...stats,
   }

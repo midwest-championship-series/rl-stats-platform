@@ -1,4 +1,4 @@
-const { getPlayerTeamsAtDate } = require('./common')
+const { getPlayerTeamsAtDate, getMatchGameId } = require('./common')
 
 module.exports = params => {
   const { league, season, match, teams, players, forfeit_date } = params
@@ -35,7 +35,7 @@ const genTeamStats = (params, context) => {
     const team = teams[i % 2]
     const opponent = teams[(i + 1) % 2]
     const gameNumber = Math.floor(i / 2) + 1
-    const forfeitId = `match:${match._id.toHexString()}:game:${gameNumber}`
+    const forfeitId = getMatchGameId(match._id.toHexString(), gameNumber)
     teamStats.push({
       ...context,
       team_id: team._id.toHexString(),
@@ -45,6 +45,7 @@ const genTeamStats = (params, context) => {
       match_id_win: team._id.toHexString() !== forfeit_team_id ? match._id.toHexString() : undefined,
       game_id_total: forfeitId,
       game_id_forfeit_win: team._id.toHexString() !== forfeit_team_id ? forfeitId : undefined,
+      game_id_win_total: team._id.toHexString() !== forfeit_team_id ? forfeitId : undefined,
       game_id_forfeit_loss: team._id.toHexString() === forfeit_team_id ? forfeitId : undefined,
       wins: team._id.toHexString() === forfeit_team_id ? 0 : 1,
     })

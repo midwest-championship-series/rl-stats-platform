@@ -176,6 +176,7 @@ const mockClosedMatch = mockDoc({
     season_type: 'REG',
     league: {
       _id: ObjectId('5ebc62b1d09245d2a7c63516'),
+      name: 'mncs',
     },
   },
 })
@@ -191,6 +192,7 @@ const mockOpenMatch = () =>
       season_type: 'REG',
       league: {
         _id: ObjectId('5ebc62b1d09245d2a7c63516'),
+        name: 'mncs',
       },
     },
   })
@@ -200,10 +202,12 @@ jest.mock('../services/mongodb')
 const replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
 const ballchasing = require('../services/ballchasing')
 jest.mock('../services/ballchasing')
-const teamGames = require('../model/sheets/team-games')
-jest.mock('../model/sheets/team-games')
-const playerGames = require('../model/sheets/player-games')
-jest.mock('../model/sheets/player-games')
+const elastic = require('../services/elastic')
+jest.mock('../services/elastic')
+// const teamGames = require('../model/sheets/team-games')
+// jest.mock('../model/sheets/team-games')
+// const playerGames = require('../model/sheets/player-games')
+// jest.mock('../model/sheets/player-games')
 const games = require('../model/mongodb/games')
 jest.mock('../model/mongodb/games')
 class Game {
@@ -272,8 +276,7 @@ describe('process-match', () => {
     ballchasing.getReplays.mockResolvedValue(replays)
   })
   afterEach(() => {
-    teamGames.upsert.mockClear()
-    playerGames.upsert.mockClear()
+    elastic.indexDocs.mockClear()
   })
   it('should process a match with a match_id', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
@@ -352,8 +355,7 @@ describe('process-match', () => {
       ],
     })
     expect(matches.Model.findById).toHaveBeenCalledWith('5ebc62b0d09245d2a7c6340c')
-    expect(teamGames.upsert.mock.calls.length).toBe(1)
-    expect(playerGames.upsert.mock.calls.length).toBe(1)
+    expect(elastic.indexDocs.mock.calls.length).toBe(2)
     expect(mockClosedMatch).toHaveProperty('winning_team_id')
     expect(mockClosedMatch.winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62e86'))
     expect(mockClosedMatch).toHaveProperty('players_to_teams')
@@ -393,11 +395,10 @@ describe('process-match', () => {
         '4ed12225-7251-4d63-8bb6-15338c60bcf2',
       ],
     })
-    expect(teamGames.upsert.mock.calls.length).toBe(1)
-    const teamStats = teamGames.upsert.mock.calls[0][0]
-    expect(teamStats).toHaveProperty('data')
-    expect(teamStats.data).toHaveLength(8)
-    expect(teamStats.data[6]).toMatchObject({
+    expect(elastic.indexDocs.mock.calls.length).toBe(2)
+    const teamStats = elastic.indexDocs.mock.calls[0][0]
+    expect(teamStats).toHaveLength(8)
+    expect(teamStats[6]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
       opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
@@ -407,11 +408,14 @@ describe('process-match', () => {
       match_id_win: '5ebc62b0d09245d2a7c6340c',
       match_type: 'REG',
       week: 1,
-      season: '1',
+      season_name: '1',
       season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
       league_id: '5ebc62b1d09245d2a7c63516',
       game_id: '5ebc62afd09245d2a7c63338',
       game_id_win: '5ebc62afd09245d2a7c63338',
+      game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
+      game_id_loss_total: undefined,
       game_number: '4',
       game_date: '2020-03-19T21:35:38Z',
       map_name: 'Utopia Coliseum',
@@ -435,11 +439,13 @@ describe('process-match', () => {
       ms_zero_boost: 162580,
       ms_full_boost: 79400,
     })
-    expect(teamStats.data[7]).toMatchObject({
+    expect(teamStats[7]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62eb3',
       opponent_team_id: '5ebc62a9d09245d2a7c62e86',
       game_id_win: undefined,
       match_id_win: undefined,
+      game_id_win_total: undefined,
+      game_id_loss_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_number: '4',
     })
   })
@@ -456,14 +462,12 @@ describe('process-match', () => {
         '4ed12225-7251-4d63-8bb6-15338c60bcf2',
       ],
     })
-    expect(playerGames.upsert.mock.calls.length).toBe(1)
-    const playerStats = playerGames.upsert.mock.calls[0][0]
-    expect(playerStats).toHaveProperty('data')
+    const playerStats = elastic.indexDocs.mock.calls[1][0]
     const findPlayerStats = criteria => {
-      return playerStats.data.filter(stat => Object.keys(criteria).every(key => stat[key] === criteria[key]))
+      return playerStats.filter(stat => Object.keys(criteria).every(key => stat[key] === criteria[key]))
     }
     // ensure there are 6 player records per game
-    expect(playerStats.data).toHaveLength(24)
+    expect(playerStats).toHaveLength(24)
     expect(findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })).toHaveLength(6)
     expect(
       findPlayerStats({ player_id: '5ec04239d09245d2a7d4fa26', game_id: '5ebc62afd09245d2a7c63338' })[0],
@@ -482,11 +486,14 @@ describe('process-match', () => {
       match_id_win: '5ebc62b0d09245d2a7c6340c',
       match_type: 'REG',
       week: 1,
-      season: '1',
+      season_name: '1',
       season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
       league_id: '5ebc62b1d09245d2a7c63516',
       game_id: '5ebc62afd09245d2a7c63338',
       game_id_win: '5ebc62afd09245d2a7c63338',
+      game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
+      game_id_loss_total: undefined,
       game_number: '4',
       game_date: '2020-03-19T21:35:38Z',
       map_name: 'Utopia Coliseum',
@@ -507,6 +514,13 @@ describe('process-match', () => {
       amount_used_while_supersonic: 212,
       ms_zero_boost: 52950,
       ms_full_boost: 23460,
+    })
+    expect(
+      findPlayerStats({ player_id: '5ec04239d09245d2a7d4fa52', game_id: '5ebc62afd09245d2a7c63338' })[0],
+    ).toMatchObject({
+      game_id_win: undefined,
+      game_id_win_total: undefined,
+      game_id_loss_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
     })
     findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })
       .filter(stat => stat.player_id !== '5ec04239d09245d2a7d4fa26')
@@ -586,9 +600,10 @@ describe('process-match', () => {
       forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
       reply_to_channel: '692994579305332806',
     })
-    const teamStats = teamGames.upsert.mock.calls[0][0]
-    expect(teamStats.data).toHaveLength(6)
-    expect(teamStats.data[0]).toMatchObject({
+    const teamStats = elastic.indexDocs.mock.calls[0][0]
+    const playerStats = elastic.indexDocs.mock.calls[1][0]
+    expect(teamStats).toHaveLength(6)
+    expect(teamStats[0]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
       opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
@@ -609,9 +624,9 @@ describe('process-match', () => {
       wins: 0,
     })
     // requires tests to have run in less than 1 s
-    const dateDiff = Math.abs(new Date(teamStats.data[0].game_date) - Date.now())
+    const dateDiff = Math.abs(new Date(teamStats[0].game_date) - Date.now())
     expect(dateDiff).toBeLessThan(1000)
-    expect(teamStats.data[1]).toMatchObject({
+    expect(teamStats[1]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62eb3',
       team_name: 'Burnsville Inferno',
       opponent_team_id: '5ebc62a9d09245d2a7c62e86',
@@ -631,12 +646,11 @@ describe('process-match', () => {
       map_name: undefined,
       wins: 1,
     })
-    expect(teamStats.data[4]).toMatchObject({
+    expect(teamStats[4]).toMatchObject({
       game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:3',
     })
-    const playerStats = playerGames.upsert.mock.calls[0][0]
-    expect(playerStats.data).toHaveLength(12)
-    expect(playerStats.data[0]).toMatchObject({
+    expect(playerStats).toHaveLength(12)
+    expect(playerStats[0]).toMatchObject({
       player_id: '5ec04239d09245d2a7d4fa26',
       player_name: 'Calster',
       team_id: '5ebc62a9d09245d2a7c62e86',
@@ -657,7 +671,7 @@ describe('process-match', () => {
       map_name: undefined,
       wins: 0,
     })
-    expect(playerStats.data[2]).toMatchObject({
+    expect(playerStats[2]).toMatchObject({
       player_id: '5ec04239d09245d2a7d4fa4f',
       player_name: 'Pace.',
       team_id: '5ebc62a9d09245d2a7c62eb3',
@@ -696,8 +710,10 @@ describe('process-match', () => {
       forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
       reply_to_channel: '692994579305332806',
     })
-    const playerStats = playerGames.upsert.mock.calls[0][0]
-    expect(playerStats.data).toHaveLength(15)
+    const teamStats = elastic.indexDocs.mock.calls[0][0]
+    expect(teamStats).toHaveLength(6)
+    const playerStats = elastic.indexDocs.mock.calls[1][0]
+    expect(playerStats).toHaveLength(15)
   })
   it('should process a forfeit with a different best_of condition', async () => {
     Match.findById = jest.fn(() => ({
@@ -716,10 +732,10 @@ describe('process-match', () => {
       forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
       reply_to_channel: '692994579305332806',
     })
-    const teamStats = teamGames.upsert.mock.calls[0][0]
-    const playerStats = playerGames.upsert.mock.calls[0][0]
-    expect(teamStats.data).toHaveLength(2)
-    expect(playerStats.data).toHaveLength(4)
+    const teamStats = elastic.indexDocs.mock.calls[0][0]
+    const playerStats = elastic.indexDocs.mock.calls[1][0]
+    expect(teamStats).toHaveLength(2)
+    expect(playerStats).toHaveLength(4)
   })
   it('should fail if forfeit match does not have best_of condition', async () => {
     Match.findById = jest.fn(() => ({

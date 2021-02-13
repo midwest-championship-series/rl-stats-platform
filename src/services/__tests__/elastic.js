@@ -15,12 +15,14 @@ describe('elasticsearch', () => {
       const docs = [{ _id: '12345', title: 'new1' }, { title: 'new2' }]
       await indexDocs(docs, 'stats')
       elastic.Client.mock.instances[0]
-      expect(bulkMock).toHaveBeenCalledWith([
-        { index: { _id: '12345', _index: 'stats' } },
-        { _id: '12345', title: 'new1' },
-        { index: { _index: 'stats' } },
-        { title: 'new2' },
-      ])
+      expect(bulkMock).toHaveBeenCalledWith({
+        body: [
+          { index: { _id: '12345', _index: 'stats' } },
+          { _id: '12345', title: 'new1' },
+          { index: { _index: 'stats' } },
+          { title: 'new2' },
+        ],
+      })
     })
   })
 })

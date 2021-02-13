@@ -1,9 +1,8 @@
 const elastic = require('elasticsearch')
 
 const connectionParams = {
-  host: process.env[`STATS_ELASTIC_URL_${process.env.SERVERLESS_STAGE}`],
+  host: process.env.ELASTIC_HOST,
   apiVersion: '7.2',
-  compression: 'gzip',
 }
 let connection
 
@@ -22,7 +21,7 @@ const getConnection = async () => {
 const indexDocs = async (documents, indexName) => {
   if (!documents || documents.length < 1) throw new Error('no documents to index')
   if (!indexName) throw new Error('indexDocs needs an index name')
-  const indexCall = documents.reduce((acc, doc) => {
+  const body = documents.reduce((acc, doc) => {
     const indexer = [{ index: { _index: indexName } }, doc]
     if (doc._id) {
       indexer[0].index._id = doc._id
@@ -30,7 +29,8 @@ const indexDocs = async (documents, indexName) => {
     return acc.concat(indexer)
   }, [])
   const conn = await getConnection()
-  return conn.bulk(indexCall)
+  console.info(`indexing ${documents.length} documents to ${indexName} index`)
+  return conn.bulk({ body })
 }
 
 module.exports = {

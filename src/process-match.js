@@ -10,6 +10,7 @@ const processMatch = require('./producers')
 const processForfeit = require('./producers/forfeit')
 const { getPlayerTeamsAtDate } = require('./producers/common')
 const { RecoverableError, UnRecoverableError } = require('./util/errors')
+const { indexDocs } = require('./services/elastic')
 
 const validateFilters = ({ league_id, match_id, game_ids }) => {
   if (match_id) return
@@ -108,14 +109,21 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
       })
   ).filter(m => m.season && m.season.league && m.season.league._id.equals(leagueId))
 
-  if (!matches[0])
-    throw new UnRecoverableError('MATCH_COUNT', `found 0 matches between teams: ${teams.map(t => t.name).join(', ')}`)
   const match = matches[0]
+  if (!match) {
+    throw new UnRecoverableError(
+      'NO_MATCH_FOUND',
+      `found 0 matches between teams: ${teams.map(t => t.name).join(', ')}`,
+    )
+  }
   return { match, teams, season: match.season, league: match.season.league }
 }
 
-const uploadStats = (teamStats, playerStats) => {
-  return Promise.all([teamGames.upsert({ data: teamStats }), playerGames.upsert({ data: playerStats })])
+const uploadStats = async (teamStats, playerStats) => {
+  return Promise.all([
+    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`),
+    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`),
+  ])
 }
 
 const handleReplays = async filters => {
@@ -158,12 +166,8 @@ const handleReplays = async filters => {
     teams,
     players,
   })
-  try {
-    console.info('uploading match stats')
-    await uploadStats(teamStats, playerStats)
-  } catch (err) {
-    throw new RecoverableError(err.message)
-  }
+  console.info('uploading match stats')
+  await uploadStats(teamStats, playerStats)
 
   for (let game of games) {
     game.date_time_processed = Date.now()
