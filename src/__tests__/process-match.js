@@ -356,6 +356,8 @@ describe('process-match', () => {
     })
     expect(matches.Model.findById).toHaveBeenCalledWith('5ebc62b0d09245d2a7c6340c')
     expect(elastic.indexDocs.mock.calls.length).toBe(2)
+    expect(elastic.indexDocs.mock.calls[0][2]).toEqual(['team_id', 'game_id'])
+    expect(elastic.indexDocs.mock.calls[1][2]).toEqual(['player_platform', 'player_platform_id', 'game_id'])
     expect(mockClosedMatch).toHaveProperty('winning_team_id')
     expect(mockClosedMatch.winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62e86'))
     expect(mockClosedMatch).toHaveProperty('players_to_teams')
