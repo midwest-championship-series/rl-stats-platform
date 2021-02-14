@@ -18,14 +18,18 @@ const getConnection = async () => {
   return connection
 }
 
-const indexDocs = async (documents, indexName) => {
+const indexDocs = async (documents, indexName, idKeys) => {
   if (!documents || documents.length < 1) throw new Error('no documents to index')
   if (!indexName) throw new Error('indexDocs needs an index name')
+  if (!idKeys || idKeys.length < 1) throw new Error('no id keys passed to elastic call')
   const body = documents.reduce((acc, doc) => {
-    const indexer = [{ index: { _index: indexName } }, doc]
-    if (doc._id) {
-      indexer[0].index._id = doc._id
-    }
+    const _id = idKeys.map(key => doc[key]).join(':')
+    const indexer = [
+      {
+        update: { _id, _index: indexName },
+      },
+      doc,
+    ]
     return acc.concat(indexer)
   }, [])
   const conn = await getConnection()
