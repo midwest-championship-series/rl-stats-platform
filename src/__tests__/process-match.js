@@ -18,10 +18,8 @@ const mockPlayers = [
         screen_name: 'Calster',
       },
     ],
-    created_at: { $date: '2020-05-16T19:42:49.164Z' },
     discord_id: '191639902100783108',
     screen_name: 'Calster',
-    updated_at: { $date: '2020-05-16T19:44:06.774Z' },
     team_history: [
       {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
@@ -38,10 +36,8 @@ const mockPlayers = [
         screen_name: 'Cheezy',
       },
     ],
-    created_at: { $date: '2020-05-16T19:42:49.164Z' },
     discord_id: '369948469986852874',
     screen_name: 'Cheezy',
-    updated_at: { $date: '2020-05-16T19:44:06.822Z' },
     team_history: [
       {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
@@ -61,12 +57,10 @@ const mockPlayers = [
         screen_name: 'Delephant',
       },
     ],
-    created_at: { $date: '2020-05-16T19:42:49.164Z' },
     discord_id: '198638770390564864',
     old_league_id: '0b3814d4-f880-4cfd-a33c-4fb31f5860f3',
     old_team_id: '14c44087-6711-434e-bcfc-199b98800d74',
     screen_name: 'Delephant',
-    updated_at: { $date: '2020-05-26T22:10:05.925Z' },
     team_history: [
       {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
@@ -93,10 +87,8 @@ const mockPlayers = [
         screen_name: 'Pace.',
       },
     ],
-    created_at: { $date: '2020-05-16T19:42:49.164Z' },
     discord_id: '560642215144194068',
     screen_name: 'Pace.',
-    updated_at: { $date: '2020-05-16T19:44:06.979Z' },
     team_history: [
       {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
@@ -113,10 +105,8 @@ const mockPlayers = [
         screen_name: 'Lege',
       },
     ],
-    created_at: { $date: '2020-05-16T19:42:49.164Z' },
     discord_id: '312301326841151490',
     screen_name: 'Lege',
-    updated_at: { $date: '2020-05-16T19:44:07.027Z' },
     team_history: [
       {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
@@ -124,21 +114,42 @@ const mockPlayers = [
       },
     ],
   },
+  {
+    _id: new ObjectId('5ec9358f8c0dd900074685cd'),
+    __v: 3,
+    accounts: [
+      { platform: 'steam', platform_id: '76561198400821586' },
+      { platform: 'steam', platform_id: '76561198118651841' },
+      {
+        platform: 'xbox',
+        platform_id: 'mU6LQmC-7bIjMhkYyGkyDlTiApC9PnY9WPS58rF4PBs',
+      },
+      { platform: 'epic', platform_id: 'bee3371256b041dfa521f3dd7878dabf' },
+    ],
+    discord_id: '171031002536214529',
+    screen_name: 'MARKsmanRL',
+    team_history: [
+      {
+        _id: new ObjectId('5f2854b8a5a63b00085cccf3'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685c1'),
+        date_joined: { $date: '2020-03-21T00:00:00.000Z' },
+        date_left: { $date: '2020-10-11T20:48:15.000Z' },
+      },
+    ],
+    avatar: 'https://cdn.discordapp.com/avatars/171031002536214529/85cf7e62d05a91b2ca41d7e7766c0686.png',
+    permissions: [],
+  },
 ]
 const mockTeams = [
   {
     _id: ObjectId('5ebc62a9d09245d2a7c62e86'),
-    created_at: { $date: '2020-05-13T21:12:09.069Z' },
     discord_id: '688286287655993365',
     name: 'Duluth Superiors',
-    updated_at: { $date: '2020-05-16T19:44:02.611Z' },
   },
   {
     _id: ObjectId('5ebc62a9d09245d2a7c62eb3'),
-    created_at: { $date: '2020-05-13T21:12:09.069Z' },
     discord_id: '688286346783359027',
     name: 'Burnsville Inferno',
-    updated_at: { $date: '2020-05-16T19:44:02.611Z' },
   },
 ]
 const mockClosedMatch = mockDoc({
@@ -199,15 +210,10 @@ const mockOpenMatch = () =>
 
 // mocks
 jest.mock('../services/mongodb')
-const replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
 const ballchasing = require('../services/ballchasing')
 jest.mock('../services/ballchasing')
 const elastic = require('../services/elastic')
 jest.mock('../services/elastic')
-// const teamGames = require('../model/sheets/team-games')
-// jest.mock('../model/sheets/team-games')
-// const playerGames = require('../model/sheets/player-games')
-// jest.mock('../model/sheets/player-games')
 const games = require('../model/mongodb/games')
 jest.mock('../model/mongodb/games')
 class Game {
@@ -239,6 +245,7 @@ matches.Model = Match
 const players = require('../model/mongodb/players')
 jest.mock('../model/mongodb/players')
 players.Model = {
+  create: jest.fn(),
   find: jest.fn(),
   onTeams: jest.fn(),
 }
@@ -272,7 +279,9 @@ leagues.Model = {
 const processMatch = require('../process-match')
 
 describe('process-match', () => {
+  let replays
   beforeEach(() => {
+    replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
     ballchasing.getReplays.mockResolvedValue(replays)
   })
   afterEach(() => {
@@ -298,7 +307,6 @@ describe('process-match', () => {
         '5ebc62afd09245d2a7c6335e',
         '5ebc62afd09245d2a7c63350',
       ],
-      unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
     expect(result.games).toHaveLength(4)
     expect(result.games[0].winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62e86'))
@@ -356,6 +364,8 @@ describe('process-match', () => {
     })
     expect(matches.Model.findById).toHaveBeenCalledWith('5ebc62b0d09245d2a7c6340c')
     expect(elastic.indexDocs.mock.calls.length).toBe(2)
+    expect(elastic.indexDocs.mock.calls[0][2]).toEqual(['team_id', 'game_id'])
+    expect(elastic.indexDocs.mock.calls[1][2]).toEqual(['player_id', 'game_id'])
     expect(mockClosedMatch).toHaveProperty('winning_team_id')
     expect(mockClosedMatch.winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62e86'))
     expect(mockClosedMatch).toHaveProperty('players_to_teams')
@@ -374,6 +384,10 @@ describe('process-match', () => {
       },
       {
         player_id: new ObjectId('5ec04239d09245d2a7d4fa4f'),
+        team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+      },
+      {
+        player_id: new ObjectId('5ec9358f8c0dd900074685cd'),
         team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
       },
       {
@@ -537,17 +551,6 @@ describe('process-match', () => {
         })
       }
     })
-    const noLeagueIdRecords = findPlayerStats({ player_platform_id: '76561198118651841' })
-    expect(noLeagueIdRecords).toHaveLength(4)
-    noLeagueIdRecords.forEach(r =>
-      expect(r).toMatchObject({
-        player_id: undefined,
-        player_name: 'MARKsman.',
-        screen_name: 'MARKsman.',
-        player_platform: 'steam',
-        player_platform_id: '76561198118651841',
-      }),
-    )
   })
   it('should process a new match', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
@@ -561,10 +564,6 @@ describe('process-match', () => {
         '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
         '4ed12225-7251-4d63-8bb6-15338c60bcf2',
       ],
-    })
-    expect(result).toMatchObject({
-      match_id: '5ebc62b0d09245d2a7c6340c',
-      unlinkedPlayers: [{ name: 'MARKsman.', platform: 'steam', platform_id: '76561198118651841' }],
     })
     expect(result.game_ids).toHaveLength(4)
   })
@@ -600,6 +599,8 @@ describe('process-match', () => {
       forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
       reply_to_channel: '692994579305332806',
     })
+    expect(elastic.indexDocs.mock.calls[0][2]).toEqual(['team_id', 'game_id_total'])
+    expect(elastic.indexDocs.mock.calls[1][2]).toEqual(['player_id', 'game_id_total'])
     const teamStats = elastic.indexDocs.mock.calls[0][0]
     const playerStats = elastic.indexDocs.mock.calls[1][0]
     expect(teamStats).toHaveLength(6)
@@ -818,5 +819,25 @@ describe('process-match', () => {
         ],
       }),
     ).rejects.toEqual(new Error('no league id or game ids passed for new match'))
+  })
+  it('should create players and throw a recoverable error if players do not exist in league database', async () => {
+    const missingPlayers = [...mockPlayers].slice(0, mockPlayers.length - 2)
+    players.Model.find.mockResolvedValue(missingPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    await expect(
+      processMatch({
+        league_id: '5ebc62b1d09245d2a7c63516',
+        game_ids: [
+          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
+          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+        ],
+      }),
+    ).rejects.toEqual(new Error('NO_PLAYER_FOUND'))
+    expect(players.Model.create.mock.calls).toHaveLength(2)
+    expect(players.Model.create.mock.calls[0][0]).toMatchObject({ screen_name: 'MARKsman.' })
+    expect(players.Model.create.mock.calls[1][0]).toMatchObject({ screen_name: 'Lege' })
   })
 })

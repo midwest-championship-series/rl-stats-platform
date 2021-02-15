@@ -2,7 +2,7 @@ const { Schema } = require('mongoose')
 const createModel = require('../../services/mongodb')
 
 const schema = {
-  discord_id: { type: String, unique: true },
+  discord_id: { type: String, unique: true, sparse: true },
   team_history: {
     type: [
       {

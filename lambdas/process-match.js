@@ -6,7 +6,12 @@ const getSummary = require('../src/match-summary')
 const stage = process.env.SERVERLESS_STAGE
 
 const handler = async event => {
-  const messages = event.Records.map(r => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
+  let messages
+  if (event.Records) {
+    messages = event.Records.map(r => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
+  } else {
+    messages = [event]
+  }
   for (let message of messages) {
     try {
       const data = await processMatch(message)
@@ -24,16 +29,6 @@ const handler = async event => {
             console.log('stubbing embed send')
           }
         }
-      }
-      if (data.unlinkedPlayers && data.unlinkedPlayers.length > 0) {
-        const { unlinkedPlayers, teams, match, league } = data
-        let unlinkedPlayerReport = `unlinked players found in ${league.name} week ${
-          match.week
-        } match between ${teams.map(t => t.name).join(' and ')} match id: ${match._id}`
-        unlinkedPlayers.forEach(p => {
-          unlinkedPlayerReport += `\nname: ${p.name} !linkplayer ${p.platform}:${p.platform_id}`
-        })
-        await reportError(unlinkedPlayerReport)
       }
     } catch (err) {
       const errContext = `encountered error while processing match with message: ${JSON.stringify(message, null, 2)}`
