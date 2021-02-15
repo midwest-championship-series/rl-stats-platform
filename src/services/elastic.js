@@ -23,10 +23,12 @@ const indexDocs = async (documents, indexName, idKeys) => {
   if (!indexName) throw new Error('indexDocs needs an index name')
   if (!idKeys || idKeys.length < 1) throw new Error('no id keys passed to elastic call')
   const body = documents.reduce((acc, doc) => {
-    const _id = idKeys.map(key => doc[key]).join(':')
-    console.log('indexing with', {
-      index: { _id, _index: indexName },
-    })
+    const _id = idKeys
+      .reduce((acc, key) => {
+        if (!doc[key]) throw new Error(`document has no key: ${key}`)
+        return acc.concat([key, doc[key]])
+      }, [])
+      .join(':')
     const indexer = [
       {
         index: { _id, _index: indexName },
