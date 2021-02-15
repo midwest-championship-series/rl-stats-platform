@@ -20,9 +20,9 @@ describe('elasticsearch', () => {
       elastic.Client.mock.instances[0]
       expect(bulkMock).toHaveBeenCalledWith({
         body: [
-          { update: { _index: 'stats', _id: 'abcdefg:hijklmnop' } },
+          { index: { _index: 'stats', _id: 'abcdefg:hijklmnop' } },
           { game_id: 'hijklmnop', team_id: 'abcdefg', title: 'new1' },
-          { update: { _index: 'stats', _id: 'abcdefg:qrstuv' } },
+          { index: { _index: 'stats', _id: 'abcdefg:qrstuv' } },
           { game_id: 'qrstuv', team_id: 'abcdefg', title: 'new2' },
         ],
       })

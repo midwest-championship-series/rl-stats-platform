@@ -121,13 +121,20 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
 
 const uploadStats = async (teamStats, playerStats) => {
   return Promise.all([
-    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id']),
-    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, [
-      'player_platform',
-      'player_platform_id',
-      'game_id',
-    ]),
+    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team', 'team_id', 'game', 'game_id']),
+    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player', 'player_id', 'game', 'game_id']),
   ])
+}
+
+const createUnlinkedPlayers = players => {
+  return Promise.all(
+    players.map(p => {
+      Players.create({
+        screen_name: p.name,
+        accounts: [{ platform: p.platform, platform_id: p.platform_id }],
+      })
+    }),
+  )
 }
 
 const handleReplays = async filters => {
@@ -161,6 +168,13 @@ const handleReplays = async filters => {
   } else {
     games = match.games
   }
+  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(reportGames))
+  // console.log(getUniqueGamePlayers(reportGames))
+  if (unlinkedPlayers.length > 0) {
+    const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
+    console.info('created players', newPlayers)
+    throw new RecoverableError('NO_PLAYER_FOUND')
+  }
   console.info('processing match stats')
   const { teamStats, playerStats, playerTeamMap } = processMatch(reportGames, {
     league,
@@ -180,7 +194,6 @@ const handleReplays = async filters => {
   match.players_to_teams = playerTeamMap
   await match.save()
 
-  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(reportGames))
   return {
     match_id: match._id.toHexString(),
     game_ids: games.map(({ _id }) => _id.toHexString()),
