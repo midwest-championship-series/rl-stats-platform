@@ -119,13 +119,6 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
   return { match, teams, season: match.season, league: match.season.league }
 }
 
-// const uploadStats = async (teamStats, playerStats) => {
-//   return Promise.all([
-//     indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id']),
-//     indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player_id', 'game_id']),
-//   ])
-// }
-
 const createUnlinkedPlayers = players => {
   return Promise.all(
     players.map(p => {
@@ -169,7 +162,6 @@ const handleReplays = async filters => {
     games = match.games
   }
   const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(reportGames))
-  // console.log(getUniqueGamePlayers(reportGames))
   if (unlinkedPlayers.length > 0) {
     const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
     console.info('created players', newPlayers)
@@ -206,7 +198,6 @@ const handleReplays = async filters => {
     games,
     teams,
     players,
-    unlinkedPlayers,
     teamStats,
     playerStats,
     playerTeamMap,
