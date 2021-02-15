@@ -50,6 +50,10 @@ module.exports = (game, { league, season, match, players, teams, games }) => {
       throw new UnRecoverableError('NO_TEAM_IDENTIFIED', errMsg)
     }
   })
+  if (game.orange.team._id.equals(game.blue.team._id)) {
+    const errMsg = `same team id assigned to both teams for game: ${game.id}. team: ${game.orange.team.name}`
+    throw new UnRecoverableError('DUPLICATE_TEAMS', errMsg)
+  }
   // assign team_id and player_id to players
   colors.forEach(color => {
     game[color].players.forEach(player => {

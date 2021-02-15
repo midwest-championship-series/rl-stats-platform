@@ -6,7 +6,12 @@ const getSummary = require('../src/match-summary')
 const stage = process.env.SERVERLESS_STAGE
 
 const handler = async event => {
-  const messages = event.Records.map(r => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
+  let messages
+  if (event.Records) {
+    messages = event.Records.map(r => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
+  } else {
+    messages = [event]
+  }
   for (let message of messages) {
     try {
       const data = await processMatch(message)
