@@ -599,6 +599,8 @@ describe('process-match', () => {
       forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
       reply_to_channel: '692994579305332806',
     })
+    expect(elastic.indexDocs.mock.calls[0][2]).toEqual(['team_id', 'game_id_total'])
+    expect(elastic.indexDocs.mock.calls[1][2]).toEqual(['player_id', 'game_id_total'])
     const teamStats = elastic.indexDocs.mock.calls[0][0]
     const playerStats = elastic.indexDocs.mock.calls[1][0]
     expect(teamStats).toHaveLength(6)

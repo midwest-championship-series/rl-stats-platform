@@ -119,17 +119,17 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
   return { match, teams, season: match.season, league: match.season.league }
 }
 
-const uploadStats = async (teamStats, playerStats) => {
-  return Promise.all([
-    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id']),
-    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player_id', 'game_id']),
-  ])
-}
+// const uploadStats = async (teamStats, playerStats) => {
+//   return Promise.all([
+//     indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id']),
+//     indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player_id', 'game_id']),
+//   ])
+// }
 
 const createUnlinkedPlayers = players => {
   return Promise.all(
     players.map(p => {
-      Players.create({
+      return Players.create({
         screen_name: p.name,
         accounts: [{ platform: p.platform, platform_id: p.platform_id }],
       })
@@ -185,7 +185,10 @@ const handleReplays = async filters => {
     players,
   })
   console.info('uploading match stats')
-  await uploadStats(teamStats, playerStats)
+  await Promise.all([
+    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id']),
+    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player_id', 'game_id']),
+  ])
 
   for (let game of games) {
     game.date_time_processed = Date.now()
@@ -237,11 +240,10 @@ const handleForfeit = async filters => {
     forfeit_date,
   })
 
-  try {
-    await uploadStats(teamStats, playerStats)
-  } catch (err) {
-    throw new RecoverableError(err.message)
-  }
+  await Promise.all([
+    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id_total']),
+    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player_id', 'game_id_total']),
+  ])
 
   match.forfeited_by_team = forfeit_team_id
   await match.save()
