@@ -4,8 +4,9 @@ module.exports = params => {
   const { league, season, match, teams, players, forfeit_date } = params
   const context = {
     league_id: league._id.toHexString(),
+    league_name: league.name,
     season_id: season._id.toHexString(),
-    season: season.name,
+    season_name: season.name,
     match_type: season.season_type,
     match_id: match._id.toHexString(),
     week: match.week,
