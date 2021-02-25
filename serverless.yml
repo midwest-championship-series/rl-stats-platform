@@ -189,6 +189,16 @@ functions:
     events:
       - schedule: cron(0 0 * * ? *)
 
+  index-bigquery:
+    handler: lambdas/index-bigquery.handler
+    name: ${self:service}-index-bigquery-${self:provider.stage}
+    timeout: 300
+
+  sync-bigquery:
+    handler: lambdas/sync-bigquery.handler
+    name: ${self:service}-sync-bigquery-${self:provider.stage}
+    timeout: 300
+
 resources:
   Resources:
     AuthTable:
