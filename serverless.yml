@@ -58,6 +58,7 @@ provider:
     MNRL_BOT_URL: https://rl-rank-bot.herokuapp.com
     ERROR_CHANNEL_ID: '692994579305332806'
     ELASTIC_HOST: ${ssm:${self:provider.stage}-mnrl-elastic-host~true}
+    PRODUCED_STATS_BUCKET: ${self:resources.Outputs.ProducedStatsBucketName.Value}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -220,7 +221,14 @@ resources:
         MessageRetentionPeriod: 345600
         ReceiveMessageWaitTimeSeconds: 20
         VisibilityTimeout: 40
+    StatsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-produced-stats-${self:provider.stage}-${self:provider.region}
   Outputs:
     GamesQueue:
       Value:
         Ref: GamesQueue
+    ProducedStatsBucketName:
+      Value:
+        Ref: StatsBucket

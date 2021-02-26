@@ -4,13 +4,16 @@ const { Model: Teams } = require('./model/mongodb/teams')
 const { Model: Games } = require('./model/mongodb/games')
 const { Model: Matches } = require('./model/mongodb/matches')
 const { Model: Leagues } = require('./model/mongodb/leagues')
-const teamGames = require('./model/sheets/team-games')
-const playerGames = require('./model/sheets/player-games')
+const aws = require('./services/aws')
 const processMatch = require('./producers')
 const processForfeit = require('./producers/forfeit')
 const { getPlayerTeamsAtDate } = require('./producers/common')
 const { RecoverableError, UnRecoverableError } = require('./util/errors')
 const { indexDocs } = require('./services/elastic')
+
+const teamGameIndex = `${process.env.SERVERLESS_STAGE}_stats_team`
+const playerGameIndex = `${process.env.SERVERLESS_STAGE}_stats_player`
+const producedStatsBucket = process.env.PRODUCED_STATS_BUCKET
 
 const validateFilters = ({ league_id, match_id, game_ids }) => {
   if (match_id) return
@@ -130,6 +133,14 @@ const createUnlinkedPlayers = players => {
   )
 }
 
+const uploadStats = async (teamStats, playerStats, compositeKey) => {
+  await Promise.all([
+    indexDocs(teamStats, teamGameIndex, ['team_id', compositeKey]),
+    indexDocs(playerStats, playerGameIndex, ['player_id', compositeKey]),
+  ])
+  await aws.s3.uploadJSON(producedStatsBucket, teamStats[0].compositeKey, { teamStats, playerStats })
+}
+
 const handleReplays = async filters => {
   console.info('validating filters')
   validateFilters(filters)
@@ -177,10 +188,7 @@ const handleReplays = async filters => {
     players,
   })
   console.info('uploading match stats')
-  await Promise.all([
-    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id']),
-    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player_id', 'game_id']),
-  ])
+  await uploadStats(teamStats, playerStats, 'game_id')
 
   for (let game of games) {
     game.date_time_processed = Date.now()
@@ -231,10 +239,7 @@ const handleForfeit = async filters => {
     forfeit_date,
   })
 
-  await Promise.all([
-    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id_total']),
-    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player_id', 'game_id_total']),
-  ])
+  await uploadStats(teamStats, playerStats, 'game_id_total')
 
   match.forfeited_by_team = forfeit_team_id
   await match.save()

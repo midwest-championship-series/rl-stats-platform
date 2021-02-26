@@ -214,6 +214,8 @@ const ballchasing = require('../services/ballchasing')
 jest.mock('../services/ballchasing')
 const elastic = require('../services/elastic')
 jest.mock('../services/elastic')
+const aws = require('../services/aws')
+jest.mock('../services/aws')
 const games = require('../model/mongodb/games')
 jest.mock('../model/mongodb/games')
 class Game {
@@ -395,6 +397,10 @@ describe('process-match', () => {
         team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
       },
     ])
+    expect(aws.s3.uploadJSON.mock.calls).toHaveLength(1)
+    const s3Stats = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(s3Stats.teamStats).toHaveLength(8)
+    expect(s3Stats.playerStats).toHaveLength(24)
   })
   it('should process team stats', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
