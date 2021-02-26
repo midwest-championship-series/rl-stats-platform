@@ -133,12 +133,12 @@ const createUnlinkedPlayers = players => {
   )
 }
 
-const uploadStats = async (teamStats, playerStats) => {
+const uploadStats = async (teamStats, playerStats, fileName) => {
   await Promise.all([
     indexDocs(teamStats, teamGameIndex, ['team_id', 'game_id_total']),
     indexDocs(playerStats, playerGameIndex, ['player_id', 'game_id_total']),
   ])
-  await aws.s3.uploadJSON(producedStatsBucket, `${teamStats[0].game_id_total}.json`, { teamStats, playerStats })
+  await aws.s3.uploadJSON(producedStatsBucket, fileName, { teamStats, playerStats })
 }
 
 const handleReplays = async filters => {
@@ -188,7 +188,7 @@ const handleReplays = async filters => {
     players,
   })
   console.info('uploading match stats')
-  await uploadStats(teamStats, playerStats, 'game_id')
+  await uploadStats(teamStats, playerStats, `match:${match._id.toHexString()}.json`)
 
   for (let game of games) {
     game.date_time_processed = Date.now()
@@ -239,7 +239,7 @@ const handleForfeit = async filters => {
     forfeit_date,
   })
 
-  await uploadStats(teamStats, playerStats, 'game_id_total')
+  await uploadStats(teamStats, playerStats, `match:${match._id.toHexString()}.json`)
 
   match.forfeited_by_team = forfeit_team_id
   await match.save()

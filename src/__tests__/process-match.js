@@ -401,7 +401,7 @@ describe('process-match', () => {
     const uploadStaticStats = aws.s3.uploadJSON.mock.calls
     expect(uploadStaticStats).toHaveLength(1)
     expect(uploadStaticStats[0][0]).toEqual('stats bucket name')
-    expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c:game:1.json')
+    expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
     const s3Stats = uploadStaticStats[0][2]
     expect(s3Stats.teamStats).toHaveLength(8)
     expect(s3Stats.playerStats).toHaveLength(24)
@@ -714,7 +714,7 @@ describe('process-match', () => {
     const uploadStaticStats = aws.s3.uploadJSON.mock.calls
     expect(uploadStaticStats).toHaveLength(1)
     expect(uploadStaticStats[0][0]).toEqual('stats bucket name')
-    expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c:game:1.json')
+    expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
     const s3Stats = uploadStaticStats[0][2]
     expect(s3Stats.teamStats).toHaveLength(6)
     /** @todo find out why this is 12... it should be (# players on teams) * (# games in match) */
