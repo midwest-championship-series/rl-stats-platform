@@ -30,6 +30,7 @@ const processTeam = (game, color) => {
     wins: teamWon ? 1 : 0,
     match_id_win: game[color].match_id_win,
     game_id_win: teamWon ? game.game_id : undefined,
+    game_id_total: getMatchGameId(game.match_id, game.game_number),
     game_id_win_total: teamWon ? getMatchGameId(game.match_id, game.game_number) : undefined,
     game_id_loss_total: teamWon ? undefined : getMatchGameId(game.match_id, game.game_number),
     ms_played: game.duration * 1000,

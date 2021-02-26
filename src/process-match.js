@@ -133,12 +133,12 @@ const createUnlinkedPlayers = players => {
   )
 }
 
-const uploadStats = async (teamStats, playerStats, compositeKey) => {
+const uploadStats = async (teamStats, playerStats) => {
   await Promise.all([
-    indexDocs(teamStats, teamGameIndex, ['team_id', compositeKey]),
-    indexDocs(playerStats, playerGameIndex, ['player_id', compositeKey]),
+    indexDocs(teamStats, teamGameIndex, ['team_id', 'game_id_total']),
+    indexDocs(playerStats, playerGameIndex, ['player_id', 'game_id_total']),
   ])
-  await aws.s3.uploadJSON(producedStatsBucket, teamStats[0].compositeKey, { teamStats, playerStats })
+  await aws.s3.uploadJSON(producedStatsBucket, `${teamStats[0].game_id_total}.json`, { teamStats, playerStats })
 }
 
 const handleReplays = async filters => {

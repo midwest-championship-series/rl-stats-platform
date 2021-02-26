@@ -13,7 +13,6 @@ function uploadJSON(bucket, fileName, content) {
     ...defaults,
     Bucket: bucket,
     Key: fileName,
-    ACL: acl,
     ContentType: 'application/json',
     Body: Buffer.from(content).toString('utf8'),
   }
