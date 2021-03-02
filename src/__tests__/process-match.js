@@ -402,6 +402,7 @@ describe('process-match', () => {
     expect(uploadStaticStats).toHaveLength(1)
     expect(uploadStaticStats[0][0]).toEqual('stats bucket name')
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
+    expect(uploadStaticStats[0][3] / 100).toBeCloseTo(Date.now() / 100, 0)
     const s3Stats = uploadStaticStats[0][2]
     expect(s3Stats.teamStats).toHaveLength(8)
     expect(s3Stats.playerStats).toHaveLength(24)
@@ -719,6 +720,7 @@ describe('process-match', () => {
     expect(uploadStaticStats).toHaveLength(1)
     expect(uploadStaticStats[0][0]).toEqual('stats bucket name')
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
+    expect(uploadStaticStats[0][3] / 100).toBeCloseTo(Date.now() / 100, 0)
     const s3Stats = uploadStaticStats[0][2]
     expect(s3Stats.teamStats).toHaveLength(6)
     /** @todo find out why this is 12... it should be (# players on teams) * (# games in match) */

@@ -35,18 +35,17 @@ const handler = async event => {
           schema: team_games,
         },
       ]
-      return Promise.all(
+      const [res1, res2] = await Promise.all(
         tables.map(config => {
           const table = dataset.table(config.name)
           const insert = config.stats.map(s => conform(s, config.schema))
           return table.insert(insert)
         }),
-      ).then(([res1, res2]) => {
-        const errors = [].concat(res1.errors).concat(res2.errors)
-        if (errors.length > 1) {
-          throw new Error(`${errors.length} errors occurred while indexing into bigquery`)
-        }
-      })
+      )
+      const errors = [].concat(res1.errors).concat(res2.errors)
+      if (errors.length > 1) {
+        throw new Error(`${errors.length} errors occurred while indexing into bigquery`)
+      }
     }
   } catch (err) {
     console.error(err)
