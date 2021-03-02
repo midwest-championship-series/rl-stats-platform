@@ -1,7 +1,7 @@
 const { S3: Client } = require('aws-sdk')
 const s3 = new Client({ apiVersion: '2006-03-01' })
 
-function uploadJSON(bucket, fileName, content) {
+const uploadJSON = (bucket, fileName, content) => {
   const defaults = {
     acl: 'private',
   }
@@ -19,6 +19,15 @@ function uploadJSON(bucket, fileName, content) {
   return s3.upload(opts).promise()
 }
 
+const get = (bucket, fileName) => {
+  const options = {
+    Bucket: bucket,
+    Key: fileName,
+  }
+  return s3.getObject(options).promise()
+}
+
 module.exports = {
   uploadJSON,
+  get,
 }

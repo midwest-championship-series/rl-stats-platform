@@ -1,12 +1,10 @@
 const types = require('./types')
 const gameContext = require('./game_context')
+const playerContext = require('./player_context')
 
 module.exports = [
   ...gameContext,
-  { name: 'player_id', type: types.STR },
-  { name: 'player_name', type: types.STR },
-  { name: 'player_platform', type: types.STR },
-  { name: 'player_platform_id', type: types.STR },
+  ...playerContext,
   { name: 'mvps', type: types.INT },
   { name: 'wins', type: types.INT },
   { name: 'ms_played', type: types.INT },
@@ -61,17 +59,6 @@ module.exports = [
   { name: 'ms_most_forward', type: types.INT },
   { name: 'ms_closest_to_ball', type: types.INT },
   { name: 'ms_farthest_from_ball', type: types.INT },
-  { name: 'percent_defensive_third', type: types.FLOAT },
-  { name: 'percent_offensive_third', type: types.FLOAT },
-  { name: 'percent_neutral_third', type: types.FLOAT },
-  { name: 'percent_defensive_half', type: types.FLOAT },
-  { name: 'percent_offensive_half', type: types.FLOAT },
-  { name: 'percent_behind_ball', type: types.FLOAT },
-  { name: 'percent_infront_ball', type: types.FLOAT },
-  { name: 'percent_most_back', type: types.FLOAT },
-  { name: 'percent_most_forward', type: types.FLOAT },
-  { name: 'percent_closest_to_ball', type: types.FLOAT },
-  { name: 'percent_farthest_from_ball', type: types.FLOAT },
   { name: 'demos_inflicted', type: types.INT },
   { name: 'demos_taken', type: types.INT },
 ]
