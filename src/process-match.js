@@ -141,7 +141,7 @@ const uploadStats = async (teamStats, playerStats, fileName) => {
   await aws.s3.uploadJSON(producedStatsBucket, fileName, { teamStats, playerStats })
 }
 
-const handleReplays = async filters => {
+const handleReplays = async (filters, processedAt) => {
   console.info('validating filters')
   validateFilters(filters)
   const { league_id, match_id, game_ids } = filters
@@ -179,14 +179,18 @@ const handleReplays = async filters => {
     throw new RecoverableError('NO_PLAYER_FOUND')
   }
   console.info('processing match stats')
-  const { teamStats, playerStats, playerTeamMap } = processMatch(reportGames, {
-    league,
-    season,
-    match,
-    games,
-    teams,
-    players,
-  })
+  const { teamStats, playerStats, playerTeamMap } = processMatch(
+    reportGames,
+    {
+      league,
+      season,
+      match,
+      games,
+      teams,
+      players,
+    },
+    processedAt,
+  )
   console.info('uploading match stats')
   await uploadStats(teamStats, playerStats, `match:${match._id.toHexString()}.json`)
 
@@ -212,7 +216,7 @@ const handleReplays = async filters => {
   }
 }
 
-const handleForfeit = async filters => {
+const handleForfeit = async (filters, processedAt) => {
   const { forfeit_team_id, match_id } = filters
   const match = await Matches.findById(match_id)
     .populate('teams')
@@ -229,15 +233,18 @@ const handleForfeit = async filters => {
   if (!match.best_of) {
     throw new UnRecoverableError('MISSING_BEST_OF', 'forfeited match must have best_of property')
   }
-  const { teamStats, playerStats } = processForfeit({
-    league,
-    season,
-    match,
-    teams,
-    players,
-    forfeit_team_id,
-    forfeit_date,
-  })
+  const { teamStats, playerStats } = processForfeit(
+    {
+      league,
+      season,
+      match,
+      teams,
+      players,
+      forfeit_team_id,
+      forfeit_date,
+    },
+    processedAt,
+  )
 
   await uploadStats(teamStats, playerStats, `match:${match._id.toHexString()}.json`)
 
@@ -263,9 +270,10 @@ const handleForfeit = async filters => {
  * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
  */
 module.exports = async filters => {
+  const processedAt = Date.now()
   if (filters.forfeit_team_id) {
-    return handleForfeit(filters)
+    return handleForfeit(filters, processedAt)
   } else {
-    return handleReplays(filters)
+    return handleReplays(filters, processedAt)
   }
 }

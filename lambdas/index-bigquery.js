@@ -13,7 +13,6 @@ const conform = require('../src/util/conform-schema')
 
 const handler = async event => {
   let currentKey, currentSource
-  console.log('event', JSON.stringify(event))
   try {
     for (let record of event.Records) {
       const source = record.s3.bucket.name
@@ -22,9 +21,7 @@ const handler = async event => {
       currentKey = key
       currentSource = source
       const s3Data = await aws.s3.get(source, key)
-      console.log('data', s3Data)
       const stats = JSON.parse(s3Data.Body)
-      console.log('stats', stats)
       const { playerStats, teamStats } = stats
       const tables = [
         {
@@ -42,11 +39,9 @@ const handler = async event => {
         tables.map(config => {
           const table = dataset.table(config.name)
           const insert = config.stats.map(s => conform(s, config.schema))
-          console.log('insert', insert)
           return table.insert(insert)
         }),
       ).then(([res1, res2]) => {
-        console.log(res1, res2)
         const errors = [].concat(res1.errors).concat(res2.errors)
         if (errors.length > 1) {
           throw new Error(`${errors.length} errors occurred while indexing into bigquery`)

@@ -1,6 +1,6 @@
 const { getTeamStats, reduceStats, getMatchGameId } = require('./common')
 
-const processTeam = (game, color) => {
+const processTeam = (game, color, time) => {
   const opponentColor = color === 'blue' ? 'orange' : 'blue'
   const ownStats = getTeamStats(game, color)
   const opponentStats = getTeamStats(game, opponentColor)
@@ -11,6 +11,7 @@ const processTeam = (game, color) => {
   const stats = reduceStats({ ownStats, game, modifiers, opponentStats })
   const teamWon = game.winning_team_id.equals(game[color].team._id)
   return {
+    epoch_processed: time,
     team_id: game[color].team._id.toHexString(),
     team_name: game[color].team.name,
     opponent_team_id: game[opponentColor].team._id.toHexString(),
@@ -42,6 +43,6 @@ const processTeam = (game, color) => {
  * processes each game to return stats for each team
  * returns stats for teams [blue, red] for a single game
  */
-module.exports = game => {
-  return ['blue', 'orange'].map(color => processTeam(game, color))
+module.exports = (game, processedAt) => {
+  return ['blue', 'orange'].map(color => processTeam(game, color, processedAt))
 }

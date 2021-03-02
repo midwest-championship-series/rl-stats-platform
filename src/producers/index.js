@@ -40,7 +40,7 @@ const assignWins = (games, match, leagueGames) => {
   })
 }
 
-module.exports = (games, leagueInfo) => {
+module.exports = (games, leagueInfo, processedAt) => {
   const sortedGames = games.sort((a, b) => new Date(a.date) - new Date(b.date))
   let playersToTeams = []
   let gameNumber = 1
@@ -52,8 +52,8 @@ module.exports = (games, leagueInfo) => {
   }
   assignWins(games, leagueInfo.match, leagueInfo.games)
   return {
-    teamStats: games.reduce((result, game) => result.concat(teamStats(game)), []),
-    playerStats: games.reduce((result, game) => result.concat(playerStats(game)), []),
+    teamStats: games.reduce((result, game) => result.concat(teamStats(game, processedAt)), []),
+    playerStats: games.reduce((result, game) => result.concat(playerStats(game, processedAt)), []),
     playerTeamMap: playersToTeams.reduce((result, item) => {
       if (!result.find(i => i.player_id === item.player_id)) {
         result.push(item)

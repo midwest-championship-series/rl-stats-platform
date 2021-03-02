@@ -422,6 +422,7 @@ describe('process-match', () => {
     expect(elastic.indexDocs.mock.calls.length).toBe(2)
     const teamStats = elastic.indexDocs.mock.calls[0][0]
     expect(teamStats).toHaveLength(8)
+    expect(teamStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
     expect(teamStats[6]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
@@ -494,6 +495,7 @@ describe('process-match', () => {
     }
     // ensure there are 6 player records per game
     expect(playerStats).toHaveLength(24)
+    expect(playerStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
     expect(findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })).toHaveLength(6)
     expect(
       findPlayerStats({ player_id: '5ec04239d09245d2a7d4fa26', game_id: '5ebc62afd09245d2a7c63338' })[0],
@@ -618,6 +620,7 @@ describe('process-match', () => {
     const teamStats = elastic.indexDocs.mock.calls[0][0]
     const playerStats = elastic.indexDocs.mock.calls[1][0]
     expect(teamStats).toHaveLength(6)
+    expect(teamStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
     expect(teamStats[0]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
@@ -667,6 +670,7 @@ describe('process-match', () => {
       game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:3',
     })
     expect(playerStats).toHaveLength(12)
+    expect(playerStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
     expect(playerStats[0]).toMatchObject({
       player_id: '5ec04239d09245d2a7d4fa26',
       player_name: 'Calster',

@@ -46,10 +46,8 @@ const ensureTable = async ({ name, schema, columns }, dataset, tables) => {
       table
         .createQueryStream(query)
         .on('error', console.error)
-        .on('data', row => {
-          console.log('row', row)
-        })
-        .on('end', () => console.log('ended!'))
+        .on('data', row => {})
+        .on('end', () => console.info('end query stream'))
     }
   }
 }
