@@ -1,7 +1,7 @@
 const types = require('./types')
 
 module.exports = [
-  { name: 'epoch_processed', type: types.STR, skipOpponent: true },
+  { name: 'epoch_processed', type: types.INT, skipOpponent: true },
   { name: 'league_name', type: types.STR, skipOpponent: true },
   { name: 'league_id', type: types.STR, skipOpponent: true },
   { name: 'match_id', type: types.STR, skipOpponent: true },

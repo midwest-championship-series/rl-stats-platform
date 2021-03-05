@@ -1,5 +1,6 @@
 const { S3: Client } = require('aws-sdk')
 const s3 = new Client({ apiVersion: '2006-03-01' })
+const fs = require('fs')
 
 const uploadJSON = (bucket, fileName, content) => {
   const defaults = {
@@ -27,7 +28,19 @@ const get = (bucket, fileName) => {
   return s3.getObject(options).promise()
 }
 
+const writeToFile = (key, source, writePath) => {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(writePath)
+    getObject({ Key: key, Bucket: source })
+      .createReadStream()
+      .pipe(file)
+      .on('error', err => reject(err))
+      .on('close', () => resolve())
+  })
+}
+
 module.exports = {
   uploadJSON,
   get,
+  writeToFile,
 }

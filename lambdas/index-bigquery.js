@@ -3,15 +3,14 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS = path.join(__dirname, '..', '.google
 const stage = process.env.SERVERLESS_STAGE
 const datasetName = `${stage}_stats`
 
+const { query, load } = require('../src/services/bigquery')
 const aws = require('../src/services/aws')
-const { BigQuery } = require('@google-cloud/bigquery')
-const bigquery = new BigQuery()
-const dataset = bigquery.dataset(datasetName)
 const { reportError } = require('../src/services/rl-bot')
 const { player_games, team_games } = require('../src/schemas')
 const conform = require('../src/util/conform-schema')
 
 const handler = async event => {
+  console.log('event', JSON.stringify(event))
   let currentKey, currentSource
   try {
     for (let record of event.Records) {
@@ -22,7 +21,8 @@ const handler = async event => {
       currentSource = source
       const s3Data = await aws.s3.get(source, key)
       const stats = JSON.parse(s3Data.Body)
-      const { playerStats, teamStats } = stats
+      const { playerStats, teamStats, processedAt } = stats
+
       const tables = [
         {
           name: 'player_games',
@@ -37,15 +37,26 @@ const handler = async event => {
       ]
       const [res1, res2] = await Promise.all(
         tables.map(config => {
-          const table = dataset.table(config.name)
-          const insert = config.stats.map(s => conform(s, config.schema))
-          return table.insert(insert)
+          const loadData = config.stats.map(s => {
+            return { epoch_processed: processedAt, ...conform(s, config.schema) }
+          })
+          return load(loadData, config.name)
         }),
       )
-      const errors = [].concat(res1.errors).concat(res2.errors)
+      console.log(res1, res2)
+      const errors = []
+        .concat(res1.errors)
+        .concat(res2.errors)
+        .filter(i => !!i)
       if (errors.length > 1) {
+        console.error(errors)
         throw new Error(`${errors.length} errors occurred while indexing into bigquery`)
       }
+      await Promise.all([
+        tables.map(config => {
+          return query('DELETE', config.name, `epoch_processed < ${processedAt}`)
+        }),
+      ])
     }
   } catch (err) {
     console.error(err)

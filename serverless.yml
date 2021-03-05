@@ -59,6 +59,7 @@ provider:
     ERROR_CHANNEL_ID: '692994579305332806'
     ELASTIC_HOST: ${ssm:${self:provider.stage}-mnrl-elastic-host~true}
     PRODUCED_STATS_BUCKET: ${self:resources.Outputs.ProducedStatsBucketName.Value}
+    GOOGLE_PROJECT_ID: mnrl-269717
   iamRoleStatements:
     - Effect: Allow
       Action:

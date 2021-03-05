@@ -138,7 +138,7 @@ const uploadStats = async (teamStats, playerStats, fileName, processedAt) => {
     indexDocs(teamStats, teamGameIndex, ['team_id', 'game_id_total']),
     indexDocs(playerStats, playerGameIndex, ['player_id', 'game_id_total']),
   ])
-  await aws.s3.uploadJSON(producedStatsBucket, fileName, { teamStats, playerStats }, processedAt)
+  await aws.s3.uploadJSON(producedStatsBucket, fileName, { teamStats, playerStats, processedAt })
 }
 
 const handleReplays = async (filters, processedAt) => {
