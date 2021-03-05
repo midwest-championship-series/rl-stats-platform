@@ -1,10 +1,13 @@
 const types = require('./types')
-const gameContext = require('./game_context')
-const playerContext = require('./player_context')
+const opponent = require('./opponent')
+const gameContext = require('./contexts/game_context')
+const playerContext = require('./contexts/player_context')
+const teamContext = require('./contexts/team_context')
 
 module.exports = [
   ...gameContext,
   ...playerContext,
+  ...opponent(teamContext),
   { name: 'mvps', type: types.INT },
   { name: 'wins', type: types.INT },
   { name: 'ms_played', type: types.INT },
