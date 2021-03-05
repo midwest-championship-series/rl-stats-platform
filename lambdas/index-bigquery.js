@@ -10,7 +10,6 @@ const { player_games, team_games } = require('../src/schemas')
 const conform = require('../src/util/conform-schema')
 
 const handler = async event => {
-  console.log('event', JSON.stringify(event))
   let currentKey, currentSource
   try {
     for (let record of event.Records) {
@@ -43,7 +42,6 @@ const handler = async event => {
           return load(loadData, config.name)
         }),
       )
-      console.log(res1, res2)
       const errors = []
         .concat(res1.errors)
         .concat(res2.errors)

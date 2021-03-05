@@ -3,7 +3,7 @@ const { Model: Leagues } = require('../src/model/mongodb/leagues')
 const { Model: Teams } = require('../src/model/mongodb/teams')
 
 const handler = async () => {
-  console.log('adjusting data')
+  console.info('adjusting data')
   const leagues = await Leagues.find().populate({
     path: 'seasons',
     populate: { path: 'matches' },
@@ -40,7 +40,7 @@ const handler = async () => {
       await season.save()
     }
   }
-  console.log('finished adjusting')
+  console.info('finished adjusting')
 }
 
 module.exports = { handler }

@@ -15,7 +15,7 @@ const createTableName = table => {
 const query = (command, tableId, query) => {
   const refId = createTableName(tableId)
   const statement = `${command.toUpperCase()} FROM ${refId} WHERE ${query}`
-  console.log('running query', statement)
+  console.info('running query', statement)
   return dataset.query(statement)
 }
 
