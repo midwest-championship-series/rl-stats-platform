@@ -133,12 +133,12 @@ const createUnlinkedPlayers = players => {
   )
 }
 
-const uploadStats = async (teamStats, playerStats, fileName, processedAt) => {
+const uploadStats = async (matchId, teamStats, playerStats, fileName, processedAt) => {
   await Promise.all([
     indexDocs(teamStats, teamGameIndex, ['team_id', 'game_id_total']),
     indexDocs(playerStats, playerGameIndex, ['player_id', 'game_id_total']),
   ])
-  await aws.s3.uploadJSON(producedStatsBucket, fileName, { teamStats, playerStats, processedAt })
+  await aws.s3.uploadJSON(producedStatsBucket, fileName, { matchId, teamStats, playerStats, processedAt })
 }
 
 const handleReplays = async (filters, processedAt) => {
@@ -192,7 +192,13 @@ const handleReplays = async (filters, processedAt) => {
     processedAt,
   )
   console.info('uploading match stats')
-  await uploadStats(teamStats, playerStats, `match:${match._id.toHexString()}.json`, processedAt)
+  await uploadStats(
+    match._id.toHexString(),
+    teamStats,
+    playerStats,
+    `match:${match._id.toHexString()}.json`,
+    processedAt,
+  )
 
   for (let game of games) {
     game.date_time_processed = Date.now()
@@ -246,7 +252,13 @@ const handleForfeit = async (filters, processedAt) => {
     processedAt,
   )
 
-  await uploadStats(teamStats, playerStats, `match:${match._id.toHexString()}.json`, processedAt)
+  await uploadStats(
+    match._id.toHexString(),
+    teamStats,
+    playerStats,
+    `match:${match._id.toHexString()}.json`,
+    processedAt,
+  )
 
   match.forfeited_by_team = forfeit_team_id
   await match.save()
