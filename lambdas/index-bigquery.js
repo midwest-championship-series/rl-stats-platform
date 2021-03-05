@@ -20,7 +20,7 @@ const handler = async event => {
       currentSource = source
       const s3Data = await aws.s3.get(source, key)
       const stats = JSON.parse(s3Data.Body)
-      const { playerStats, teamStats, processedAt } = stats
+      const { playerStats, teamStats, processedAt, matchId } = stats
 
       const tables = [
         {
@@ -52,7 +52,8 @@ const handler = async event => {
       }
       await Promise.all([
         tables.map(config => {
-          return query('DELETE', config.name, `epoch_processed < ${processedAt}`)
+          const where = `epoch_processed < ${processedAt} AND match_id = '${matchId}'`
+          return query('DELETE', config.name, where)
         }),
       ])
     }

@@ -402,10 +402,11 @@ describe('process-match', () => {
     expect(uploadStaticStats).toHaveLength(1)
     expect(uploadStaticStats[0][0]).toEqual('stats bucket name')
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
-    expect(uploadStaticStats[0][3] / 100).toBeCloseTo(Date.now() / 100, 0)
-    const s3Stats = uploadStaticStats[0][2]
-    expect(s3Stats.teamStats).toHaveLength(8)
-    expect(s3Stats.playerStats).toHaveLength(24)
+    const { processedAt, teamStats, playerStats, matchId } = uploadStaticStats[0][2]
+    expect(matchId).toEqual('5ebc62b0d09245d2a7c6340c')
+    expect(processedAt / 1000).toBeCloseTo(Date.now() / 1000, 0)
+    expect(teamStats).toHaveLength(8)
+    expect(playerStats).toHaveLength(24)
   })
   it('should process team stats', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
@@ -635,6 +636,7 @@ describe('process-match', () => {
       season_id: '5ebc62b0d09245d2a7c63477',
       league_id: '5ebc62b1d09245d2a7c63516',
       league_name: 'mncs',
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
       game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:1',
       game_id_forfeit_win: undefined,
       game_id: undefined,
@@ -661,6 +663,7 @@ describe('process-match', () => {
       league_name: 'mncs',
       game_id_forfeit_loss: undefined,
       game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
       game_id: undefined,
       game_id_win: undefined,
       game_number: undefined,
@@ -720,9 +723,10 @@ describe('process-match', () => {
     expect(uploadStaticStats).toHaveLength(1)
     expect(uploadStaticStats[0][0]).toEqual('stats bucket name')
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
-    expect(uploadStaticStats[0][3] / 100).toBeCloseTo(Date.now() / 100, 0)
     const s3Stats = uploadStaticStats[0][2]
+    expect(s3Stats.processedAt / 1000).toBeCloseTo(Date.now() / 1000, 0)
     expect(s3Stats.teamStats).toHaveLength(6)
+    expect(s3Stats.matchId).toEqual('5ebc62b0d09245d2a7c6340c')
     /** @todo find out why this is 12... it should be (# players on teams) * (# games in match) */
     expect(s3Stats.playerStats).toHaveLength(12)
   })
