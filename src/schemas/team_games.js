@@ -1,6 +1,7 @@
 const types = require('./types')
-const gameContext = require('./game_context')
-const teamContext = require('./team_context')
+const opponent = require('./opponent')
+const gameContext = require('./contexts/game_context')
+const teamContext = require('./contexts/team_context')
 
 const teamStats = [
   ...gameContext,
@@ -53,10 +54,4 @@ const teamStats = [
   { name: 'demos_taken', type: types.INT },
 ]
 
-module.exports = teamStats.reduce((result, item) => {
-  const concat = [item]
-  if (!item.skipOpponent) {
-    concat.push({ name: `opponent_${item.name}`, type: item.type })
-  }
-  return result.concat(concat)
-}, [])
+module.exports = opponent(teamStats)

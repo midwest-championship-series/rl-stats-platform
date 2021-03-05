@@ -1,4 +1,4 @@
-const types = require('./types')
+const types = require('../types')
 
 module.exports = [
   { name: 'team_id', type: types.STR },
