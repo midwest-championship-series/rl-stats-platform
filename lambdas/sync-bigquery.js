@@ -1,6 +1,5 @@
 const { team_games, player_games } = require('../src/schemas')
 const { bigquery, dataSetId } = require('../src/services/bigquery')
-const types = require('../src/schemas/types')
 
 const createSchema = (name, columns) => {
   return {
