@@ -4,13 +4,16 @@ const { Model: Teams } = require('./model/mongodb/teams')
 const { Model: Games } = require('./model/mongodb/games')
 const { Model: Matches } = require('./model/mongodb/matches')
 const { Model: Leagues } = require('./model/mongodb/leagues')
-const teamGames = require('./model/sheets/team-games')
-const playerGames = require('./model/sheets/player-games')
+const aws = require('./services/aws')
 const processMatch = require('./producers')
 const processForfeit = require('./producers/forfeit')
 const { getPlayerTeamsAtDate } = require('./producers/common')
 const { RecoverableError, UnRecoverableError } = require('./util/errors')
 const { indexDocs } = require('./services/elastic')
+
+const teamGameIndex = `${process.env.SERVERLESS_STAGE}_stats_team`
+const playerGameIndex = `${process.env.SERVERLESS_STAGE}_stats_player`
+const producedStatsBucket = process.env.PRODUCED_STATS_BUCKET
 
 const validateFilters = ({ league_id, match_id, game_ids }) => {
   if (match_id) return
@@ -130,7 +133,15 @@ const createUnlinkedPlayers = players => {
   )
 }
 
-const handleReplays = async filters => {
+const uploadStats = async (teamStats, playerStats, fileName, processedAt) => {
+  await Promise.all([
+    indexDocs(teamStats, teamGameIndex, ['team_id', 'game_id_total']),
+    indexDocs(playerStats, playerGameIndex, ['player_id', 'game_id_total']),
+  ])
+  await aws.s3.uploadJSON(producedStatsBucket, fileName, { teamStats, playerStats, processedAt })
+}
+
+const handleReplays = async (filters, processedAt) => {
   console.info('validating filters')
   validateFilters(filters)
   const { league_id, match_id, game_ids } = filters
@@ -168,19 +179,20 @@ const handleReplays = async filters => {
     throw new RecoverableError('NO_PLAYER_FOUND')
   }
   console.info('processing match stats')
-  const { teamStats, playerStats, playerTeamMap } = processMatch(reportGames, {
-    league,
-    season,
-    match,
-    games,
-    teams,
-    players,
-  })
+  const { teamStats, playerStats, playerTeamMap } = processMatch(
+    reportGames,
+    {
+      league,
+      season,
+      match,
+      games,
+      teams,
+      players,
+    },
+    processedAt,
+  )
   console.info('uploading match stats')
-  await Promise.all([
-    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id']),
-    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player_id', 'game_id']),
-  ])
+  await uploadStats(teamStats, playerStats, `match:${match._id.toHexString()}.json`, processedAt)
 
   for (let game of games) {
     game.date_time_processed = Date.now()
@@ -204,7 +216,7 @@ const handleReplays = async filters => {
   }
 }
 
-const handleForfeit = async filters => {
+const handleForfeit = async (filters, processedAt) => {
   const { forfeit_team_id, match_id } = filters
   const match = await Matches.findById(match_id)
     .populate('teams')
@@ -221,20 +233,20 @@ const handleForfeit = async filters => {
   if (!match.best_of) {
     throw new UnRecoverableError('MISSING_BEST_OF', 'forfeited match must have best_of property')
   }
-  const { teamStats, playerStats } = processForfeit({
-    league,
-    season,
-    match,
-    teams,
-    players,
-    forfeit_team_id,
-    forfeit_date,
-  })
+  const { teamStats, playerStats } = processForfeit(
+    {
+      league,
+      season,
+      match,
+      teams,
+      players,
+      forfeit_team_id,
+      forfeit_date,
+    },
+    processedAt,
+  )
 
-  await Promise.all([
-    indexDocs(teamStats, `${process.env.SERVERLESS_STAGE}_stats_team`, ['team_id', 'game_id_total']),
-    indexDocs(playerStats, `${process.env.SERVERLESS_STAGE}_stats_player`, ['player_id', 'game_id_total']),
-  ])
+  await uploadStats(teamStats, playerStats, `match:${match._id.toHexString()}.json`, processedAt)
 
   match.forfeited_by_team = forfeit_team_id
   await match.save()
@@ -258,9 +270,10 @@ const handleForfeit = async filters => {
  * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
  */
 module.exports = async filters => {
+  const processedAt = Date.now()
   if (filters.forfeit_team_id) {
-    return handleForfeit(filters)
+    return handleForfeit(filters, processedAt)
   } else {
-    return handleReplays(filters)
+    return handleReplays(filters, processedAt)
   }
 }

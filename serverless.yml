@@ -58,6 +58,8 @@ provider:
     MNRL_BOT_URL: https://rl-rank-bot.herokuapp.com
     ERROR_CHANNEL_ID: '692994579305332806'
     ELASTIC_HOST: ${ssm:${self:provider.stage}-mnrl-elastic-host~true}
+    PRODUCED_STATS_BUCKET: ${self:resources.Outputs.ProducedStatsBucketName.Value}
+    GOOGLE_PROJECT_ID: mnrl-269717
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -189,6 +191,22 @@ functions:
     events:
       - schedule: cron(0 0 * * ? *)
 
+  index-bigquery:
+    handler: lambdas/index-bigquery.handler
+    name: ${self:service}-index-bigquery-${self:provider.stage}
+    timeout: 300
+    events:
+      # if this eventually fails due to race condition, could package event in with s3 resource as seen
+      # in https://github.com/serverless/serverless/issues/4194#issuecomment-469616889
+      - s3:
+          bucket: ${self:resources.Resources.StatsBucket.Properties.BucketName}
+          existing: true
+
+  sync-bigquery:
+    handler: lambdas/sync-bigquery.handler
+    name: ${self:service}-sync-bigquery-${self:provider.stage}
+    timeout: 300
+
 resources:
   Resources:
     AuthTable:
@@ -210,7 +228,14 @@ resources:
         MessageRetentionPeriod: 345600
         ReceiveMessageWaitTimeSeconds: 20
         VisibilityTimeout: 40
+    StatsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-produced-stats-${self:provider.stage}-${self:provider.region}
   Outputs:
     GamesQueue:
       Value:
         Ref: GamesQueue
+    ProducedStatsBucketName:
+      Value:
+        Ref: StatsBucket

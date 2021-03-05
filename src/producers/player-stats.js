@@ -1,6 +1,6 @@
 const { getPlayerStats, reduceStats, getMatchGameId } = require('./common')
 
-const processPlayer = (game, player) => {
+const processPlayer = (game, player, processedAt) => {
   const ownStats = getPlayerStats(player)
   const modifiers = [
     { inName: 'inflicted', outName: 'demos_inflicted' },
@@ -9,6 +9,7 @@ const processPlayer = (game, player) => {
   const stats = reduceStats({ ownStats, game, modifiers })
   const playerTeamWon = game.winning_team_id.equals(player.team_id)
   return {
+    epoch_processed: processedAt,
     player_id: player.league_id,
     player_name: player.name,
     player_platform: player.id.platform,
@@ -31,6 +32,7 @@ const processPlayer = (game, player) => {
     game_date: game.date,
     map_name: game.map_name,
     match_id_win: game[player.team_color].match_id_win,
+    game_id_total: getMatchGameId(game.match_id, game.game_number),
     game_id_win_total: playerTeamWon ? getMatchGameId(game.match_id, game.game_number) : undefined,
     game_id_win: playerTeamWon ? game.game_id : undefined,
     game_id_loss_total: playerTeamWon ? undefined : getMatchGameId(game.match_id, game.game_number),
@@ -40,7 +42,7 @@ const processPlayer = (game, player) => {
   }
 }
 
-module.exports = game => {
+module.exports = (game, processedAt) => {
   // assign stats to each player
   const colors = ['blue', 'orange']
   const playerStats = colors.reduce(
@@ -49,7 +51,7 @@ module.exports = game => {
         game[color].players.map(player => {
           player.team_color = color
           player.opponent_color = color === 'blue' ? 'orange' : 'blue'
-          return processPlayer(game, player)
+          return processPlayer(game, player, processedAt)
         }),
       ),
     [],

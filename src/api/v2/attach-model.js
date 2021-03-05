@@ -34,7 +34,7 @@ const buildQuery = (query, params) => {
 const populateQuery = (query, populations) => {
   if (populations) {
     populations.forEach(p => {
-      console.log('populating', p)
+      console.info('populating', p)
       const arr = p.split('.')
       if (arr.length === 1) {
         query = query.populate(p)

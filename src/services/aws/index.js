@@ -8,4 +8,5 @@ module.exports = {
   dynamodb: require('./dynamodb'),
   ssm: require('./ssm'),
   aurora: require('./aurora'),
+  s3: require('./s3'),
 }
