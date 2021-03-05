@@ -15,6 +15,7 @@ module.exports = [
   { name: 'map_name', type: types.STR, skipOpponent: true },
   { name: 'match_id_win', type: types.STR },
   { name: 'game_id_win', type: types.STR },
+  { name: 'game_id_total', type: types.STR },
   { name: 'game_id_forfeit_win', type: types.STR },
   { name: 'game_id_forfeit_loss', type: types.STR },
 ]
