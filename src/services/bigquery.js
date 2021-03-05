@@ -29,6 +29,7 @@ const load = async (data, tableName) => {
 module.exports = {
   bigquery,
   dataset,
+  dataSetId,
   query,
   load,
 }
