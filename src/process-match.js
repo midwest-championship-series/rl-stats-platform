@@ -10,6 +10,8 @@ const processForfeit = require('./producers/forfeit')
 const { getPlayerTeamsAtDate } = require('./producers/common')
 const { RecoverableError, UnRecoverableError } = require('./util/errors')
 const { indexDocs } = require('./services/elastic')
+const conform = require('./util/conform-schema')
+const { team_games: teamGameSchema, player_games: playerGameSchema } = require('./schemas')
 
 const teamGameIndex = `${process.env.SERVERLESS_STAGE}_stats_team`
 const playerGameIndex = `${process.env.SERVERLESS_STAGE}_stats_player`
@@ -134,9 +136,11 @@ const createUnlinkedPlayers = players => {
 }
 
 const uploadStats = async (matchId, teamStats, playerStats, fileName, processedAt) => {
+  const indexTeamStats = conform(teamStats, teamGameSchema)
+  const indexPlayerStats = conform(playerStats, playerGameSchema)
   await Promise.all([
-    indexDocs(teamStats, teamGameIndex, ['team_id', 'game_id_total']),
-    indexDocs(playerStats, playerGameIndex, ['player_id', 'game_id_total']),
+    indexDocs(indexTeamStats, teamGameIndex, ['team_id', 'game_id_total']),
+    indexDocs(indexPlayerStats, playerGameIndex, ['player_id', 'game_id_total']),
   ])
   await aws.s3.uploadJSON(producedStatsBucket, fileName, { matchId, teamStats, playerStats, processedAt })
 }

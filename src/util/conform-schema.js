@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-module.exports = (dataObject, schema) => {
+const conformObject = (dataObject, schema) => {
   if (Object.keys(dataObject).length < 1) throw new Error(`dataObject is empty`)
   const reducedObject = _.pick(
     dataObject,
@@ -14,4 +14,14 @@ module.exports = (dataObject, schema) => {
     }
   })
   return reducedObject
+}
+
+module.exports = (conformThis, schema) => {
+  if (conformThis instanceof Array) {
+    return conformThis.map(item => conformObject(item, schema))
+  } else if (typeof conformThis === 'object') {
+    return conformObject(conformThis, schema)
+  } else {
+    throw new Error(`cannot conform type of ${typeof conformThis}`)
+  }
 }

@@ -14,8 +14,9 @@ module.exports = [
   { name: 'game_number', type: types.STR, skipOpponent: true },
   { name: 'map_name', type: types.STR, skipOpponent: true },
   { name: 'game_id_total', type: types.STR, skipOpponent: true },
+  { name: 'game_id_overtime_game', type: types.STR, skipOpponent: true },
   { name: 'match_id_win', type: types.STR },
   { name: 'game_id_win', type: types.STR },
+  { name: 'game_id_win_total', type: types.STR },
   { name: 'game_id_forfeit_win', type: types.STR },
-  { name: 'game_id_forfeit_loss', type: types.STR },
 ]
