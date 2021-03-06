@@ -8,6 +8,9 @@ const processPlayer = (game, player, processedAt) => {
   ]
   const stats = reduceStats({ ownStats, game, modifiers })
   const playerTeamWon = game.winning_team_id.equals(player.team_id)
+  // if (game.hasOwnProperty('overtime')) {
+  //   console.log(game)
+  // }
   return {
     epoch_processed: processedAt,
     player_id: player.league_id,
@@ -36,6 +39,8 @@ const processPlayer = (game, player, processedAt) => {
     game_id_total: getMatchGameId(game.match_id, game.game_number),
     game_id_win_total: playerTeamWon ? getMatchGameId(game.match_id, game.game_number) : undefined,
     game_id_win: playerTeamWon ? game.game_id : undefined,
+    game_id_overtime_game: game.overtime ? game.game_id : undefined,
+    overtime_seconds_played: game.overtime && game.overtime_seconds > 0 ? game.overtime_seconds : undefined,
     wins: playerTeamWon ? 1 : 0,
     ms_played: (player.end_time - player.start_time) * 1000,
     ...stats,

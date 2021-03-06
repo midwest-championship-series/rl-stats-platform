@@ -12,6 +12,7 @@ module.exports = [
   { name: 'mvps', type: types.INT },
   { name: 'wins', type: types.INT },
   { name: 'ms_played', type: types.INT },
+  { name: 'overtime_seconds_played', type: types.INT },
   { name: 'shots', type: types.INT },
   { name: 'shots_against', type: types.INT },
   { name: 'goals', type: types.INT },

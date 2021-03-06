@@ -425,6 +425,11 @@ describe('process-match', () => {
     const teamStats = elastic.indexDocs.mock.calls[0][0]
     expect(teamStats).toHaveLength(8)
     expect(teamStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
+    const findStats = filters => teamStats.filter(s => Object.keys(filters).every(key => s[key] == filters[key]))
+    expect(findStats({ game_id: '5ebc62afd09245d2a7c6333f', team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
+      game_id_overtime_game: '5ebc62afd09245d2a7c6333f',
+      overtime_seconds_played: 124,
+    })
     expect(teamStats[6]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
@@ -443,6 +448,7 @@ describe('process-match', () => {
       game_id_win: '5ebc62afd09245d2a7c63338',
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
+      game_id_overtime_game: undefined,
       game_number: '4',
       game_date: '2020-03-19T21:35:38Z',
       map_name: 'Utopia Coliseum',
@@ -457,6 +463,7 @@ describe('process-match', () => {
       assists: 3,
       opponent_assists: 2,
       ms_played: 351000,
+      overtime_seconds_played: undefined,
       demos_inflicted: 2,
       demos_taken: 5,
       amount_collected: 6608,
@@ -496,6 +503,7 @@ describe('process-match', () => {
     expect(playerStats).toHaveLength(24)
     expect(playerStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
     expect(findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })).toHaveLength(6)
+    console.log(playerStats.find(s => s.overtime_seconds_played && s.overtime_seconds_played > 0))
     expect(
       findPlayerStats({ player_id: '5ec04239d09245d2a7d4fa26', game_id: '5ebc62afd09245d2a7c63338' })[0],
     ).toMatchObject({
@@ -520,6 +528,7 @@ describe('process-match', () => {
       game_id_win: '5ebc62afd09245d2a7c63338',
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
+      game_id_overtime_game: undefined,
       game_number: '4',
       game_date: '2020-03-19T21:35:38Z',
       map_name: 'Utopia Coliseum',
@@ -532,6 +541,7 @@ describe('process-match', () => {
       score: 493,
       mvps: 1,
       ms_played: 351728,
+      overtime_seconds_played: undefined,
       demos_inflicted: 0,
       demos_taken: 2,
       amount_collected: 2461,
@@ -546,6 +556,12 @@ describe('process-match', () => {
       game_id_win: undefined,
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_id_win_total: undefined,
+    })
+    expect(
+      findPlayerStats({ player_id: '5ec04239d09245d2a7d4fa26', game_id: '5ebc62afd09245d2a7c6333f' })[0],
+    ).toMatchObject({
+      game_id_overtime_game: '5ebc62afd09245d2a7c6333f',
+      overtime_seconds_played: 124,
     })
     findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })
       .filter(stat => stat.player_id !== '5ec04239d09245d2a7d4fa26')

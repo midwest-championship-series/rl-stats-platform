@@ -34,6 +34,8 @@ const processTeam = (game, color, time) => {
     game_id_win: teamWon ? game.game_id : undefined,
     game_id_total: getMatchGameId(game.match_id, game.game_number),
     game_id_win_total: teamWon ? getMatchGameId(game.match_id, game.game_number) : undefined,
+    game_id_overtime_game: game.overtime ? game.game_id : undefined,
+    overtime_seconds_played: game.overtime && game.overtime_seconds > 0 ? game.overtime_seconds : undefined,
     ms_played: game.duration * 1000,
     ...stats,
   }
