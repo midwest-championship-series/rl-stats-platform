@@ -8,6 +8,7 @@ module.exports = [
   ...gameContext,
   ...playerContext,
   ...opponent(teamContext),
+  { name: 'games_played', type: types.INT },
   { name: 'mvps', type: types.INT },
   { name: 'wins', type: types.INT },
   { name: 'ms_played', type: types.INT },

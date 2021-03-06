@@ -19,7 +19,6 @@ const baseStats = {
   map_name: 'DFH Stadium',
   wins: 0,
   game_id_total: 'match:5ec935988c0dd900074686ae:game:1',
-  game_id_loss_total: 'match:5ec935988c0dd900074686ae:game:1',
   ms_played: 352000,
   shots: 5,
   opponent_shots: 7,
@@ -154,8 +153,6 @@ const baseSchema = [
   { name: 'opponent_game_id_win', type: { default: 'string' } },
   { name: 'game_id_forfeit_win', type: { default: 'string' } },
   { name: 'opponent_game_id_forfeit_win', type: { default: 'string' } },
-  { name: 'game_id_forfeit_loss', type: { default: 'string' } },
-  { name: 'opponent_game_id_forfeit_loss', type: { default: 'string' } },
   { name: 'wins', type: { DDL: 'INT64', default: 'integer' } },
   { name: 'opponent_wins', type: { DDL: 'INT64', default: 'integer' } },
   { name: 'ms_played', type: { DDL: 'INT64', default: 'integer' } },
@@ -265,5 +262,19 @@ describe('conform-schema', () => {
       opponent_ms_full_boost: 101480,
       opponent_ms_supersonic_speed: 119510,
     })
+  })
+  it('should conform arrays', () => {
+    const result = conform([baseStats, baseStats], baseSchema)
+    expect(result).toBeInstanceOf(Array)
+    expect(result).toMatchObject([
+      {
+        goals_against: 3,
+        opponent_goals_against: 2,
+      },
+      {
+        goals_against: 3,
+        opponent_goals_against: 2,
+      },
+    ])
   })
 })

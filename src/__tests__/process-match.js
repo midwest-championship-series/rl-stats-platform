@@ -443,10 +443,10 @@ describe('process-match', () => {
       game_id_win: '5ebc62afd09245d2a7c63338',
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
-      game_id_loss_total: undefined,
       game_number: '4',
       game_date: '2020-03-19T21:35:38Z',
       map_name: 'Utopia Coliseum',
+      games_played: 1,
       wins: 1,
       shots: 5,
       opponent_shots: 7,
@@ -459,8 +459,6 @@ describe('process-match', () => {
       ms_played: 351000,
       demos_inflicted: 2,
       demos_taken: 5,
-      bpm: 1194,
-      avg_amount: 139.37,
       amount_collected: 6608,
       amount_stolen: 1225,
       amount_used_while_supersonic: 797,
@@ -473,7 +471,6 @@ describe('process-match', () => {
       game_id_win: undefined,
       match_id_win: undefined,
       game_id_win_total: undefined,
-      game_id_loss_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_number: '4',
     })
@@ -506,7 +503,6 @@ describe('process-match', () => {
       player_name: 'Calster',
       player_platform: 'steam',
       player_platform_id: '76561198059743159',
-      screen_name: 'Calster',
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
       team_color: 'blue',
@@ -524,10 +520,10 @@ describe('process-match', () => {
       game_id_win: '5ebc62afd09245d2a7c63338',
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
-      game_id_loss_total: undefined,
       game_number: '4',
       game_date: '2020-03-19T21:35:38Z',
       map_name: 'Utopia Coliseum',
+      games_played: 1,
       wins: 1,
       shots: 2,
       goals: 1,
@@ -538,8 +534,6 @@ describe('process-match', () => {
       ms_played: 351728,
       demos_inflicted: 0,
       demos_taken: 2,
-      bpm: 416,
-      avg_amount: 49.66,
       amount_collected: 2461,
       amount_stolen: 410,
       amount_used_while_supersonic: 212,
@@ -552,7 +546,6 @@ describe('process-match', () => {
       game_id_win: undefined,
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_id_win_total: undefined,
-      game_id_loss_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
     })
     findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })
       .filter(stat => stat.player_id !== '5ec04239d09245d2a7d4fa26')
@@ -637,13 +630,13 @@ describe('process-match', () => {
       league_id: '5ebc62b1d09245d2a7c63516',
       league_name: 'mncs',
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
-      game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:1',
       game_id_forfeit_win: undefined,
       game_id: undefined,
       game_id_win: undefined,
       game_number: undefined,
       map_name: undefined,
       wins: 0,
+      games_played: undefined,
     })
     // requires tests to have run in less than 1 s
     const dateDiff = Math.abs(new Date(teamStats[0].game_date) - Date.now())
@@ -661,7 +654,6 @@ describe('process-match', () => {
       season_id: '5ebc62b0d09245d2a7c63477',
       league_id: '5ebc62b1d09245d2a7c63516',
       league_name: 'mncs',
-      game_id_forfeit_loss: undefined,
       game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:1',
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
       game_id: undefined,
@@ -669,9 +661,7 @@ describe('process-match', () => {
       game_number: undefined,
       map_name: undefined,
       wins: 1,
-    })
-    expect(teamStats[4]).toMatchObject({
-      game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      games_played: undefined,
     })
     expect(playerStats).toHaveLength(12)
     expect(playerStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
@@ -689,13 +679,13 @@ describe('process-match', () => {
       season_id: '5ebc62b0d09245d2a7c63477',
       league_id: '5ebc62b1d09245d2a7c63516',
       league_name: 'mncs',
-      game_id_forfeit_loss: 'match:5ebc62b0d09245d2a7c6340c:game:1',
       game_id_forfeit_win: undefined,
       game_id: undefined,
       game_id_win: undefined,
       game_number: undefined,
       map_name: undefined,
       wins: 0,
+      games_played: undefined,
     })
     expect(playerStats[2]).toMatchObject({
       player_id: '5ec04239d09245d2a7d4fa4f',
@@ -711,13 +701,13 @@ describe('process-match', () => {
       season_id: '5ebc62b0d09245d2a7c63477',
       league_id: '5ebc62b1d09245d2a7c63516',
       league_name: 'mncs',
-      game_id_forfeit_loss: undefined,
       game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:1',
       game_id: undefined,
       game_id_win: undefined,
       game_number: undefined,
       map_name: undefined,
       wins: 1,
+      games_played: undefined,
     })
     const uploadStaticStats = aws.s3.uploadJSON.mock.calls
     expect(uploadStaticStats).toHaveLength(1)

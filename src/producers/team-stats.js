@@ -25,6 +25,7 @@ const processTeam = (game, color, time) => {
     season_id: game.season_id,
     week: game.week,
     game_id: game.game_id,
+    games_played: 1,
     game_date: game.date,
     game_number: game.game_number.toString(),
     map_name: game.map_name,
@@ -33,7 +34,6 @@ const processTeam = (game, color, time) => {
     game_id_win: teamWon ? game.game_id : undefined,
     game_id_total: getMatchGameId(game.match_id, game.game_number),
     game_id_win_total: teamWon ? getMatchGameId(game.match_id, game.game_number) : undefined,
-    game_id_loss_total: teamWon ? undefined : getMatchGameId(game.match_id, game.game_number),
     ms_played: game.duration * 1000,
     ...stats,
   }

@@ -6,6 +6,7 @@ const teamContext = require('./contexts/team_context')
 const teamStats = [
   ...gameContext,
   ...teamContext,
+  { name: 'games_played', type: types.INT },
   { name: 'wins', type: types.INT },
   { name: 'ms_played', type: types.INT },
   { name: 'shots', type: types.INT },

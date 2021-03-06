@@ -16,6 +16,7 @@ module.exports = (params, processedAt) => {
     game_date: forfeit_date.toISOString(),
     game_number: undefined,
     map_name: undefined,
+    games_played: undefined,
   }
   const teamStats = genTeamStats(params, context)
 
@@ -48,7 +49,6 @@ const genTeamStats = (params, context) => {
       game_id_total: forfeitId,
       game_id_forfeit_win: team._id.toHexString() !== forfeit_team_id ? forfeitId : undefined,
       game_id_win_total: team._id.toHexString() !== forfeit_team_id ? forfeitId : undefined,
-      game_id_forfeit_loss: team._id.toHexString() === forfeit_team_id ? forfeitId : undefined,
       wins: team._id.toHexString() === forfeit_team_id ? 0 : 1,
     })
   }
