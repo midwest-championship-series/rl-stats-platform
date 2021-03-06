@@ -503,7 +503,6 @@ describe('process-match', () => {
     expect(playerStats).toHaveLength(24)
     expect(playerStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
     expect(findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })).toHaveLength(6)
-    console.log(playerStats.find(s => s.overtime_seconds_played && s.overtime_seconds_played > 0))
     expect(
       findPlayerStats({ player_id: '5ec04239d09245d2a7d4fa26', game_id: '5ebc62afd09245d2a7c63338' })[0],
     ).toMatchObject({

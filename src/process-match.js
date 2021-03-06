@@ -13,8 +13,8 @@ const { indexDocs } = require('./services/elastic')
 const conform = require('./util/conform-schema')
 const { team_games: teamGameSchema, player_games: playerGameSchema } = require('./schemas')
 
-const teamGameIndex = `${process.env.SERVERLESS_STAGE}_stats_team`
-const playerGameIndex = `${process.env.SERVERLESS_STAGE}_stats_player`
+const teamGameIndex = `${process.env.SERVERLESS_STAGE}_stats_team_games`
+const playerGameIndex = `${process.env.SERVERLESS_STAGE}_stats_player_games`
 const producedStatsBucket = process.env.PRODUCED_STATS_BUCKET
 
 const validateFilters = ({ league_id, match_id, game_ids }) => {
