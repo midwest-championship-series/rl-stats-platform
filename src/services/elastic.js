@@ -42,6 +42,39 @@ const indexDocs = async (documents, indexName, idKeys) => {
   return conn.bulk({ body })
 }
 
+const search = async (index, body) => {
+  try {
+    const conn = await getConnection()
+    const { hits: results, aggregations } = await conn.search(
+      {
+        index,
+        body,
+      },
+      {
+        ignore: [404],
+        maxRetries: 3,
+      },
+    )
+    return {
+      total: results.total.value,
+      hits: results.hits && results.hits.map(h => h._source),
+      aggregations,
+    }
+  } catch (err) {
+    throw formatError(err)
+  }
+}
+
+const formatError = err => {
+  return {
+    source: 'elastic',
+    statusCode: err.statusCode,
+    message: err.message,
+  }
+}
+
 module.exports = {
+  formatError,
   indexDocs,
+  search,
 }
