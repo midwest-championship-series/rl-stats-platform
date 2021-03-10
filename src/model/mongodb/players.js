@@ -55,6 +55,11 @@ const Model = createModel('Player', schema, schema => {
     })
     return this.find(query)
   }
+  schema.virtual('teams', {
+    ref: 'Team',
+    localField: 'team_history.team_id',
+    foreignField: '_id',
+  })
 })
 
 module.exports = { Model }
