@@ -128,7 +128,7 @@ const createUnlinkedPlayers = players => {
   return Promise.all(
     players.map(p => {
       return Players.create({
-        screen_name: p.name,
+        screen_name: p.name.trim(),
         accounts: [{ platform: p.platform, platform_id: p.platform_id }],
       })
     }),
@@ -180,7 +180,10 @@ const handleReplays = async (filters, processedAt) => {
   if (unlinkedPlayers.length > 0) {
     const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
     console.info('created players', newPlayers)
-    throw new RecoverableError('NO_PLAYER_FOUND')
+    throw new RecoverableError(
+      'NO_PLAYER_FOUND',
+      `created new players: ${newPlayers.map(p => p.screen_name).join(', ')}`,
+    )
   }
   console.info('processing match stats')
   const { teamStats, playerStats, playerTeamMap } = processMatch(
