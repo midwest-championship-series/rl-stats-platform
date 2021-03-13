@@ -6,10 +6,14 @@ const connStr = `mongodb+srv://mnrl_stats:${process.env.MONGODB_PASSWORD}@${proc
 mongoose.Promise = Promise
 
 mongoose.connectionConfigured = false
+mongoose.connecting = false
 
 const setup = () => {
   mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
-  mongoose.connection.once('open', () => console.log('Connected to Mongo!'))
+  mongoose.connection.once('open', () => {
+    console.log('Connected to Mongo!')
+    mongoose.connecting = false
+  })
 
   // when something interrupts the process, disconnect from mongodb
   process.on('SIGINT', () => {
@@ -26,7 +30,8 @@ const connect = () => {
     mongoose.connectionConfigured = true
   }
 
-  if (mongoose.connection.readyState !== 1) {
+  if (!mongoose.connecting && mongoose.connection.readyState !== 1) {
+    mongoose.connecting = true
     console.info('wiring up the database for ' + process.env.SERVERLESS_STAGE)
     mongoose.connect(connStr, {
       socketTimeoutMS: 120000,
