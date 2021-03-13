@@ -10,6 +10,7 @@ app.use('/', require('../src/api'))
 // or as a promise
 const api = serverless(app)
 const handler = async (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false
   const warmerIntercept = require('../src/util/warmer-intercept')
   if (warmerIntercept(event)) return
   const result = await api(event, context)

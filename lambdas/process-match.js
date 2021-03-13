@@ -4,6 +4,7 @@ const { sendToChannel, sendEmbedToChannel, reportError } = require('../src/servi
 const { RecoverableError } = require('../src/util/errors')
 const getSummary = require('../src/match-summary')
 const stage = process.env.SERVERLESS_STAGE
+const errorChannelId = process.env.ERROR_CHANNEL_ID
 
 const handler = async event => {
   let messages
@@ -34,6 +35,9 @@ const handler = async event => {
       const errContext = `encountered error while processing match with message: ${JSON.stringify(message, null, 2)}`
       console.error(`error occurred while processing message:`, errContext, err)
       if (err instanceof RecoverableError) {
+        if (err.notice) {
+          await sendToChannel(errorChannelId, err.notice)
+        }
         throw err // this will put the message back on the queue for re-processing
       } else {
         if (!err.code || !message.reply_to_channel) {

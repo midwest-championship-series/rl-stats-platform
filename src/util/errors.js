@@ -1,7 +1,8 @@
 class RecoverableError extends Error {
-  constructor(msg) {
+  constructor(msg, notice) {
     super(msg)
     this.code = 'recoverable_error'
+    this.notice = notice
   }
 }
 
