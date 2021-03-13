@@ -57,6 +57,7 @@ const search = async (index, body) => {
     )
     return {
       total: results.total.value,
+      returned: results.hits.length,
       hits: results.hits && results.hits.map(h => h._source),
       aggregations,
     }
