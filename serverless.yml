@@ -231,6 +231,10 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:service}-produced-stats-${self:provider.stage}-${self:provider.region}
+    RLStatsEventBus:    
+      Type: AWS::Events::EventBus
+      Properties: 
+        Name: ${self:service}-${self:provider.stage}
   Outputs:
     GamesQueue:
       Value:
@@ -238,3 +242,11 @@ resources:
     ProducedStatsBucketName:
       Value:
         Ref: StatsBucket
+    RLStatsEventBus:
+      Value:
+        Ref: RLStatsEventBus
+    RLStatsEventBusArn:
+      Value:
+        Fn::GetAtt:
+          - RLStatsEventBus
+          - Arn
