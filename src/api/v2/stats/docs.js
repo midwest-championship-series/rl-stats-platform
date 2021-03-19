@@ -38,34 +38,3 @@ module.exports = schema => {
     next()
   }
 }
-
-// module.exports = {
-//   filterDocs: schema => {
-//     return (req, res, next) => {
-//       let description = `Simple filtering api which allows specification of filters using query params`
-//       description += ` (e.g. ?${schema[0].name}=value1&${schema[1].name}=value2`
-//       req.context = {
-//         core: {
-//           description,
-//           model: reduceSchema(schema),
-//         },
-//       }
-//       return next()
-//     }
-//   },
-//   rawDocs: schema => {
-//     return (req, res, next) => {
-//       let description = 'API for advanced querying and stats.'
-//       description +=
-//         ' Allows pass-through querying of elasticsearch according to these docs: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html.'
-//       description += ' Returns a simplified response with hits, aggregations, and a total number of accessible hits'
-//       req.context = {
-//         core: {
-//           description,
-//           model: reduceSchema(schema),
-//         },
-//       }
-//       return next()
-//     }
-//   },
-// }
