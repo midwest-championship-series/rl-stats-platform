@@ -7,7 +7,8 @@ const reduceSchema = schema => {
 
 const filterDocs = schema => {
   let description = `Simple filtering api which allows specification of filters using query params`
-  description += ` (e.g. ?${schema[0].name}=value1&${schema[1].name}=value2`
+  description += ` (e.g. ?${schema[0].name}=value1&${schema[1].name}=value2).`
+  description += ` Also accepts a "size" and "from" parameters for pagination.`
   return {
     core: {
       description,
