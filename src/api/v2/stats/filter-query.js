@@ -16,6 +16,10 @@ module.exports = indexName => {
       query.size = params.size
       delete params.size
     }
+    if (params.from) {
+      query.from = params.from
+      delete params.from
+    }
     query.query.bool.filter = Object.entries(params).map(([key, value]) => {
       return { term: { [key]: value } }
     })
