@@ -247,7 +247,7 @@ matches.Model = Match
 const players = require('../model/mongodb/players')
 jest.mock('../model/mongodb/players')
 players.Model = {
-  create: jest.fn(),
+  create: jest.fn(() => ({ screen_name: 'something' })),
   find: jest.fn(),
   onTeams: jest.fn(),
 }
@@ -285,10 +285,12 @@ describe('process-match', () => {
   beforeEach(() => {
     replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
     ballchasing.getReplays.mockResolvedValue(replays)
+    aws.s3.uploadJSON = jest.fn(() => ({
+      Location: 'some url',
+    }))
   })
   afterEach(() => {
     elastic.indexDocs.mockClear()
-    aws.s3.uploadJSON.mockClear()
   })
   it('should process a match with a match_id', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)

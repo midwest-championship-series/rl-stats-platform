@@ -3,9 +3,10 @@ const { eventBridge } = require('../src/services/aws')
 module.exports = {
   handler: async () => {
     const event = {
-      type: 'BIG_STUFF',
+      type: 'MATCH_PROCESS_ENDED',
       detail: {
-        boomers: [{ x: 1, y: 3 }],
+        match_id: '5ec935988c0dd900074686a5',
+        s3_data_url: 'https://s3.com',
       },
     }
     console.log(`logging event`, JSON.stringify(event, null, 2))
