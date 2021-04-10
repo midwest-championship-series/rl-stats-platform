@@ -1,7 +1,5 @@
 const path = require('path')
 process.env.GOOGLE_APPLICATION_CREDENTIALS = path.join(__dirname, '..', '.google.creds.json')
-const stage = process.env.SERVERLESS_STAGE
-const datasetName = `${stage}_stats`
 
 const { query, load } = require('../src/services/bigquery')
 const aws = require('../src/services/aws')

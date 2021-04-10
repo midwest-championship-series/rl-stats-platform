@@ -1,7 +1,3 @@
-const joi = require('joi')
-
-const registerSchema = require('./register')
-
 const schemas = [...require('./match-process')]
 
 module.exports = event => {
