@@ -4,7 +4,7 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS = path.join(__dirname, '..', '.google
 const { query, load } = require('../src/services/bigquery')
 const aws = require('../src/services/aws')
 const { reportError } = require('../src/services/rl-bot')
-const { player_games, team_games } = require('../src/schemas')
+const schemas = require('../src/schemas')
 const conform = require('../src/util/conform-schema')
 const { getS3Location } = require('../src/util/events/s3')
 
@@ -17,26 +17,15 @@ const handler = async event => {
       currentSource = source
       const s3Data = await aws.s3.get(source, key)
       const stats = JSON.parse(s3Data.Body)
-      const { playerStats, teamStats, processedAt, matchId } = stats
+      const { processedAt, matchId } = stats
 
-      const tables = [
-        {
-          name: 'player_games',
-          stats: playerStats,
-          schema: player_games,
-        },
-        {
-          name: 'team_games',
-          stats: teamStats,
-          schema: team_games,
-        },
-      ]
+      const tables = ['player_games', 'team_games']
       const [res1, res2] = await Promise.all(
-        tables.map(config => {
-          const loadData = config.stats.map(s => {
-            return { epoch_processed: processedAt, ...conform(s, config.schema) }
+        tables.map(name => {
+          const loadData = stats[name].map(s => {
+            return { epoch_processed: processedAt, ...conform(s, schemas[name]) }
           })
-          return load(loadData, config.name)
+          return load(loadData, name)
         }),
       )
       const errors = []
@@ -48,9 +37,9 @@ const handler = async event => {
         throw new Error(`${errors.length} errors occurred while indexing into bigquery`)
       }
       await Promise.all([
-        tables.map(config => {
+        tables.map(name => {
           const where = `epoch_processed < ${processedAt} AND match_id = '${matchId}'`
-          return query('DELETE', config.name, where)
+          return query('DELETE', name, where)
         }),
       ])
     }

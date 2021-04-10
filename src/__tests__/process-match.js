@@ -404,11 +404,11 @@ describe('process-match', () => {
     expect(uploadStaticStats).toHaveLength(1)
     expect(uploadStaticStats[0][0]).toEqual('stats bucket name')
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
-    const { processedAt, teamStats, playerStats, matchId } = uploadStaticStats[0][2]
+    const { processedAt, team_games, player_games, matchId } = uploadStaticStats[0][2]
     expect(matchId).toEqual('5ebc62b0d09245d2a7c6340c')
     expect(processedAt / 1000).toBeCloseTo(Date.now() / 1000, 0)
-    expect(teamStats).toHaveLength(8)
-    expect(playerStats).toHaveLength(24)
+    expect(team_games).toHaveLength(8)
+    expect(player_games).toHaveLength(24)
   })
   it('should process team stats', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
@@ -732,10 +732,10 @@ describe('process-match', () => {
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
     const s3Stats = uploadStaticStats[0][2]
     expect(s3Stats.processedAt / 1000).toBeCloseTo(Date.now() / 1000, 0)
-    expect(s3Stats.teamStats).toHaveLength(6)
+    expect(s3Stats.team_games).toHaveLength(6)
     expect(s3Stats.matchId).toEqual('5ebc62b0d09245d2a7c6340c')
     /** @todo find out why this is 12... it should be (# players on teams) * (# games in match) */
-    expect(s3Stats.playerStats).toHaveLength(12)
+    expect(s3Stats.player_games).toHaveLength(12)
   })
   it('should process a forfeit with a scheduled date', async () => {
     Match.findById = jest.fn(() => ({

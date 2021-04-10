@@ -5,7 +5,7 @@ const bq = require('../../src/services/bigquery')
 jest.mock('../../src/services/aws')
 const aws = require('../../src/services/aws')
 const stats = {
-  playerStats: [
+  player_games: [
     {
       player_name: 'Tero.',
       player_id: '5ec9358f8c0dd900074685c7',
@@ -13,7 +13,7 @@ const stats = {
       team_id: '5ec9358e8c0dd900074685c3',
     },
   ],
-  teamStats: [
+  team_games: [
     {
       team_name: 'Hibbing Rangers',
       team_id: '5ec9358e8c0dd900074685c3',
