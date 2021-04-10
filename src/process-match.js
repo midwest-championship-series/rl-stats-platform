@@ -149,6 +149,7 @@ const uploadStats = async (matchId, teamStats, playerStats, fileName, processedA
     playerStats,
     processedAt,
   })
+  console.info(`emitting match ${matchId} to ${s3Data.Location}`)
   await eventBridge.emitEvent('MATCH_PROCESS_ENDED', {
     match_id: matchId,
     s3_data_url: s3Data.Location,
