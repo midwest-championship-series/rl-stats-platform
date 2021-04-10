@@ -4,7 +4,6 @@ plugins:
   # - serverless-python-requirements
   # - serverless-export-env
   # - serverless-dotenv-plugin
-  - serverless-step-functions
   - serverless-offline
 
 package:
@@ -83,13 +82,18 @@ provider:
       Resource: 
         - '*'
   usagePlan:
-    quota:
-      limit: 10000
-      offset: 2
-      period: MONTH
-    throttle:
-      burstLimit: 10
-      rateLimit: 5
+    - low:
+        quota:
+          limit: 10000
+          offset: 2
+          period: MONTH
+        throttle:
+          burstLimit: 10
+          rateLimit: 5
+    - high:
+        throttle:
+          burstLimit: 10
+          rateLimit: 5
   stackTags:
     Project: rl-stats
     Role: ${self:service}
@@ -173,10 +177,6 @@ functions:
           enabled: ${self:custom.keepWarm.${self:provider.stage}, self:custom.keepWarm.notprod}
           input:
             type: warmer
-  
-  init-step-function:
-    handler: lambdas/init-step-function.handler
-    name: ${self:service}-init-step-function-${self:provider.stage}
 
   migrate:
     handler: lambdas/migrate.handler
