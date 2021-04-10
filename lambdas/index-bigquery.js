@@ -6,14 +6,13 @@ const aws = require('../src/services/aws')
 const { reportError } = require('../src/services/rl-bot')
 const { player_games, team_games } = require('../src/schemas')
 const conform = require('../src/util/conform-schema')
+const { getS3Location } = require('../src/util/events/s3')
 
 const handler = async event => {
   let currentKey, currentSource
   try {
     for (let record of event.Records) {
-      const source = record.s3.bucket.name
-      // got the following line from: https://github.com/serverless/examples/blob/master/aws-node-s3-file-replicator/handler.js#L32
-      const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, ' '))
+      const { key, source } = getS3Location(record)
       currentKey = key
       currentSource = source
       const s3Data = await aws.s3.get(source, key)

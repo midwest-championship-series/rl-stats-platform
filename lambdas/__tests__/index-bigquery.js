@@ -70,6 +70,10 @@ const event = {
 describe('index-bigquery', () => {
   it('should index records', async () => {
     await index(event)
+    expect(aws.s3.get).toHaveBeenCalledWith(
+      'rl-stats-produced-stats-dev-us-east-1',
+      'match:5ec935998c0dd900074686c9.json',
+    )
     expect(bq.load).toHaveBeenCalledTimes(2)
     expect(bq.load).toHaveBeenLastCalledWith(
       [{ epoch_processed: 1618089471185, team_id: '5ec9358e8c0dd900074685c3', team_name: 'Hibbing Rangers' }],
