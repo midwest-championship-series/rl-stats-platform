@@ -137,15 +137,6 @@ const createUnlinkedPlayers = players => {
 }
 
 const uploadStats = async (matchId, team_games, player_games, fileName, processedAt) => {
-  const indexTeamStats = conform(team_games, teamGameSchema)
-  const indexPlayerStats = conform(player_games, playerGameSchema)
-  await Promise.all([
-    /**
-     * @todo make this a transaction which simultaneously deletes old data
-     */
-    indexDocs(indexTeamStats, teamGameIndex, ['team_id', 'game_id_total']),
-    indexDocs(indexPlayerStats, playerGameIndex, ['player_id', 'game_id_total']),
-  ])
   const s3Data = await aws.s3.uploadJSON(producedStatsBucket, fileName, {
     matchId,
     team_games,

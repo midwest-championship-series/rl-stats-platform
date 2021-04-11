@@ -368,9 +368,6 @@ describe('process-match', () => {
       ],
     })
     expect(matches.Model.findById).toHaveBeenCalledWith('5ebc62b0d09245d2a7c6340c')
-    expect(elastic.indexDocs.mock.calls.length).toBe(2)
-    expect(elastic.indexDocs.mock.calls[0][2]).toEqual(['team_id', 'game_id_total'])
-    expect(elastic.indexDocs.mock.calls[1][2]).toEqual(['player_id', 'game_id_total'])
     expect(mockClosedMatch).toHaveProperty('winning_team_id')
     expect(mockClosedMatch.winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62e86'))
     expect(mockClosedMatch).toHaveProperty('players_to_teams')
@@ -434,16 +431,15 @@ describe('process-match', () => {
         '4ed12225-7251-4d63-8bb6-15338c60bcf2',
       ],
     })
-    expect(elastic.indexDocs.mock.calls.length).toBe(2)
-    const teamStats = elastic.indexDocs.mock.calls[0][0]
-    expect(teamStats).toHaveLength(8)
-    expect(teamStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
-    const findStats = filters => teamStats.filter(s => Object.keys(filters).every(key => s[key] == filters[key]))
+    const { team_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(team_games).toHaveLength(8)
+    expect(team_games[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
+    const findStats = filters => team_games.filter(s => Object.keys(filters).every(key => s[key] == filters[key]))
     expect(findStats({ game_id: '5ebc62afd09245d2a7c6333f', team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
       game_id_overtime_game: '5ebc62afd09245d2a7c6333f',
       overtime_seconds_played: 124,
     })
-    expect(teamStats[6]).toMatchObject({
+    expect(team_games[6]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
       opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
@@ -485,7 +481,7 @@ describe('process-match', () => {
       ms_zero_boost: 162580,
       ms_full_boost: 79400,
     })
-    expect(teamStats[7]).toMatchObject({
+    expect(team_games[7]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62eb3',
       opponent_team_id: '5ebc62a9d09245d2a7c62e86',
       game_id_win: undefined,
@@ -508,13 +504,13 @@ describe('process-match', () => {
         '4ed12225-7251-4d63-8bb6-15338c60bcf2',
       ],
     })
-    const playerStats = elastic.indexDocs.mock.calls[1][0]
+    const { player_games } = aws.s3.uploadJSON.mock.calls[0][2]
     const findPlayerStats = criteria => {
-      return playerStats.filter(stat => Object.keys(criteria).every(key => stat[key] === criteria[key]))
+      return player_games.filter(stat => Object.keys(criteria).every(key => stat[key] === criteria[key]))
     }
     // ensure there are 6 player records per game
-    expect(playerStats).toHaveLength(24)
-    expect(playerStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
+    expect(player_games).toHaveLength(24)
+    expect(player_games[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
     expect(findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })).toHaveLength(6)
     expect(
       findPlayerStats({ player_id: '5ec04239d09245d2a7d4fa26', game_id: '5ebc62afd09245d2a7c63338' })[0],
@@ -638,13 +634,10 @@ describe('process-match', () => {
       forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
       reply_to_channel: '692994579305332806',
     })
-    expect(elastic.indexDocs.mock.calls[0][2]).toEqual(['team_id', 'game_id_total'])
-    expect(elastic.indexDocs.mock.calls[1][2]).toEqual(['player_id', 'game_id_total'])
-    const teamStats = elastic.indexDocs.mock.calls[0][0]
-    const playerStats = elastic.indexDocs.mock.calls[1][0]
-    expect(teamStats).toHaveLength(6)
-    expect(teamStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
-    expect(teamStats[0]).toMatchObject({
+    const { player_games, team_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(team_games).toHaveLength(6)
+    expect(team_games[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
+    expect(team_games[0]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
       opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
@@ -667,9 +660,9 @@ describe('process-match', () => {
       games_played: undefined,
     })
     // requires tests to have run in less than 1 s
-    const dateDiff = Math.abs(new Date(teamStats[0].game_date) - Date.now())
+    const dateDiff = Math.abs(new Date(team_games[0].game_date) - Date.now())
     expect(dateDiff).toBeLessThan(1000)
-    expect(teamStats[1]).toMatchObject({
+    expect(team_games[1]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62eb3',
       team_name: 'Burnsville Inferno',
       opponent_team_id: '5ebc62a9d09245d2a7c62e86',
@@ -691,9 +684,9 @@ describe('process-match', () => {
       wins: 1,
       games_played: undefined,
     })
-    expect(playerStats).toHaveLength(12)
-    expect(playerStats[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
-    expect(playerStats[0]).toMatchObject({
+    expect(player_games).toHaveLength(12)
+    expect(player_games[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
+    expect(player_games[0]).toMatchObject({
       player_id: '5ec04239d09245d2a7d4fa26',
       player_name: 'Calster',
       team_id: '5ebc62a9d09245d2a7c62e86',
@@ -715,7 +708,7 @@ describe('process-match', () => {
       wins: 0,
       games_played: undefined,
     })
-    expect(playerStats[2]).toMatchObject({
+    expect(player_games[2]).toMatchObject({
       player_id: '5ec04239d09245d2a7d4fa4f',
       player_name: 'Pace.',
       team_id: '5ebc62a9d09245d2a7c62eb3',
@@ -765,10 +758,9 @@ describe('process-match', () => {
       forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
       reply_to_channel: '692994579305332806',
     })
-    const teamStats = elastic.indexDocs.mock.calls[0][0]
-    expect(teamStats).toHaveLength(6)
-    const playerStats = elastic.indexDocs.mock.calls[1][0]
-    expect(playerStats).toHaveLength(15)
+    const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(team_games).toHaveLength(6)
+    expect(player_games).toHaveLength(15)
   })
   it('should process a forfeit with a different best_of condition', async () => {
     Match.findById = jest.fn(() => ({
@@ -787,10 +779,9 @@ describe('process-match', () => {
       forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
       reply_to_channel: '692994579305332806',
     })
-    const teamStats = elastic.indexDocs.mock.calls[0][0]
-    const playerStats = elastic.indexDocs.mock.calls[1][0]
-    expect(teamStats).toHaveLength(2)
-    expect(playerStats).toHaveLength(4)
+    const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(team_games).toHaveLength(2)
+    expect(player_games).toHaveLength(4)
   })
   it('should fail if forfeit match does not have best_of condition', async () => {
     Match.findById = jest.fn(() => ({
