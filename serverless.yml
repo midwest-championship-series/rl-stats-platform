@@ -1,9 +1,6 @@
 service: rl-stats
 
 plugins:
-  # - serverless-python-requirements
-  # - serverless-export-env
-  # - serverless-dotenv-plugin
   - serverless-offline
 
 package:
@@ -44,8 +41,7 @@ provider:
   environment:
     SERVERLESS_REGION: ${self:provider.region}
     SERVERLESS_STAGE: ${self:provider.stage}
-    SERVERLESS_ACCOUNT_ID:
-      Ref: AWS::AccountId
+    SERVERLESS_SERVICE: ${self:service}
     BALLCHASING_KEY: ${ssm:BALLCHASING_KEY}
     MNCS_STAT_SHEET_ID: ${ssm:${self:provider.stage}-MNCS_STAT_SHEET_ID}
     MNRL_SHEET_ID: ${ssm:${self:provider.stage}-MNRL_SHEET_ID}
@@ -58,61 +54,59 @@ provider:
     ELASTIC_HOST: ${ssm:${self:provider.stage}-mnrl-elastic-host~true}
     PRODUCED_STATS_BUCKET: ${self:resources.Outputs.ProducedStatsBucketName.Value}
     GOOGLE_PROJECT_ID: mnrl-269717
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - states:StartExecution
-        - s3:*
-        - dynamodb:*
-        - rds:*
-      Resource:
-        - '*'
-    - Effect: Allow
-      Action:
-        - sqs:ListQueues
-        - sqs:DeleteMessage
-        - sqs:GetQueueUrl
-        - sqs:ReceiveMessage
-        - sqs:SendMessage
-      Resource:
-        - '*'
-    - Effect: Allow
-      Action:
-        - secretsmanager:GetSecretValue
-      Resource: 
-        - '*'
-  usagePlan:
-    - low:
-        quota:
-          limit: 10000
-          offset: 2
-          period: MONTH
-        throttle:
-          burstLimit: 10
-          rateLimit: 5
-    - high:
-        throttle:
-          burstLimit: 10
-          rateLimit: 5
-  stackTags:
-    Project: rl-stats
-    Role: ${self:service}
+    EVENT_BUS: ${self:resources.Outputs.RLStatsEventBus.Value}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - states:StartExecution
+            - s3:*
+            - dynamodb:*
+            - rds:*
+            - secretsmanager:GetSecretValue
+            - events:PutEvents
+            - events:RemoveTargets
+            - lambda:InvokeFunction
+          Resource:
+            - '*'
+        - Effect: Allow
+          Action:
+            - sqs:ListQueues
+            - sqs:DeleteMessage
+            - sqs:GetQueueUrl
+            - sqs:ReceiveMessage
+            - sqs:SendMessage
+          Resource:
+            - '*'
+  apiGateway:
+    usagePlan:
+      - low:
+          quota:
+            limit: 10000
+            offset: 2
+            period: MONTH
+          throttle:
+            burstLimit: 10
+            rateLimit: 5
+      - high:
+          throttle:
+            burstLimit: 10
+            rateLimit: 5
+  eventBridge:
+    useCloudFormation: true
 
 functions:
-  # fetches a player's ranks via https://rocketleague.tracker.network/
-  fetch-ranks:
-    handler: lambdas/fetch-ranks.handler
-    name: ${self:service}-fetch-ranks-${self:provider.stage}
-    events:
-      - http:
-          path: /ranks/{platform}/{platformId}
-          method: get
-          cors: true
-          request:
-            parameters:
-              path:
-                platform: true
-                platformId: true
+  eventbridge:
+    handler: lambdas/event-bridge.handler
+  # invoke-event:
+  #   handler: lambdas/invoke-event.handler
+  #   events:
+  #     - eventBridge:
+  #         eventBus: !Ref RLStatsEventBus
+  #         pattern:
+  #           detail-type:
+  #             - BIG_STUFF
 
   report-games:
     handler: lambdas/report-games.handler
@@ -190,16 +184,27 @@ functions:
     events:
       - schedule: cron(0 0 * * ? *)
 
+  index-elastic:
+    handler: lambdas/index-elastic.handler
+    name: ${self:service}-index-elastic-${self:provider.stage}
+    timeout: 300
+    events:
+      - eventBridge:
+          eventBus: !Ref RLStatsEventBus
+          pattern:
+            detail-type:
+              - MATCH_PROCESS_ENDED
+
   index-bigquery:
     handler: lambdas/index-bigquery.handler
     name: ${self:service}-index-bigquery-${self:provider.stage}
     timeout: 300
     events:
-      # if this eventually fails due to race condition, could package event in with s3 resource as seen
-      # in https://github.com/serverless/serverless/issues/4194#issuecomment-469616889
-      - s3:
-          bucket: ${self:resources.Resources.StatsBucket.Properties.BucketName}
-          existing: true
+      - eventBridge:
+          eventBus: !Ref RLStatsEventBus
+          pattern:
+            detail-type:
+              - MATCH_PROCESS_ENDED
 
   sync-bigquery:
     handler: lambdas/sync-bigquery.handler

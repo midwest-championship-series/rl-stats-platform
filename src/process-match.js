@@ -12,6 +12,7 @@ const { RecoverableError, UnRecoverableError } = require('./util/errors')
 const { indexDocs } = require('./services/elastic')
 const conform = require('./util/conform-schema')
 const { team_games: teamGameSchema, player_games: playerGameSchema } = require('./schemas')
+const { eventBridge } = require('./services/aws')
 
 const teamGameIndex = `${process.env.SERVERLESS_STAGE}_stats_team_games`
 const playerGameIndex = `${process.env.SERVERLESS_STAGE}_stats_player_games`
@@ -135,14 +136,24 @@ const createUnlinkedPlayers = players => {
   )
 }
 
-const uploadStats = async (matchId, teamStats, playerStats, fileName, processedAt) => {
-  const indexTeamStats = conform(teamStats, teamGameSchema)
-  const indexPlayerStats = conform(playerStats, playerGameSchema)
-  await Promise.all([
-    indexDocs(indexTeamStats, teamGameIndex, ['team_id', 'game_id_total']),
-    indexDocs(indexPlayerStats, playerGameIndex, ['player_id', 'game_id_total']),
-  ])
-  await aws.s3.uploadJSON(producedStatsBucket, fileName, { matchId, teamStats, playerStats, processedAt })
+const uploadStats = async (matchId, team_games, player_games, fileName, processedAt) => {
+  const s3Data = await aws.s3.uploadJSON(producedStatsBucket, fileName, {
+    matchId,
+    team_games,
+    player_games,
+    processedAt,
+  })
+  console.info(`emitting match ${matchId} to ${s3Data.Location}`)
+  await eventBridge.emitEvent({
+    type: 'MATCH_PROCESS_ENDED',
+    detail: {
+      match_id: matchId,
+      bucket: {
+        source: producedStatsBucket,
+        key: fileName,
+      },
+    },
+  })
 }
 
 const handleReplays = async (filters, processedAt) => {

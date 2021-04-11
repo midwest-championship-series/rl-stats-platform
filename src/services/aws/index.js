@@ -9,4 +9,5 @@ module.exports = {
   ssm: require('./ssm'),
   aurora: require('./aurora'),
   s3: require('./s3'),
+  eventBridge: require('./event-bridge'),
 }
