@@ -18,4 +18,16 @@ module.exports = [
       })
       .required(),
   }),
+  registerSchema({
+    type: 'MATCH_BIGQUERY_STATS_LOADED',
+    detail: joi.object().keys({
+      match_id: joi.string().required(),
+    }),
+  }),
+  registerSchema({
+    type: 'MATCH_ELASTIC_STATS_LOADED',
+    detail: joi.object().keys({
+      match_id: joi.string().required(),
+    }),
+  }),
 ]

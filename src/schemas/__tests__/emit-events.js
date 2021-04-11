@@ -41,5 +41,23 @@ describe('emit-events', () => {
       }
       validate(end)
     })
+    it('should validate a bigquery stats load event', () => {
+      const event = {
+        type: 'MATCH_BIGQUERY_STATS_LOADED',
+        detail: {
+          match_id: '1234567890',
+        },
+      }
+      validate(event)
+    })
+    it('should validate an elastic stats load event', () => {
+      const event = {
+        type: 'MATCH_ELASTIC_STATS_LOADED',
+        detail: {
+          match_id: '1234567890',
+        },
+      }
+      validate(event)
+    })
   })
 })

@@ -37,6 +37,10 @@ const handler = async event => {
         return query('DELETE', name, where)
       }),
     ])
+    await aws.eventBridge.emitEvent({
+      type: 'MATCH_BIGQUERY_STATS_LOADED',
+      match_id: matchId,
+    })
   } catch (err) {
     console.error(err)
     await reportError(

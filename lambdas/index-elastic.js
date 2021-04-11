@@ -17,7 +17,7 @@ const handler = async event => {
     currentSource = source
     const s3Data = await aws.s3.get(source, key)
     const stats = JSON.parse(s3Data.Body)
-    const { processedAt } = stats
+    const { processedAt, matchId } = stats
     const responses = await Promise.all(
       indexes.map(({ name, keys }) => {
         const indexName = `${stage}_stats_${name}`
@@ -32,6 +32,10 @@ const handler = async event => {
       console.error(errors)
       throw new Error(`${errors.length} errors occurred while indexing into elastic`)
     }
+    await aws.eventBridge.emitEvent({
+      type: 'MATCH_ELASTIC_STATS_LOADED',
+      match_id: matchId,
+    })
   } catch (err) {
     console.error(err)
     await reportError(

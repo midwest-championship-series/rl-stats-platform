@@ -60,5 +60,9 @@ describe('index-elastic', () => {
       'test_stats_player_games',
       ['player_id', 'game_id_total'],
     )
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
+      type: 'MATCH_ELASTIC_STATS_LOADED',
+      match_id: '5ec935998c0dd900074686c9',
+    })
   })
 })

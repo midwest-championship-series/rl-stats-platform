@@ -61,5 +61,9 @@ describe('index-bigquery', () => {
       'team_games',
       "epoch_processed < 1618089471185 AND match_id = '5ec935998c0dd900074686c9'",
     )
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
+      type: 'MATCH_BIGQUERY_STATS_LOADED',
+      match_id: '5ec935998c0dd900074686c9',
+    })
   })
 })
