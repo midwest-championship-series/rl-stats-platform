@@ -140,6 +140,9 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
   const indexTeamStats = conform(team_games, teamGameSchema)
   const indexPlayerStats = conform(player_games, playerGameSchema)
   await Promise.all([
+    /**
+     * @todo make this a transaction which simultaneously deletes old data
+     */
     indexDocs(indexTeamStats, teamGameIndex, ['team_id', 'game_id_total']),
     indexDocs(indexPlayerStats, playerGameIndex, ['player_id', 'game_id_total']),
   ])
@@ -154,7 +157,10 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
     type: 'MATCH_PROCESS_ENDED',
     detail: {
       match_id: matchId,
-      s3_data_url: s3Data.Location,
+      bucket: {
+        source: producedStatsBucket,
+        key: fileName,
+      },
     },
   })
 }

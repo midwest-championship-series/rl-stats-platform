@@ -19,6 +19,7 @@ describe('elasticsearch', () => {
       await indexDocs(docs, 'stats', ['team_id', 'game_id'])
       elastic.Client.mock.instances[0]
       expect(bulkMock).toHaveBeenCalledWith({
+        refresh: true,
         body: [
           { index: { _index: 'stats', _id: 'team_id:abcdefg:game_id:hijklmnop' } },
           { game_id: 'hijklmnop', team_id: 'abcdefg', title: 'new1' },

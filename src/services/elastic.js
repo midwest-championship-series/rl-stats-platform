@@ -39,7 +39,7 @@ const indexDocs = async (documents, indexName, idKeys) => {
   }, [])
   const conn = await getConnection()
   console.info(`indexing ${documents.length} documents to ${indexName} index`)
-  return conn.bulk({ body })
+  return conn.bulk({ refresh: true, body })
 }
 
 const search = async (index, body) => {

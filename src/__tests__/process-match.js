@@ -402,13 +402,24 @@ describe('process-match', () => {
     ])
     const uploadStaticStats = aws.s3.uploadJSON.mock.calls
     expect(uploadStaticStats).toHaveLength(1)
-    expect(uploadStaticStats[0][0]).toEqual('stats bucket name')
+    expect(uploadStaticStats[0][0]).toEqual('stats_bucket_name')
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
     const { processedAt, team_games, player_games, matchId } = uploadStaticStats[0][2]
     expect(matchId).toEqual('5ebc62b0d09245d2a7c6340c')
     expect(processedAt / 1000).toBeCloseTo(Date.now() / 1000, 0)
     expect(team_games).toHaveLength(8)
     expect(player_games).toHaveLength(24)
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledTimes(1)
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
+      detail: {
+        bucket: {
+          key: 'match:5ebc62b0d09245d2a7c6340c.json',
+          source: 'stats_bucket_name',
+        },
+        match_id: '5ebc62b0d09245d2a7c6340c',
+      },
+      type: 'MATCH_PROCESS_ENDED',
+    })
   })
   it('should process team stats', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
@@ -728,7 +739,7 @@ describe('process-match', () => {
     })
     const uploadStaticStats = aws.s3.uploadJSON.mock.calls
     expect(uploadStaticStats).toHaveLength(1)
-    expect(uploadStaticStats[0][0]).toEqual('stats bucket name')
+    expect(uploadStaticStats[0][0]).toEqual('stats_bucket_name')
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
     const s3Stats = uploadStaticStats[0][2]
     expect(s3Stats.processedAt / 1000).toBeCloseTo(Date.now() / 1000, 0)

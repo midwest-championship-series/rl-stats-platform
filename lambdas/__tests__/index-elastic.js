@@ -1,7 +1,7 @@
-const { handler: index } = require('../index-bigquery')
+const { handler: index } = require('../index-elastic')
 
-jest.mock('../../src/services/bigquery')
-const bq = require('../../src/services/bigquery')
+jest.mock('../../src/services/elastic')
+const elastic = require('../../src/services/elastic')
 jest.mock('../../src/services/aws')
 const aws = require('../../src/services/aws')
 const stats = {
@@ -23,7 +23,6 @@ const stats = {
   matchId: '5ec935998c0dd900074686c9',
 }
 aws.s3.get.mockResolvedValue({ Body: JSON.stringify(stats) })
-bq.load.mockResolvedValue({ errors: [] })
 
 const event = {
   version: '0',
@@ -43,23 +42,23 @@ const event = {
   },
 }
 
-describe('index-bigquery', () => {
-  it('should index records', async () => {
+describe('index-elastic', () => {
+  it('should index to elasticsearch', async () => {
+    elastic.indexDocs.mockResolvedValue({ body: {} })
     await index(event)
-    expect(aws.s3.get).toHaveBeenCalledWith(
-      'rl-stats-produced-stats-dev-us-east-1',
-      'match:5ec935998c0dd900074686c9.json',
-    )
-    expect(bq.load).toHaveBeenCalledTimes(2)
-    expect(bq.load).toHaveBeenLastCalledWith(
-      [{ epoch_processed: 1618089471185, team_id: '5ec9358e8c0dd900074685c3', team_name: 'Hibbing Rangers' }],
-      'team_games',
-    )
-    expect(bq.query).toHaveBeenCalledTimes(2)
-    expect(bq.query).toHaveBeenLastCalledWith(
-      'DELETE',
-      'team_games',
-      "epoch_processed < 1618089471185 AND match_id = '5ec935998c0dd900074686c9'",
+    expect(elastic.indexDocs).toHaveBeenCalledTimes(2)
+    expect(elastic.indexDocs).toHaveBeenLastCalledWith(
+      [
+        {
+          epoch_processed: 1618089471185,
+          player_id: '5ec9358f8c0dd900074685c7',
+          player_name: 'Tero.',
+          team_id: '5ec9358e8c0dd900074685c3',
+          team_name: 'Hibbing Rangers',
+        },
+      ],
+      'test_stats_player_games',
+      ['player_id', 'game_id_total'],
     )
   })
 })

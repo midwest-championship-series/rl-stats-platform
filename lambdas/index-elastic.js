@@ -1,12 +1,13 @@
-const path = require('path')
-process.env.GOOGLE_APPLICATION_CREDENTIALS = path.join(__dirname, '..', '.google.creds.json')
-
-const { query, load } = require('../src/services/bigquery')
+const { indexDocs } = require('../src/services/elastic')
 const aws = require('../src/services/aws')
 const { reportError } = require('../src/services/rl-bot')
 const schemas = require('../src/schemas')
 const conform = require('../src/util/conform-schema')
-const tables = ['player_games', 'team_games']
+const stage = process.env.SERVERLESS_STAGE
+const indexes = [
+  { name: 'team_games', keys: ['team_id', 'game_id_total'] },
+  { name: 'player_games', keys: ['player_id', 'game_id_total'] },
+]
 
 const handler = async event => {
   let currentKey, currentSource
@@ -16,32 +17,26 @@ const handler = async event => {
     currentSource = source
     const s3Data = await aws.s3.get(source, key)
     const stats = JSON.parse(s3Data.Body)
-    const { processedAt, matchId } = stats
-
+    const { processedAt } = stats
     const responses = await Promise.all(
-      tables.map(name => {
+      indexes.map(({ name, keys }) => {
+        const indexName = `${stage}_stats_${name}`
         const loadData = stats[name].map(s => {
           return { epoch_processed: processedAt, ...conform(s, schemas[name]) }
         })
-        return load(loadData, name)
+        return indexDocs(loadData, indexName, keys)
       }),
     )
     const errors = responses.flatMap(item => item.errors || [])
     if (errors.length > 1) {
       console.error(errors)
-      throw new Error(`${errors.length} errors occurred while indexing into bigquery`)
+      throw new Error(`${errors.length} errors occurred while indexing into elastic`)
     }
-    await Promise.all([
-      tables.map(name => {
-        const where = `epoch_processed < ${processedAt} AND match_id = '${matchId}'`
-        return query('DELETE', name, where)
-      }),
-    ])
   } catch (err) {
     console.error(err)
     await reportError(
       err,
-      `encountered error while indexing stats to bigquery. key: ${currentKey}, source: ${currentSource}`,
+      `encountered error while indexing stats to elastic. key: ${currentKey}, source: ${currentSource}`,
     )
   }
 }

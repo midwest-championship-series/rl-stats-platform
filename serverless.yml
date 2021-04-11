@@ -184,16 +184,27 @@ functions:
     events:
       - schedule: cron(0 0 * * ? *)
 
+  index-elastic:
+    handler: lambdas/index-elastic.handler
+    name: ${self:service}-index-elastic-${self:provider.stage}
+    timeout: 300
+    events:
+      - eventBridge:
+          eventBus: !Ref RLStatsEventBus
+          pattern:
+            detail-type:
+              - MATCH_PROCESS_ENDED
+
   index-bigquery:
     handler: lambdas/index-bigquery.handler
     name: ${self:service}-index-bigquery-${self:provider.stage}
     timeout: 300
     events:
-      # if this eventually fails due to race condition, could package event in with s3 resource as seen
-      # in https://github.com/serverless/serverless/issues/4194#issuecomment-469616889
-      - s3:
-          bucket: ${self:resources.Resources.StatsBucket.Properties.BucketName}
-          existing: true
+      - eventBridge:
+          eventBus: !Ref RLStatsEventBus
+          pattern:
+            detail-type:
+              - MATCH_PROCESS_ENDED
 
   sync-bigquery:
     handler: lambdas/sync-bigquery.handler

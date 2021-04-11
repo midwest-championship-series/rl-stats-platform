@@ -7,8 +7,14 @@ module.exports = [
     detail: joi
       .object()
       .keys({
-        match_id: joi.string(),
-        s3_data_url: joi.string(),
+        match_id: joi.string().required(),
+        bucket: joi
+          .object()
+          .keys({
+            key: joi.string().required(),
+            source: joi.string().required(),
+          })
+          .required(),
       })
       .required(),
   }),

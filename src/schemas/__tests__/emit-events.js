@@ -6,7 +6,10 @@ describe('emit-events', () => {
       type: 'MATCH_PROCESS_ENDED',
       detail: {
         match_id: '1234567890',
-        s3_data_url: 'https://s3.com',
+        bucket: {
+          source: 'somebucket',
+          key: 'filename',
+        },
       },
     }
     const result = validate(valid)
@@ -30,7 +33,10 @@ describe('emit-events', () => {
         type: 'MATCH_PROCESS_ENDED',
         detail: {
           match_id: '1234567890',
-          s3_data_url: 'https://s3.com',
+          bucket: {
+            source: 'somebucket',
+            key: 'filename',
+          },
         },
       }
       validate(end)
