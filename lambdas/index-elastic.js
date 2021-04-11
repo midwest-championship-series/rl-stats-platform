@@ -1,4 +1,4 @@
-const { indexDocs } = require('../src/services/elastic')
+const { indexDocs, deleteByQuery } = require('../src/services/elastic')
 const aws = require('../src/services/aws')
 const { reportError } = require('../src/services/rl-bot')
 const schemas = require('../src/schemas')
@@ -32,9 +32,30 @@ const handler = async event => {
       console.error(errors)
       throw new Error(`${errors.length} errors occurred while indexing into elastic`)
     }
+    const { deleted } = await deleteByQuery({
+      query: {
+        bool: {
+          must: [
+            {
+              terms: {
+                match_id: [matchId],
+              },
+            },
+            {
+              range: {
+                epoch_processed: {
+                  lt: processedAt,
+                },
+              },
+            },
+          ],
+        },
+      },
+    })
+    console.log(`deleted ${deleted} docs`)
     await aws.eventBridge.emitEvent({
       type: 'MATCH_ELASTIC_STATS_LOADED',
-      match_id: matchId,
+      detail: { match_id: matchId },
     })
   } catch (err) {
     console.error(err)

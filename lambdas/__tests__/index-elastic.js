@@ -45,6 +45,7 @@ const event = {
 describe('index-elastic', () => {
   it('should index to elasticsearch', async () => {
     elastic.indexDocs.mockResolvedValue({ body: {} })
+    elastic.deleteByQuery.mockResolvedValue({ deleted: 4 })
     await index(event)
     expect(elastic.indexDocs).toHaveBeenCalledTimes(2)
     expect(elastic.indexDocs).toHaveBeenLastCalledWith(
@@ -62,7 +63,7 @@ describe('index-elastic', () => {
     )
     expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
       type: 'MATCH_ELASTIC_STATS_LOADED',
-      match_id: '5ec935998c0dd900074686c9',
+      detail: { match_id: '5ec935998c0dd900074686c9' },
     })
   })
 })

@@ -63,7 +63,7 @@ describe('index-bigquery', () => {
     )
     expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
       type: 'MATCH_BIGQUERY_STATS_LOADED',
-      match_id: '5ec935998c0dd900074686c9',
+      detail: { match_id: '5ec935998c0dd900074686c9' },
     })
   })
 })

@@ -74,7 +74,21 @@ const formatError = err => {
   }
 }
 
+const deleteByQuery = async query => {
+  try {
+    const conn = await getConnection()
+    return conn.deleteByQuery({
+      refresh: true,
+      index: `${process.env.SERVERLESS_STAGE}_stats_*`,
+      body: query,
+    })
+  } catch (err) {
+    throw formatError(err)
+  }
+}
+
 module.exports = {
+  deleteByQuery,
   formatError,
   indexDocs,
   search,

@@ -39,7 +39,7 @@ const handler = async event => {
     ])
     await aws.eventBridge.emitEvent({
       type: 'MATCH_BIGQUERY_STATS_LOADED',
-      match_id: matchId,
+      detail: { match_id: matchId },
     })
   } catch (err) {
     console.error(err)
