@@ -1,6 +1,6 @@
 service: rl-stats-setup
 
-custom: ${file(../config.yml)}
+custom: ${file(config.yml)}
 
 provider:
   name: aws
@@ -500,6 +500,10 @@ resources:
                         - Ref: 'AWS::AccountId'
                         - log-group
                         - /aws/codebuild/*
+    ReplayBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-replays-${self:provider.stage}-${self:provider.region}
 
   Outputs:
     VPC:

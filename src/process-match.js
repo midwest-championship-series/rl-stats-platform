@@ -9,9 +9,6 @@ const processMatch = require('./producers')
 const processForfeit = require('./producers/forfeit')
 const { getPlayerTeamsAtDate } = require('./producers/common')
 const { RecoverableError, UnRecoverableError } = require('./util/errors')
-const { indexDocs } = require('./services/elastic')
-const conform = require('./util/conform-schema')
-const { team_games: teamGameSchema, player_games: playerGameSchema } = require('./schemas')
 const { eventBridge } = require('./services/aws')
 
 const teamGameIndex = `${process.env.SERVERLESS_STAGE}_stats_team_games`
