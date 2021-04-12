@@ -546,3 +546,6 @@ resources:
       Value: ${self:custom.image}
     GithubUrl:
       Value: ${self:custom.githubUrl}
+    ReplayBucket:
+      Value:
+        Ref: ReplayBucket
