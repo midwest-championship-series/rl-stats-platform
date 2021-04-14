@@ -97,17 +97,6 @@ provider:
     useCloudFormation: true
 
 functions:
-  eventbridge:
-    handler: lambdas/event-bridge.handler
-  # invoke-event:
-  #   handler: lambdas/invoke-event.handler
-  #   events:
-  #     - eventBridge:
-  #         eventBus: !Ref RLStatsEventBus
-  #         pattern:
-  #           detail-type:
-  #             - BIG_STUFF
-
   report-games:
     handler: lambdas/report-games.handler
     name: ${self:service}-report-games-${self:provider.stage}
