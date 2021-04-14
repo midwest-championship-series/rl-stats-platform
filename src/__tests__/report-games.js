@@ -60,35 +60,6 @@ describe('report-games', () => {
       ],
     })
   })
-  it('should report a forfeit', async () => {
-    await reportGames({
-      league_id: '5ebc62b1d09245d2a7c63516',
-      match_id: '5f2c5e4e08c88e00084b44a6',
-      forfeit_team_id: '5ec9358e8c0dd900074685c3',
-      reply_to_channel: '692994579305332806',
-    })
-    expect(aws.sqs.sendMessage).toHaveBeenCalledWith('fake queue url', {
-      league_id: '5ebc62b1d09245d2a7c63516',
-      match_id: '5f2c5e4e08c88e00084b44a6',
-      forfeit_team_id: '5ec9358e8c0dd900074685c3',
-      reply_to_channel: '692994579305332806',
-    })
-  })
-  it('should validate forfeit', async () => {
-    const expectedErr = new Error('need league_id, forfeit_team_id and match_id to process forfeit')
-    await expect(
-      reportGames({
-        league_id: '5ebc62b1d09245d2a7c63516',
-        forfeit_team_id: '5ec9358e8c0dd900074685c3',
-      }),
-    ).rejects.toEqual(expectedErr)
-    await expect(
-      reportGames({
-        match_id: '5f2c5e4e08c88e00084b44a6',
-        forfeit_team_id: '5ec9358e8c0dd900074685c3',
-      }),
-    ).rejects.toEqual(expectedErr)
-  })
   it('should not allow reported games to be re-reported', async () => {
     matchesFindMock.mockResolvedValueOnce([])
     games.Model.find.mockResolvedValueOnce([{}])
