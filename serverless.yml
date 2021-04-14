@@ -102,11 +102,11 @@ functions:
     name: ${self:service}-report-games-${self:provider.stage}
     timeout: 30
     events:
-      - http:
-          path: /platform/games/_report
-          method: post
-          private: true
-          cors: true
+      - eventBridge:
+          eventBus: !Ref RLStatsEventBus
+          pattern:
+            detail-type:
+              - MATCH_REPORT_GAMES
 
   reprocess-games:
     handler: lambdas/reprocess-games.handler

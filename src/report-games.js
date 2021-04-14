@@ -1,7 +1,7 @@
 const { Model: Games } = require('./model/mongodb/games')
 const sqs = require('./services/aws').sqs
 
-const handleGamesReport = async (params) => {
+module.exports = async (params) => {
   const { league_id, game_ids, reply_to_channel } = params
   if (!league_id || !game_ids || game_ids.length < 1) throw new Error('request requires league_id and game_ids')
   /**
@@ -17,8 +17,4 @@ const handleGamesReport = async (params) => {
   if (reply_to_channel) queueData.reply_to_channel = reply_to_channel
   await sqs.sendMessage(process.env.GAMES_QUEUE_URL, queueData)
   return { recorded_ids: gameIdsToProcess }
-}
-
-module.exports = async (params) => {
-  return handleGamesReport(params)
 }
