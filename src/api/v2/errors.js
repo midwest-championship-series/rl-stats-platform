@@ -24,7 +24,7 @@ const handleElastic = (err, req, res, next) => {
 
 const handleEvents = (err, req, res, next) => {
   if (err.source === 'event-validation') {
-    return res.status(500).send({ error: err.name, message: err.message })
+    return res.status(400).send({ error: err.name, message: err.message })
   } else {
     next(err)
   }
