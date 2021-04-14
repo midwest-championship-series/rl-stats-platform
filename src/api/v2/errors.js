@@ -1,5 +1,3 @@
-const elasticError = require('../../services/elastic').formatError
-
 const mongooseValidation = (err, req, res, next) => {
   if (err.name === 'ValidationError') {
     return res.status(400).send(err)
@@ -24,9 +22,17 @@ const handleElastic = (err, req, res, next) => {
   }
 }
 
+const handleEvents = (err, req, res, next) => {
+  if (err.source === 'event-validation') {
+    return res.status(400).send({ error: err.name, message: err.message })
+  } else {
+    next(err)
+  }
+}
+
 const defaultError = (err, req, res, next) => {
   console.error(err)
   return res.status(500).send({ error: process.env.SERVERLESS_STAGE === 'prod' ? err.name : err })
 }
 
-module.exports = [mongooseValidation, queryValidation, handleElastic, defaultError]
+module.exports = [mongooseValidation, queryValidation, handleElastic, handleEvents, defaultError]
