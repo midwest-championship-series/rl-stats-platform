@@ -9,7 +9,7 @@ const indexes = [
   { name: 'player_games', keys: ['player_id', 'game_id_total'] },
 ]
 
-const handler = async event => {
+const handler = async (event) => {
   let currentKey, currentSource
   try {
     const { key, source } = event.detail.bucket
@@ -21,13 +21,13 @@ const handler = async event => {
     const responses = await Promise.all(
       indexes.map(({ name, keys }) => {
         const indexName = `${stage}_stats_${name}`
-        const loadData = stats[name].map(s => {
+        const loadData = stats[name].map((s) => {
           return { epoch_processed: processedAt, ...conform(s, schemas[name]) }
         })
         return indexDocs(loadData, indexName, keys)
       }),
     )
-    const errors = responses.flatMap(item => item.errors || [])
+    const errors = responses.flatMap((item) => item.errors || [])
     if (errors.length > 1) {
       console.error(errors)
       throw new Error(`${errors.length} errors occurred while indexing into elastic`)

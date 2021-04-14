@@ -6,10 +6,10 @@ const getSummary = require('../src/match-summary')
 const stage = process.env.SERVERLESS_STAGE
 const errorChannelId = process.env.ERROR_CHANNEL_ID
 
-const handler = async event => {
+const handler = async (event) => {
   let messages
   if (event.Records) {
-    messages = event.Records.map(r => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
+    messages = event.Records.map((r) => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))
   } else {
     messages = [event]
   }
@@ -20,7 +20,7 @@ const handler = async event => {
         await sendToChannel(
           message.reply_to_channel,
           `match ${data.match._id.toString()} processed successfully - match results posted to ${data.league.report_channel_ids
-            .map(c => `<#${c}>`)
+            .map((c) => `<#${c}>`)
             .join(', ')}`,
         )
         for (let channel of data.league.report_channel_ids) {
