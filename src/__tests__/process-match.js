@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const { ObjectId } = require('mongodb')
 
-const mockDoc = obj => {
+const mockDoc = (obj) => {
   obj.save = jest.fn()
   return obj
 }
@@ -194,6 +194,8 @@ const mockClosedMatch = mockDoc({
 const mockOpenMatch = () =>
   mockDoc({
     _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
+    status: 'open',
+    teams: mockTeams,
     week: 1,
     game_ids: [],
     best_of: 5,
@@ -434,7 +436,7 @@ describe('process-match', () => {
     const { team_games } = aws.s3.uploadJSON.mock.calls[0][2]
     expect(team_games).toHaveLength(8)
     expect(team_games[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
-    const findStats = filters => team_games.filter(s => Object.keys(filters).every(key => s[key] == filters[key]))
+    const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
     expect(findStats({ game_id: '5ebc62afd09245d2a7c6333f', team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
       game_id_overtime_game: '5ebc62afd09245d2a7c6333f',
       overtime_seconds_played: 124,
@@ -505,8 +507,8 @@ describe('process-match', () => {
       ],
     })
     const { player_games } = aws.s3.uploadJSON.mock.calls[0][2]
-    const findPlayerStats = criteria => {
-      return player_games.filter(stat => Object.keys(criteria).every(key => stat[key] === criteria[key]))
+    const findPlayerStats = (criteria) => {
+      return player_games.filter((stat) => Object.keys(criteria).every((key) => stat[key] === criteria[key]))
     }
     // ensure there are 6 player records per game
     expect(player_games).toHaveLength(24)
@@ -572,11 +574,11 @@ describe('process-match', () => {
       overtime_seconds_played: 124,
     })
     findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })
-      .filter(stat => stat.player_id !== '5ec04239d09245d2a7d4fa26')
-      .forEach(stat => {
+      .filter((stat) => stat.player_id !== '5ec04239d09245d2a7d4fa26')
+      .forEach((stat) => {
         expect(stat).toMatchObject({ mvps: 0 })
       })
-    findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' }).forEach(stat => {
+    findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' }).forEach((stat) => {
       if (stat.team_id === '5ebc62a9d09245d2a7c62eb3') {
         expect(stat).toMatchObject({ game_id_win: undefined, match_id_win: undefined })
       } else {
@@ -618,16 +620,12 @@ describe('process-match', () => {
       ],
     })
   })
-  it('should process a forfeit', async () => {
+  it('should process a forfeit without a scheduled datetime', async () => {
     Match.findById = jest.fn(() => ({
       populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
     }))
     players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
-    matchesFindByIdMock.mockResolvedValue({
-      ...mockClosedMatch,
-      games: [],
-      game_ids: [],
-    })
+    matchesFindByIdMock.mockResolvedValue(mockOpenMatch())
     const results = await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
       match_id: '5f2c5e4e08c88e00084b44a6',
@@ -747,9 +745,7 @@ describe('process-match', () => {
     }))
     players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
     matchesFindByIdMock.mockResolvedValue({
-      ...mockClosedMatch,
-      games: [],
-      game_ids: [],
+      ...mockOpenMatch(),
       scheduled_datetime: new Date('2020-05-10T05:00:00.000Z'),
     })
     const results = await processMatch({
@@ -768,10 +764,8 @@ describe('process-match', () => {
     }))
     players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
     matchesFindByIdMock.mockResolvedValue({
-      ...mockClosedMatch,
+      ...mockOpenMatch(),
       best_of: 1,
-      games: [],
-      game_ids: [],
     })
     const results = await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
@@ -789,10 +783,8 @@ describe('process-match', () => {
     }))
     players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
     matchesFindByIdMock.mockResolvedValue({
-      ...mockClosedMatch,
+      ...mockOpenMatch(),
       best_of: undefined,
-      games: [],
-      game_ids: [],
     })
     await expect(
       processMatch({
@@ -802,6 +794,24 @@ describe('process-match', () => {
         reply_to_channel: '692994579305332806',
       }),
     ).rejects.toEqual(new Error('forfeited match must have best_of property'))
+  })
+  it('should fail if forfeit match is not open', async () => {
+    Match.findById = jest.fn(() => ({
+      populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
+    }))
+    players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
+    matchesFindByIdMock.mockResolvedValue({
+      ...mockOpenMatch(),
+      status: 'closed',
+    })
+    await expect(
+      processMatch({
+        league_id: '5ebc62b1d09245d2a7c63516',
+        match_id: '5f2c5e4e08c88e00084b44a6',
+        forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+        reply_to_channel: '692994579305332806',
+      }),
+    ).rejects.toEqual(new Error('forfeited match cannot be reported as it is already closed'))
   })
   it('should not add stats for games which are not played by league teams', async () => {
     players.Model.find.mockResolvedValue([mockPlayers[0]])

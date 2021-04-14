@@ -21,9 +21,9 @@ const validateFilters = ({ league_id, match_id, game_ids }) => {
     throw new UnRecoverableError('INVALID_CRITERIA', 'no league id or game ids passed for new match')
 }
 
-const getEarliestGameDate = games => new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
+const getEarliestGameDate = (games) => new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
 
-const getUniqueGamePlayers = games => {
+const getUniqueGamePlayers = (games) => {
   return games
     .reduce((result, game) => {
       return result.concat(
@@ -33,7 +33,7 @@ const getUniqueGamePlayers = games => {
       )
     }, [])
     .reduce((result, item) => {
-      if (!result.some(r => r.id.platform === item.id.platform && r.id.id === item.id.id)) {
+      if (!result.some((r) => r.id.platform === item.id.platform && r.id.id === item.id.id)) {
         result.push(item)
       }
       return result
@@ -45,16 +45,16 @@ const getUnlinkedPlayers = (linked, all) => {
     return result.concat(player.accounts)
   }, [])
   return all
-    .map(p => ({ name: p.name, platform: p.id.platform, platform_id: p.id.id }))
-    .filter(p => !linkedAccounts.some(acc => p.platform === acc.platform && p.platform_id === acc.platform_id))
+    .map((p) => ({ name: p.name, platform: p.id.platform, platform_id: p.id.id }))
+    .filter((p) => !linkedAccounts.some((acc) => p.platform === acc.platform && p.platform_id === acc.platform_id))
 }
 
 /**
  * takes games from ballchasing and returns a mongodb query for all of the players' ids
  */
-const buildPlayersQuery = games => {
+const buildPlayersQuery = (games) => {
   return {
-    $or: getUniqueGamePlayers(games).map(player => ({
+    $or: getUniqueGamePlayers(games).map((player) => ({
       accounts: {
         $elemMatch: {
           platform: player.id.platform,
@@ -68,19 +68,19 @@ const buildPlayersQuery = games => {
 const buildTeamsQueryFromPlayers = (players, matchDate) => {
   const teamIds = players.reduce((result, player) => {
     if (player.team_history && player.team_history.length > 0) {
-      result.push(...getPlayerTeamsAtDate(player, matchDate).map(item => item.team_id.toHexString()))
+      result.push(...getPlayerTeamsAtDate(player, matchDate).map((item) => item.team_id.toHexString()))
     }
     return result
   }, [])
   const unique = [...new Set(teamIds)]
-  return { $or: unique.map(id => ({ _id: id })) }
+  return { $or: unique.map((id) => ({ _id: id })) }
 }
 
-const buildMatchesQuery = teams => {
-  return { $and: teams.map(t => ({ team_ids: t._id })), status: 'open' }
+const buildMatchesQuery = (teams) => {
+  return { $and: teams.map((t) => ({ team_ids: t._id })), status: 'open' }
 }
 
-const getMatchInfoById = async matchId => {
+const getMatchInfoById = async (matchId) => {
   const match = await Matches.findById(matchId)
     .populate('games')
     .populate('teams')
@@ -94,12 +94,12 @@ const getMatchInfoById = async matchId => {
 const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
   const league = await Leagues.findById(leagueId).populate('current_season')
   const seasonTeams = league.current_season.team_ids
-  const teams = (await Teams.find(buildTeamsQueryFromPlayers(players, matchDate))).filter(team =>
-    seasonTeams.some(id => id.equals(team._id)),
+  const teams = (await Teams.find(buildTeamsQueryFromPlayers(players, matchDate))).filter((team) =>
+    seasonTeams.some((id) => id.equals(team._id)),
   )
   if (teams.length !== 2) {
     let errMsg = `expected to process match between two teams but got ${teams.length}.`
-    if (teams.length > 0) errMsg += ` Teams: ${teams.map(t => t._id.toHexString()).join(', ')}.`
+    if (teams.length > 0) errMsg += ` Teams: ${teams.map((t) => t._id.toHexString()).join(', ')}.`
     throw new UnRecoverableError('MATCH_TEAM_COUNT', errMsg)
   }
   const matches = (
@@ -110,21 +110,21 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
         path: 'season',
         populate: { path: 'league' },
       })
-  ).filter(m => m.season && m.season.league && m.season.league._id.equals(leagueId))
+  ).filter((m) => m.season && m.season.league && m.season.league._id.equals(leagueId))
 
   const match = matches[0]
   if (!match) {
     throw new UnRecoverableError(
       'NO_MATCH_FOUND',
-      `found 0 matches between teams: ${teams.map(t => t.name).join(', ')}`,
+      `found 0 matches between teams: ${teams.map((t) => t.name).join(', ')}`,
     )
   }
   return { match, teams, season: match.season, league: match.season.league }
 }
 
-const createUnlinkedPlayers = players => {
+const createUnlinkedPlayers = (players) => {
   return Promise.all(
-    players.map(p => {
+    players.map((p) => {
       return Players.create({
         screen_name: p.name.trim(),
         accounts: [{ platform: p.platform, platform_id: p.platform_id }],
@@ -178,9 +178,9 @@ const handleReplays = async (filters, processedAt) => {
   let games
   if (!match.games || match.games.length < 1) {
     // create games
-    games = reportGames.map(g => new Games({ ballchasing_id: g.id, date_time_played: g.date }))
+    games = reportGames.map((g) => new Games({ ballchasing_id: g.id, date_time_played: g.date }))
     // update match
-    match.game_ids = games.map(g => g._id)
+    match.game_ids = games.map((g) => g._id)
   } else {
     games = match.games
   }
@@ -190,7 +190,7 @@ const handleReplays = async (filters, processedAt) => {
     console.info('created players', newPlayers)
     throw new RecoverableError(
       'NO_PLAYER_FOUND',
-      `created new players: ${newPlayers.map(p => p.screen_name).join(', ')}`,
+      `created new players: ${newPlayers.map((p) => p.screen_name).join(', ')}`,
     )
   }
   console.info('processing match stats')
@@ -247,6 +247,12 @@ const handleForfeit = async (filters, processedAt) => {
         path: 'league',
       },
     })
+  if (match.status !== 'open') {
+    throw new UnRecoverableError(
+      'MATCH_STATUS_VALIDATION',
+      'forfeited match cannot be reported as it is already closed',
+    )
+  }
   const forfeit_date = match.scheduled_datetime || new Date()
   const players = await Players.find().onTeams(match.team_ids, forfeit_date)
   const { teams, season } = match
@@ -296,7 +302,7 @@ const handleForfeit = async (filters, processedAt) => {
  * takes a match and game ids and updates stat data
  * @param {{ match_id, game_ids }} matchInfo match_id can be undefined, game_ids are the ballchasing game ids
  */
-module.exports = async filters => {
+module.exports = async (filters) => {
   const processedAt = Date.now()
   if (filters.forfeit_team_id) {
     return handleForfeit(filters, processedAt)

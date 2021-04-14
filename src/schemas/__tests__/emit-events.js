@@ -5,7 +5,7 @@ describe('emit-events', () => {
     const valid = {
       type: 'MATCH_PROCESS_ENDED',
       detail: {
-        match_id: '1234567890',
+        match_id: '600fac63be0bbe0008ffddcd',
         bucket: {
           source: 'somebucket',
           key: 'filename',
@@ -32,7 +32,7 @@ describe('emit-events', () => {
       const end = {
         type: 'MATCH_PROCESS_ENDED',
         detail: {
-          match_id: '1234567890',
+          match_id: '600fac63be0bbe0008ffddcd',
           bucket: {
             source: 'somebucket',
             key: 'filename',
@@ -45,7 +45,7 @@ describe('emit-events', () => {
       const event = {
         type: 'MATCH_BIGQUERY_STATS_LOADED',
         detail: {
-          match_id: '1234567890',
+          match_id: '600fac63be0bbe0008ffddcd',
         },
       }
       validate(event)
@@ -54,7 +54,7 @@ describe('emit-events', () => {
       const event = {
         type: 'MATCH_ELASTIC_STATS_LOADED',
         detail: {
-          match_id: '1234567890',
+          match_id: '600fac63be0bbe0008ffddcd',
         },
       }
       validate(event)

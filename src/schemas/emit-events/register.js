@@ -1,4 +1,4 @@
-const joi = require('joi')
+const joi = require('../../util/validator')
 
 module.exports = ({ type, detail }) => {
   return {
