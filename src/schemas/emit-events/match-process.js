@@ -8,7 +8,7 @@ module.exports = [
       .object()
       .keys({
         league_id: joi.objectId().required(),
-        game_ids: joi.array().min(1).required(),
+        urls: joi.array().min(1).required(),
         reply_to_channel: joi.string().required(),
       })
       .required(),

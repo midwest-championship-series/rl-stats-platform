@@ -2,8 +2,8 @@ const { Model: Games } = require('./model/mongodb/games')
 const sqs = require('./services/aws').sqs
 
 module.exports = async (params) => {
-  const { league_id, game_ids, reply_to_channel } = params
-  if (!league_id || !game_ids || game_ids.length < 1) throw new Error('request requires league_id and game_ids')
+  const { league_id, urls, reply_to_channel } = params
+  const game_ids = urls.map((url) => url.split('?')[0].split('/').slice(-1)[0])
   /**
    * if games with these ballchasing ids have already been reported, throw an error - we only want new games to
    * be reported with this mechanism. all other games should go through the reprocess-games function.

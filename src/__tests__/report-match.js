@@ -18,7 +18,7 @@ matches.Model = {
 const aws = require('../services/aws')
 jest.mock('../services/aws')
 
-const reportGames = require('../report-games')
+const reportGames = require('../report-match')
 
 describe('report-games', () => {
   process.env.GAMES_QUEUE_URL = 'fake queue url'

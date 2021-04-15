@@ -97,16 +97,17 @@ provider:
     useCloudFormation: true
 
 functions:
-  report-games:
-    handler: lambdas/report-games.handler
-    name: ${self:service}-report-games-${self:provider.stage}
+  report-match:
+    handler: lambdas/report-match.handler
+    name: ${self:service}-report-match-${self:provider.stage}
     timeout: 30
     events:
-      - eventBridge:
-          eventBus: !Ref RLStatsEventBus
-          pattern:
-            detail-type:
-              - MATCH_REPORT_GAMES
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - ReportMatchQueue
+              - Arn
+          batchSize: 1
 
   reprocess-games:
     handler: lambdas/reprocess-games.handler
@@ -221,10 +222,22 @@ resources:
         MessageRetentionPeriod: 345600
         ReceiveMessageWaitTimeSeconds: 20
         VisibilityTimeout: 40
+    ReportMatchQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-download-replays-queue-${self:provider.stage}
+        DelaySeconds: 0
+        MessageRetentionPeriod: 345600
+        ReceiveMessageWaitTimeSeconds: 20
+        VisibilityTimeout: 40
     StatsBucket:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:service}-produced-stats-${self:provider.stage}-${self:provider.region}
+        LifecycleConfiguration:
+          Rules:
+            - ExpirationInDays: 1
+              Status: Enabled
     RLStatsEventBus:    
       Type: AWS::Events::EventBus
       Properties: 
@@ -241,6 +254,18 @@ resources:
           - Arn: !GetAtt GamesQueue.Arn
             InputPath: $.detail
             Id: SQSqueue
+    ReportMatchRule:
+      Type: AWS::Events::Rule
+      Properties:
+        Description: Indicates that a match has been reported
+        EventBusName: ${self:resources.Outputs.RLStatsEventBus.Value}
+        EventPattern:
+          detail-type:
+            - MATCH_REPORT_GAMES
+        Targets:
+          - Arn: !GetAtt ReportMatchQueue.Arn
+            InputPath: $.detail
+            Id: SQSqueue
     EventBridgeToSqsPolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
@@ -249,19 +274,17 @@ resources:
           - Effect: Allow
             Principal:
               Service: events.amazonaws.com
-            Condition:
-              ArnEquals:
-                aws:SourceArn:
-                  Fn::GetAtt: 
-                    - ForfeitMatchRule
-                    - Arn
             Action: SQS:SendMessage
             Resource: 
-              Fn::GetAtt:
-                - GamesQueue
-                - Arn
+              - Fn::GetAtt:
+                  - GamesQueue
+                  - Arn
+              - Fn::GetAtt:
+                  - ReportMatchQueue
+                  - Arn
         Queues:
           - Ref: GamesQueue
+          - Ref: ReportMatchQueue
   Outputs:
     GamesQueue:
       Value:
