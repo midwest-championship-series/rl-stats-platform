@@ -27,29 +27,31 @@ describe('report-games', () => {
     matchesFindByIdMock.mockClear()
     matchesFindMock.mockClear()
   })
-  it('should process new games given game_ids', async () => {
+  it('should process new games given urls', async () => {
     // simulate first game reported
     games.Model.find.mockResolvedValueOnce([])
     const result = await reportGames({
       league_id: '5ebc62b1d09245d2a7c63516',
-      game_ids: [
-        '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-        'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-        'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-        '877f66a5-23c9-4397-9c47-97c9870351c0',
+      urls: [
+        'https://ballchasing.com/replay/595ac248-5f25-48a5-bf39-9b50f25e97a1',
+        'https://ballchasing.com/replay/b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+        'https://ballchasing.com/replay/a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+        'https://ballchasing.com/replay/877f66a5-23c9-4397-9c47-97c9870351c0',
       ],
       reply_to_channel: '692994579305332806',
     })
-    expect(aws.sqs.sendMessage).toHaveBeenCalledWith('fake queue url', {
-      league_id: '5ebc62b1d09245d2a7c63516',
-      game_ids: [
-        '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-        'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-        'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-        '877f66a5-23c9-4397-9c47-97c9870351c0',
-      ],
-      reply_to_channel: '692994579305332806',
-      match_id: undefined,
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
+      type: 'MATCH_PROCESS_INIT',
+      detail: {
+        league_id: '5ebc62b1d09245d2a7c63516',
+        game_ids: [
+          '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+          'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+          'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+          '877f66a5-23c9-4397-9c47-97c9870351c0',
+        ],
+        reply_to_channel: '692994579305332806',
+      },
     })
     expect(result).toMatchObject({
       recorded_ids: [
@@ -66,11 +68,12 @@ describe('report-games', () => {
     await expect(
       reportGames({
         league_id: '5ebc62b1d09245d2a7c63516',
-        game_ids: ['5ebc62afd09245d2a7c63355', '5ebc62afd09245d2a7c6333b', '5ebc62afd09245d2a7c63326'],
+        urls: [
+          'https://ballchasing.com/replay/5ebc62afd09245d2a7c63355',
+          'https://ballchasing.com/replay/5ebc62afd09245d2a7c6333b',
+          'https://ballchasing.com/replay/5ebc62afd09245d2a7c63326',
+        ],
       }),
     ).rejects.toEqual(new Error('games have already been reported - please use the !reprocess command'))
-  })
-  it('should throw an error if there is not a match id or game ids in the body', async () => {
-    await expect(reportGames({})).rejects.toEqual(new Error('request requires league_id and game_ids'))
   })
 })

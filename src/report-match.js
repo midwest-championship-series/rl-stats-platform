@@ -1,5 +1,5 @@
 const { Model: Games } = require('./model/mongodb/games')
-const sqs = require('./services/aws').sqs
+const { eventBridge } = require('./services/aws')
 
 module.exports = async (params) => {
   const { league_id, urls, reply_to_channel } = params
@@ -13,8 +13,11 @@ module.exports = async (params) => {
     throw new Error('games have already been reported - please use the !reprocess command')
   }
   const gameIdsToProcess = [...new Set(game_ids)]
-  const queueData = { game_ids: gameIdsToProcess, league_id }
-  if (reply_to_channel) queueData.reply_to_channel = reply_to_channel
-  await sqs.sendMessage(process.env.GAMES_QUEUE_URL, queueData)
+  const detail = { game_ids: gameIdsToProcess, league_id, reply_to_channel }
+  await eventBridge.emitEvent({
+    type: 'MATCH_PROCESS_INIT',
+    detail,
+  })
+
   return { recorded_ids: gameIdsToProcess }
 }

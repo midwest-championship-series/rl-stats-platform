@@ -254,6 +254,18 @@ resources:
           - Arn: !GetAtt GamesQueue.Arn
             InputPath: $.detail
             Id: SQSqueue
+    ProcessMatchRule:
+      Type: AWS::Events::Rule
+      Properties:
+        Description: Process match after game data has been retrieved
+        EventBusName: ${self:resources.Outputs.RLStatsEventBus.Value}
+        EventPattern:
+          detail-type:
+            - MATCH_PROCESS_INIT
+        Targets:
+          - Arn: !GetAtt GamesQueue.Arn
+            InputPath: $.detail
+            Id: SQSqueue
     ReportMatchRule:
       Type: AWS::Events::Rule
       Properties:

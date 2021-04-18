@@ -25,6 +25,17 @@ module.exports = [
       .required(),
   }),
   registerSchema({
+    type: 'MATCH_PROCESS_INIT',
+    detail: joi
+      .object()
+      .keys({
+        game_ids: joi.array().items(joi.string()),
+        league_id: joi.objectId().required(),
+        reply_to_channel: joi.string().required(),
+      })
+      .required(),
+  }),
+  registerSchema({
     type: 'MATCH_PROCESS_ENDED',
     detail: joi
       .object()
