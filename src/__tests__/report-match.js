@@ -17,13 +17,16 @@ matches.Model = {
 }
 const aws = require('../services/aws')
 jest.mock('../services/aws')
+const ballchasing = require('../services/ballchasing')
+jest.mock('../services/ballchasing')
+const wait = require('../util/wait')
+jest.mock('../util/wait')
 
 const reportGames = require('../report-match')
 
 describe('report-games', () => {
   process.env.GAMES_QUEUE_URL = 'fake queue url'
   afterEach(() => {
-    aws.sqs.sendMessage.mockClear()
     matchesFindByIdMock.mockClear()
     matchesFindMock.mockClear()
   })
@@ -54,11 +57,39 @@ describe('report-games', () => {
       },
     })
     expect(result).toMatchObject({
-      recorded_ids: [
-        '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-        'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-        'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-        '877f66a5-23c9-4397-9c47-97c9870351c0',
+      replays: [
+        {
+          bucket: {
+            key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
+            source: 'mock-bucket',
+          },
+          id: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+          upload_source: 'ballchasing',
+        },
+        {
+          bucket: {
+            key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+            source: 'mock-bucket',
+          },
+          id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+          upload_source: 'ballchasing',
+        },
+        {
+          bucket: {
+            key: 'ballchasing:a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
+            source: 'mock-bucket',
+          },
+          id: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+          upload_source: 'ballchasing',
+        },
+        {
+          bucket: {
+            key: 'ballchasing:877f66a5-23c9-4397-9c47-97c9870351c0.replay',
+            source: 'mock-bucket',
+          },
+          id: '877f66a5-23c9-4397-9c47-97c9870351c0',
+          upload_source: 'ballchasing',
+        },
       ],
     })
   })

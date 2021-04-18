@@ -55,6 +55,7 @@ provider:
     PRODUCED_STATS_BUCKET: ${self:resources.Outputs.ProducedStatsBucketName.Value}
     GOOGLE_PROJECT_ID: mnrl-269717
     EVENT_BUS: ${self:resources.Outputs.RLStatsEventBus.Value}
+    REPLAY_FILES_BUCKET: ${cf:rl-stats-setup-prod.ReplayBucket}
   iam:
     role:
       statements:
@@ -100,7 +101,9 @@ functions:
   report-match:
     handler: lambdas/report-match.handler
     name: ${self:service}-report-match-${self:provider.stage}
-    timeout: 30
+    reservedConcurrency: 1
+    memorySize: 3008
+    timeout: 60
     events:
       - sqs:
           arn:

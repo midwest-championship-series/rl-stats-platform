@@ -14,7 +14,7 @@ const handler = async (event) => {
       console.info('processing report', data)
       const reportedGames = await reportGames(data)
       if (data.reply_to_channel) {
-        const message = `${reportedGames.recorded_ids.length} games queued for processing`
+        const message = `${reportedGames.replays.length} games queued for processing`
         await sendToChannel(data.reply_to_channel, message)
       }
     } catch (err) {
