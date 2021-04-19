@@ -56,6 +56,24 @@ describe('emit-events', () => {
       }
       validate(event)
     })
+    it('should validate a replays obtained event', () => {
+      const event = {
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
+        detail: {
+          replays: [
+            {
+              bucket: {
+                key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+                source: 'mock-bucket',
+              },
+              id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+              upload_source: 'ballchasing',
+            },
+          ],
+        },
+      }
+      validate(event)
+    })
     it('should validate a bigquery stats load event', () => {
       const event = {
         type: 'MATCH_BIGQUERY_STATS_LOADED',

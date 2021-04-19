@@ -1,9 +1,17 @@
 const joi = require('../../util/validator')
 const registerSchema = require('./register')
 
+const bucketSchema = joi
+  .object()
+  .keys({
+    key: joi.string().required(),
+    source: joi.string().required(),
+  })
+  .required()
+
 module.exports = [
   registerSchema({
-    type: 'MATCH_REPORT_GAMES',
+    type: 'MATCH_PROCESS_GAMES_REPORTED',
     detail: joi
       .object()
       .keys({
@@ -14,7 +22,7 @@ module.exports = [
       .required(),
   }),
   registerSchema({
-    type: 'MATCH_REPORT_FORFEIT',
+    type: 'MATCH_PROCESS_FORFEIT_REPORTED',
     detail: joi
       .object()
       .keys({
@@ -23,6 +31,20 @@ module.exports = [
         reply_to_channel: joi.string().required(),
       })
       .required(),
+  }),
+  registerSchema({
+    type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
+    detail: joi.object().keys({
+      replays: joi
+        .array()
+        .min(1)
+        .items({
+          id: joi.string().required(),
+          upload_source: joi.string().valid('ballchasing').required(),
+          bucket: bucketSchema,
+        })
+        .required(),
+    }),
   }),
   registerSchema({
     type: 'MATCH_PROCESS_INIT',
@@ -41,13 +63,7 @@ module.exports = [
       .object()
       .keys({
         match_id: joi.objectId().required(),
-        bucket: joi
-          .object()
-          .keys({
-            key: joi.string().required(),
-            source: joi.string().required(),
-          })
-          .required(),
+        bucket: bucketSchema,
       })
       .required(),
   }),

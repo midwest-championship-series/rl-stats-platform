@@ -38,6 +38,10 @@ module.exports = async (params) => {
     type: 'MATCH_PROCESS_INIT',
     detail,
   })
+  await eventBridge.emitEvent({
+    type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
+    detail: { replays },
+  })
 
   return { replays }
 }

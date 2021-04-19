@@ -56,7 +56,7 @@ describe('report-games', () => {
         reply_to_channel: '692994579305332806',
       },
     })
-    expect(result).toMatchObject({
+    const replayLocations = {
       replays: [
         {
           bucket: {
@@ -91,7 +91,12 @@ describe('report-games', () => {
           upload_source: 'ballchasing',
         },
       ],
+    }
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
+      type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
+      detail: replayLocations,
     })
+    expect(result).toMatchObject(replayLocations)
   })
   it('should not allow reported games to be re-reported', async () => {
     matchesFindMock.mockResolvedValueOnce([])

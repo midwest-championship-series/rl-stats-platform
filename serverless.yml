@@ -252,7 +252,7 @@ resources:
         EventBusName: ${self:resources.Outputs.RLStatsEventBus.Value}
         EventPattern:
           detail-type:
-            - MATCH_REPORT_FORFEIT
+            - MATCH_PROCESS_FORFEIT_REPORTED
         Targets:
           - Arn: !GetAtt GamesQueue.Arn
             InputPath: $.detail
@@ -276,7 +276,7 @@ resources:
         EventBusName: ${self:resources.Outputs.RLStatsEventBus.Value}
         EventPattern:
           detail-type:
-            - MATCH_REPORT_GAMES
+            - MATCH_PROCESS_GAMES_REPORTED
         Targets:
           - Arn: !GetAtt ReportMatchQueue.Arn
             InputPath: $.detail
