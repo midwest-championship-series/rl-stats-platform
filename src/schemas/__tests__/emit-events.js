@@ -41,6 +41,39 @@ describe('emit-events', () => {
       }
       validate(end)
     })
+    it('should validate a process match init event', () => {
+      const event = {
+        type: 'MATCH_PROCESS_INIT',
+        detail: {
+          game_ids: [
+            'b201a81b-3e83-47dc-9c68-5883b43724b5',
+            '631dddc2-941f-4e63-9fda-f9455495b57e',
+            '05b634d3-5df1-4088-b104-cdd5ea404391',
+          ],
+          league_id: '5ec9359b8c0dd900074686d3',
+          reply_to_channel: '692994579305332806',
+        },
+      }
+      validate(event)
+    })
+    it('should validate a replays obtained event', () => {
+      const event = {
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
+        detail: {
+          replays: [
+            {
+              bucket: {
+                key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+                source: 'mock-bucket',
+              },
+              id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+              upload_source: 'ballchasing',
+            },
+          ],
+        },
+      }
+      validate(event)
+    })
     it('should validate a bigquery stats load event', () => {
       const event = {
         type: 'MATCH_BIGQUERY_STATS_LOADED',

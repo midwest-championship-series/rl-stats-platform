@@ -28,19 +28,24 @@ const get = (bucket, fileName) => {
   return s3.getObject(options).promise()
 }
 
-const writeToFile = (key, source, writePath) => {
+const writeToFile = (bucket, fileName, writePath) => {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(writePath)
-    getObject({ Key: key, Bucket: source })
+    getObject({ Key: fileName, Bucket: bucket })
       .createReadStream()
       .pipe(file)
-      .on('error', err => reject(err))
+      .on('error', (err) => reject(err))
       .on('close', () => resolve())
   })
+}
+
+const upload = (bucket, fileName, stream) => {
+  return s3.upload({ Bucket: bucket, Key: fileName, Body: stream }).promise()
 }
 
 module.exports = {
   uploadJSON,
   get,
   writeToFile,
+  upload,
 }

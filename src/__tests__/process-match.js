@@ -286,7 +286,7 @@ describe('process-match', () => {
   let replays
   beforeEach(() => {
     replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
-    ballchasing.getReplays.mockResolvedValue(replays)
+    ballchasing.getReplayData.mockResolvedValue(replays)
     aws.s3.uploadJSON = jest.fn(() => ({
       Location: 'some url',
     }))
@@ -834,7 +834,7 @@ describe('process-match', () => {
   it('should throw an error if the match does not meet best_of requirements', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
-    ballchasing.getReplays.mockResolvedValue([replays[0], replays[1], replays[3]])
+    ballchasing.getReplayData.mockResolvedValue([replays[0], replays[1], replays[3]])
     matchesFindMock.mockResolvedValue([mockOpenMatch()])
     await expect(
       processMatch({

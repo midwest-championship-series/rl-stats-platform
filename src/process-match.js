@@ -160,7 +160,7 @@ const handleReplays = async (filters, processedAt) => {
   let reportGames
   try {
     console.info('retrieving replays')
-    reportGames = await ballchasing.getReplays({ game_ids })
+    reportGames = await ballchasing.getReplayData({ game_ids })
   } catch (err) {
     throw new RecoverableError(err.message)
   }
