@@ -1,5 +1,5 @@
 const { Schema } = require('mongoose')
-const createModel = require('../../services/mongodb')
+const { createModel } = require('../../services/mongodb')
 
 const schema = {
   discord_id: { type: String, unique: true, sparse: true },

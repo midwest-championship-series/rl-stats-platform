@@ -14,23 +14,19 @@ const setup = () => {
     console.log('Connected to Mongo!')
     mongoose.connecting = false
   })
-
-  // when something interrupts the process, disconnect from mongodb
-  process.on('SIGINT', () => {
-    mongoose.disconnect((err) => {
-      process.exit(err ? 1 : 0)
-    })
-  })
 }
 
-const connect = () => {
-  if (!mongoose.connectionConfigured) {
-    console.info('configuring mongodb connection')
-    setup()
-    mongoose.connectionConfigured = true
-  }
-
-  if (!mongoose.connecting && mongoose.connection.readyState !== 1) {
+const connect = (hardRefresh, cb) => {
+  if (hardRefresh === true || (!mongoose.connecting && mongoose.connection.readyState !== 1)) {
+    if (hardRefresh === true) {
+      mongoose.connection.once('open', cb)
+      console.log('hard refreshing connection')
+    }
+    if (!mongoose.connectionConfigured) {
+      console.info('configuring mongodb connection')
+      setup()
+      mongoose.connectionConfigured = true
+    }
     mongoose.connecting = true
     console.info('wiring up the database for ' + process.env.SERVERLESS_STAGE)
     mongoose.connect(connStr, {
@@ -40,7 +36,6 @@ const connect = () => {
       useUnifiedTopology: true,
     })
   }
-  return mongoose
 }
 
 const createModel = (modelName, schemaJson, decorator) => {
@@ -61,4 +56,4 @@ const createModel = (modelName, schemaJson, decorator) => {
   return mongoose.model(modelName, schema)
 }
 
-module.exports = createModel
+module.exports = { createModel, connect }

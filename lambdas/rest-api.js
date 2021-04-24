@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
 require('../src/model/mongodb')
+const { connect } = require('../src/services/mongodb')
 
 app.use(bodyParser.json())
 app.use('/', require('../src/api'))
@@ -12,9 +13,15 @@ const api = serverless(app)
 const handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false
   const warmerIntercept = require('../src/util/warmer-intercept')
-  if (warmerIntercept(event)) return
-  const result = await api(event, context)
-  return result
+  if (warmerIntercept(event)) {
+    connect(true, () => {
+      console.log('connected after refresh')
+      return
+    })
+  } else {
+    const result = await api(event, context)
+    return result
+  }
 }
 
 module.exports = { handler }
