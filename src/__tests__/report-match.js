@@ -18,6 +18,10 @@ matches.Model = {
 const aws = require('../services/aws')
 jest.mock('../services/aws')
 const ballchasing = require('../services/ballchasing')
+ballchasing.getReplayIdsFromGroup.mockResolvedValue([
+  'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+  '877f66a5-23c9-4397-9c47-97c9870351c0',
+])
 jest.mock('../services/ballchasing')
 const wait = require('../util/wait')
 jest.mock('../util/wait')
@@ -38,8 +42,7 @@ describe('report-games', () => {
       urls: [
         'https://ballchasing.com/replay/595ac248-5f25-48a5-bf39-9b50f25e97a1',
         'https://ballchasing.com/replay/b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-        'https://ballchasing.com/replay/a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-        'https://ballchasing.com/replay/877f66a5-23c9-4397-9c47-97c9870351c0',
+        'https://ballchasing.com/group/test-upload-gmix5xcfhp',
       ],
       reply_to_channel: '692994579305332806',
     })
