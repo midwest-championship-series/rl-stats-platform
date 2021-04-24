@@ -8,29 +8,23 @@ mongoose.Promise = Promise
 mongoose.connectionConfigured = false
 mongoose.connecting = false
 
-const setup = (cb) => {
+const setup = () => {
   mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
   mongoose.connection.once('open', () => {
     console.log('Connected to Mongo!')
     mongoose.connecting = false
-    if (typeof cb === 'function') {
-      cb()
-    }
-  })
-
-  // when something interrupts the process, disconnect from mongodb
-  process.on('SIGINT', () => {
-    mongoose.disconnect((err) => {
-      process.exit(err ? 1 : 0)
-    })
   })
 }
 
 const connect = (hardRefresh, cb) => {
   if (hardRefresh === true || (!mongoose.connecting && mongoose.connection.readyState !== 1)) {
+    if (hardRefresh === true) {
+      mongoose.connection.once('open', cb)
+      console.log('hard refreshing connection')
+    }
     if (!mongoose.connectionConfigured) {
       console.info('configuring mongodb connection')
-      setup(cb)
+      setup()
       mongoose.connectionConfigured = true
     }
     mongoose.connecting = true
