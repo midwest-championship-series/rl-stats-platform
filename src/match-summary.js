@@ -4,7 +4,7 @@ const group = (stats, groupBy) => {
     if (!result[groupVal]) {
       result[groupVal] = {}
     }
-    Object.keys(gameStats).forEach(key => {
+    Object.keys(gameStats).forEach((key) => {
       if (typeof gameStats[key] === 'number') {
         if (result[groupVal].hasOwnProperty(key)) {
           result[groupVal][key] += gameStats[key]
@@ -29,17 +29,17 @@ const createSummaryField = (team, groupedStats) => {
   }
 }
 
-const matchSummary = data => {
+const matchSummary = (data) => {
   const { league, match, teams, teamStats } = data
   const groupedTeamStats = group(teamStats, 'team_id')
-  const winner = teams.find(t => match.winning_team_id.equals(t._id))
-  const loser = teams.find(t => !match.winning_team_id.equals(t._id))
-  const twitchUrl = league.urls && league.urls.find(u => u.name === 'twitch')
-  const statsUrl = league.urls && league.urls.find(u => u.name === 'stats')
-  const thumbUrl = league.urls && league.urls.find(u => u.name === 'logo')
+  const winner = teams.find((t) => match.winning_team_id.equals(t._id))
+  const loser = teams.find((t) => !match.winning_team_id.equals(t._id))
+  const twitchUrl = league.urls && league.urls.find((u) => u.name === 'twitch')
+  const statsUrl = league.urls && league.urls.find((u) => u.name === 'stats')
+  const thumbUrl = league.urls && league.urls.find((u) => u.name === 'logo')
 
   return {
-    title: `${league.name.toUpperCase()} week ${match.week} ${teams.map(t => t.name).join(' vs ')}`,
+    title: `${league.name.toUpperCase()} week ${match.week} ${teams.map((t) => t.name).join(' vs ')}`,
     description: `${winner.name} defeated ${loser.name} (${groupedTeamStats[winner._id.toHexString()].wins}-${
       groupedTeamStats[loser._id.toHexString()].wins
     })`,
@@ -68,16 +68,16 @@ const matchSummary = data => {
   }
 }
 
-const forfeitSummary = data => {
+const forfeitSummary = (data) => {
   const { league, match, teams, forfeit_team_id } = data
-  const loser = teams.find(t => t._id.equals(forfeit_team_id))
-  const winner = teams.find(t => t._id.toHexString() !== loser._id.toHexString())
-  const twitchUrl = league.urls && league.urls.find(u => u.name === 'twitch')
-  const statsUrl = league.urls && league.urls.find(u => u.name === 'stats')
-  const thumbUrl = league.urls && league.urls.find(u => u.name === 'logo')
+  const loser = teams.find((t) => t._id.equals(forfeit_team_id))
+  const winner = teams.find((t) => t._id.toHexString() !== loser._id.toHexString())
+  const twitchUrl = league.urls && league.urls.find((u) => u.name === 'twitch')
+  const statsUrl = league.urls && league.urls.find((u) => u.name === 'stats')
+  const thumbUrl = league.urls && league.urls.find((u) => u.name === 'logo')
 
   return {
-    title: `${league.name.toUpperCase()} week ${match.week} ${teams.map(t => t.name).join(' vs ')}`,
+    title: `${league.name.toUpperCase()} week ${match.week} ${teams.map((t) => t.name).join(' vs ')}`,
     description: `${loser.name} forfeited to ${winner.name}. Bad ${loser.name} :slight_frown:`,
     color: league.hex_color || '6caddf',
     url: twitchUrl && twitchUrl.url,
@@ -95,7 +95,7 @@ const forfeitSummary = data => {
   }
 }
 
-module.exports = data => {
+module.exports = (data) => {
   if (data.forfeit_team_id) {
     return forfeitSummary(data)
   } else {

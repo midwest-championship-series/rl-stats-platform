@@ -5,7 +5,7 @@ const createSchema = (name, columns) => {
   return {
     name,
     schema: columns
-      .map(col => {
+      .map((col) => {
         return `${col.name}:${col.type.default}`
       })
       .join(','),
@@ -17,7 +17,7 @@ const tableSchemas = [createSchema('player_games', player_games), createSchema('
 
 const ensureDataset = async () => {
   const [sets] = await bigquery.getDatasets()
-  let set = sets.find(s => s.id === dataSetId)
+  let set = sets.find((s) => s.id === dataSetId)
   if (!set) {
     console.info(`creating dataset: ${dataSetId}`)
     set = (await bigquery.createDataset(dataSetId))[0]
@@ -26,13 +26,13 @@ const ensureDataset = async () => {
 }
 
 const ensureTable = async ({ name, schema, columns }, dataset, tables) => {
-  let table = tables.find(t => t.id === name)
+  let table = tables.find((t) => t.id === name)
   if (!table) {
     console.info('creating table')
     await dataset.createTable(name, { schema })
   } else {
     const [tableInfo] = await table.getMetadata()
-    const columnDiff = columns.filter(({ name }) => !tableInfo.schema.fields.find(f => name === f.name))
+    const columnDiff = columns.filter(({ name }) => !tableInfo.schema.fields.find((f) => name === f.name))
     if (columnDiff.length > 0) {
       let query = `ALTER TABLE ${table.id} `
       query += columnDiff
@@ -45,7 +45,7 @@ const ensureTable = async ({ name, schema, columns }, dataset, tables) => {
       table
         .createQueryStream(query)
         .on('error', console.error)
-        .on('data', row => {})
+        .on('data', (row) => {})
         .on('end', () => console.info('end query stream'))
     }
   }

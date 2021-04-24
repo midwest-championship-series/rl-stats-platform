@@ -7,19 +7,19 @@ const validateEvent = require('../../schemas/emit-events')
 const eventBus = process.env.EVENT_BUS
 const serviceName = process.env.SERVERLESS_SERVICE
 
-const emitEvent = event => {
+const emitEvent = (event) => {
   return emit([createEvent(event)])
 }
 
-const emitEvents = events => {
+const emitEvents = (events) => {
   console.log(
     'making eventbridge call',
-    events.map(e => createEvent(e)),
+    events.map((e) => createEvent(e)),
   )
-  return emit(events.map(e => createEvent(e)))
+  return emit(events.map((e) => createEvent(e)))
 }
 
-const createEvent = event => {
+const createEvent = (event) => {
   validateEvent(event)
   const { type, detail } = event
   return {
@@ -31,7 +31,7 @@ const createEvent = event => {
   }
 }
 
-const emit = async events => {
+const emit = async (events) => {
   const messageRequests = chunk(events, 10)
   let responses = []
   for (let msg of messageRequests) {

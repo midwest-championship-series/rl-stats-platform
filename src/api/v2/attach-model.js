@@ -17,7 +17,7 @@ const buildQuery = (query, params) => {
     if (typeof params.or === 'string') {
       params.or = [params.or]
     }
-    params.or.forEach(p => {
+    params.or.forEach((p) => {
       const orQuery = {}
       if (!params[p]) {
         throw new InvalidQueryError(`${p} is listed as an 'or' parameter but does not exist in query params`)
@@ -33,7 +33,7 @@ const buildQuery = (query, params) => {
 
 const populateQuery = (query, populations) => {
   if (populations) {
-    populations.forEach(p => {
+    populations.forEach((p) => {
       console.info('populating', p)
       const arr = p.split('.')
       if (arr.length === 1) {
@@ -55,7 +55,7 @@ const populateQuery = (query, populations) => {
   return query
 }
 
-module.exports = Model => {
+module.exports = (Model) => {
   const router = express.Router()
 
   router.get('/_docs', docsHandler(Model))

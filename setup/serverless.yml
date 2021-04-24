@@ -28,40 +28,40 @@ resources:
   Parameters:
     Stage:
       Type: String
-      Default: "${self:provider.stage}"
-  
+      Default: '${self:provider.stage}'
+
   Conditions:
     IsProd:
-      Fn::Equals: [ Ref: Stage, "prod" ]
+      Fn::Equals: [Ref: Stage, 'prod']
 
   Resources:
     # MasterKey:
     #   DependsOn: CodebuildRole
     #   Type: AWS::KMS::Key
-    #   Properties: 
+    #   Properties:
     #     Description: "Master Key For SSM Encryption"
-    #     KeyPolicy: 
+    #     KeyPolicy:
     #       Version: "2012-10-17"
     #       Id: "${self:custom.kmsKeyName}"
     #       Statement:
-    #         - 
+    #         -
     #           Sid: "Allow administration of the key"
     #           Effect: "Allow"
-    #           Principal: 
-    #             AWS: 
+    #           Principal:
+    #             AWS:
     #               Fn::Join:
     #                 - ":"
     #                 - - arn:aws:iam
     #                   - ''
     #                   - Ref: 'AWS::AccountId'
     #                   - role/${self:custom.codebuildAdminRole}
-    #           Action: 
+    #           Action:
     #             - "kms:*"
     #           Resource: "*"
-    #         - 
+    #         -
     #           Sid: "Allow use through codebuild"
     #           Effect: "Allow"
-    #           Principal: 
+    #           Principal:
     #             AWS:
     #               Fn::Join:
     #                 - ":"
@@ -69,14 +69,14 @@ resources:
     #                   - ''
     #                   - Ref: 'AWS::AccountId'
     #                   - role/service-role/${self:custom.codebuildRole}
-    #           Action: 
+    #           Action:
     #             - "kms:DescribeKey"
     #             - "kms:Decrypt"
     #           Resource: "*"
-    #         - 
+    #         -
     #           Sid: "Allow use by devs"
     #           Effect: "Allow"
-    #           Principal: 
+    #           Principal:
     #             AWS:
     #               Fn::Join:
     #                 - ":"
@@ -84,14 +84,14 @@ resources:
     #                   - ''
     #                   - Ref: 'AWS::AccountId'
     #                   - role/${self:custom.devRole}
-    #           Action: 
+    #           Action:
     #             - "kms:DescribeKey"
     #             - "kms:Decrypt"
     #           Resource: "*"
 
     # MasterKeyAlias:
     #   Type: AWS::KMS::Alias
-    #   Properties: 
+    #   Properties:
     #     AliasName: alias/${self:service}-${self:custom.kmsKeyName}
     #     TargetKeyId:
     #       Ref: MasterKey
@@ -106,14 +106,14 @@ resources:
         EnableDnsHostnames: true
         EnableDnsSupport: true
         Tags:
-        - Key: Name
-          Value: ${self:service}
+          - Key: Name
+            Value: ${self:service}
     InternetGateway:
       Type: AWS::EC2::InternetGateway
       Properties:
         Tags:
-        - Key: Name
-          Value: ${self:service}
+          - Key: Name
+            Value: ${self:service}
     VPCGatewayAttachment:
       Type: AWS::EC2::VPCGatewayAttachment
       Properties:
@@ -187,7 +187,7 @@ resources:
         Tags:
           - Key: Name
             Value: public-b-${self:service}
-    
+
     #
     # -- NAT
     #
@@ -200,13 +200,13 @@ resources:
       Properties:
         AllocationId:
           Fn::GetAtt:
-          - ElasticIpForNAT
-          - AllocationId
+            - ElasticIpForNAT
+            - AllocationId
         SubnetId:
           Ref: PublicSubnetA
         Tags:
-        - Key: Name
-          Value: ${self:service}
+          - Key: Name
+            Value: ${self:service}
 
     #
     # -- ROUTING & SUBNET ASSOCIATIONS
@@ -273,7 +273,7 @@ resources:
           Ref: PublicSubnetB
         RouteTableId:
           Ref: PublicRouteTable
-    
+
     #
     # -- LAMBDA SECURITY GROUP
     #
@@ -285,16 +285,16 @@ resources:
         VpcId:
           Ref: VPC
         SecurityGroupIngress:
-        - IpProtocol: -1
-          CidrIp: ${self:custom.vpcCidr}
-    
+          - IpProtocol: -1
+            CidrIp: ${self:custom.vpcCidr}
+
     #
-    # -- DATABASE 
+    # -- DATABASE
     #
     DBSubnetGroup:
-      Type: "AWS::RDS::DBSubnetGroup"
+      Type: 'AWS::RDS::DBSubnetGroup'
       Properties:
-        DBSubnetGroupDescription: "db subnet group"
+        DBSubnetGroupDescription: 'db subnet group'
         SubnetIds:
           - Ref: PrivateSubnetC
           - Ref: PrivateSubnetD
@@ -306,8 +306,8 @@ resources:
         VpcId:
           Ref: VPC
         SecurityGroupIngress:
-        - IpProtocol: -1
-          CidrIp: ${self:custom.vpcCidr}
+          - IpProtocol: -1
+            CidrIp: ${self:custom.vpcCidr}
 
     #
     # -- CODEBUILD ROLE ADN POLICY
@@ -316,25 +316,22 @@ resources:
       Type: AWS::IAM::Role
       Properties:
         RoleName: ${self:service}
-        AssumeRolePolicyDocument: 
-          Version: "2012-10-17"
-          Statement: 
-            - 
-              Effect: Allow
-              Principal: 
-                Service: 
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
                   - codebuild.amazonaws.com
-              Action: 
+              Action:
                 - sts:AssumeRole
         Path: /service-role/
-        Policies: 
-          - 
-            PolicyName: ${self:service}-codebuild
-            PolicyDocument: 
-              Version: "2012-10-17"
-              Statement: 
-                - 
-                  Effect: Allow
+        Policies:
+          - PolicyName: ${self:service}-codebuild
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
                   Action:
                     - ec2:CreateNetworkInterface
                     - ec2:DescribeDhcpOptions
@@ -343,68 +340,65 @@ resources:
                     - ec2:DescribeSubnets
                     - ec2:DescribeSecurityGroups
                     - ec2:DescribeVpcs
-                  Resource: "*"
-                - 
-                  Effect: Allow
+                  Resource: '*'
+                - Effect: Allow
                   Action:
                     - ec2:CreateNetworkInterfacePermission
                   Resource:
                     - Fn::Join:
-                      - ":"
-                      - - arn:aws:ec2
-                        - Ref: 'AWS::Region'
-                        - Ref: 'AWS::AccountId'
-                        - network-interface/*
+                        - ':'
+                        - - arn:aws:ec2
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - network-interface/*
                   Condition:
                     StringEquals:
-                      'ec2:subnet': 
+                      'ec2:subnet':
                         - Fn::Join:
-                          - ""
-                          - - 'arn:aws:ec2:'
-                            - Ref: 'AWS::Region'
-                            - ":"
-                            - Ref: 'AWS::AccountId'
-                            - ":"
-                            - subnet/
-                            - Ref: PrivateSubnetA
+                            - ''
+                            - - 'arn:aws:ec2:'
+                              - Ref: 'AWS::Region'
+                              - ':'
+                              - Ref: 'AWS::AccountId'
+                              - ':'
+                              - subnet/
+                              - Ref: PrivateSubnetA
                         - Fn::Join:
-                          - ""
-                          - - 'arn:aws:ec2:'
-                            - Ref: 'AWS::Region'
-                            - ":"
-                            - Ref: 'AWS::AccountId'
-                            - ":"
-                            - subnet/
-                            - Ref: PrivateSubnetB
+                            - ''
+                            - - 'arn:aws:ec2:'
+                              - Ref: 'AWS::Region'
+                              - ':'
+                              - Ref: 'AWS::AccountId'
+                              - ':'
+                              - subnet/
+                              - Ref: PrivateSubnetB
                         - Fn::Join:
-                          - ""
-                          - - 'arn:aws:ec2:'
-                            - Ref: 'AWS::Region'
-                            - ":"
-                            - Ref: 'AWS::AccountId'
-                            - ":"
-                            - subnet/
-                            - Ref: PrivateSubnetC
+                            - ''
+                            - - 'arn:aws:ec2:'
+                              - Ref: 'AWS::Region'
+                              - ':'
+                              - Ref: 'AWS::AccountId'
+                              - ':'
+                              - subnet/
+                              - Ref: PrivateSubnetC
                         - Fn::Join:
-                          - ""
-                          - - 'arn:aws:ec2:'
-                            - Ref: 'AWS::Region'
-                            - ":"
-                            - Ref: 'AWS::AccountId'
-                            - ":"
-                            - subnet/
-                            - Ref: PrivateSubnetD
+                            - ''
+                            - - 'arn:aws:ec2:'
+                              - Ref: 'AWS::Region'
+                              - ':'
+                              - Ref: 'AWS::AccountId'
+                              - ':'
+                              - subnet/
+                              - Ref: PrivateSubnetD
                       'ec2:AuthorizedService': 'codebuild.amazonaws.com'
-                - 
-                  Effect: Allow
+                - Effect: Allow
                   Action:
                     - ssm:DescribeAssociation
                     - ssm:GetParameters
                     - ssm:GetParameter
                     - ssm:GetParametersByPath
                   Resource: arn:aws:ssm:*:*:parameter/*
-                - 
-                  Effect: Allow
+                - Effect: Allow
                   Action:
                     - cloudformation:CancelUpdateStack
                     - cloudformation:ContinueUpdateRollback
@@ -485,21 +479,20 @@ resources:
                     - rds:*
                     - sqs:*
                     - cloudwatch:*
-                  Resource: "*"
-                - 
-                  Effect: Allow
+                  Resource: '*'
+                - Effect: Allow
                   Action:
                     - logs:CreateLogGroup
                     - logs:CreateLogStream
                     - logs:PutLogEvents
                   Resource:
                     - Fn::Join:
-                      - ":"
-                      - - arn:aws:logs
-                        - Ref: 'AWS::Region'
-                        - Ref: 'AWS::AccountId'
-                        - log-group
-                        - /aws/codebuild/*
+                        - ':'
+                        - - arn:aws:logs
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - log-group
+                          - /aws/codebuild/*
     ReplayBucket:
       Type: AWS::S3::Bucket
       Properties:

@@ -25,11 +25,11 @@ const Model = createModel(
     winning_team_id: { type: Schema.Types.ObjectId },
     scheduled_datetime: { type: Date },
   },
-  schema => {
-    schema.path('team_ids').validate(function(val) {
+  (schema) => {
+    schema.path('team_ids').validate(function (val) {
       return val.length === 2
     }, 'expected `{PATH}` to contain two unique team ids')
-    schema.path('players_to_teams').validate(function(val) {
+    schema.path('players_to_teams').validate(function (val) {
       if (val.length === 0) {
         return true
       }
@@ -56,7 +56,7 @@ const Model = createModel(
       foreignField: 'match_ids',
       justOne: true,
     })
-    schema.pre('validate', function() {
+    schema.pre('validate', function () {
       const minGames = Math.ceil(this.best_of / 2)
       if (this.game_ids && this.game_ids.length > 0) {
         // validate that best_of has been met
@@ -72,7 +72,9 @@ const Model = createModel(
       }
       if (this.forfeited_by_team) {
         this.status = 'closed'
-        this.winning_team_id = this.team_ids.filter(id => id.toHexString() !== this.forfeited_by_team.toHexString())[0]
+        this.winning_team_id = this.team_ids.filter(
+          (id) => id.toHexString() !== this.forfeited_by_team.toHexString(),
+        )[0]
       }
     })
   },

@@ -46,5 +46,5 @@ const processTeam = (game, color, time) => {
  * returns stats for teams [blue, red] for a single game
  */
 module.exports = (game, processedAt) => {
-  return ['blue', 'orange'].map(color => processTeam(game, color, processedAt))
+  return ['blue', 'orange'].map((color) => processTeam(game, color, processedAt))
 }

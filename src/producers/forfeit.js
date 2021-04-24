@@ -57,9 +57,9 @@ const genTeamStats = (params, context) => {
 
 const genPlayerStats = (forfeit_date, teamStats, players) => {
   const playerStats = []
-  teamStats.forEach(teamStat => {
-    players.forEach(player => {
-      if (getPlayerTeamsAtDate(player, forfeit_date).some(history => history.team_id.equals(teamStat.team_id))) {
+  teamStats.forEach((teamStat) => {
+    players.forEach((player) => {
+      if (getPlayerTeamsAtDate(player, forfeit_date).some((history) => history.team_id.equals(teamStat.team_id))) {
         playerStats.push({
           ...teamStat,
           player_id: player._id.toHexString(),

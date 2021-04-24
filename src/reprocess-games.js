@@ -12,7 +12,7 @@ const reduceArray = (docs, prop) => {
 }
 
 const matchGetters = {
-  matches: criteria => {
+  matches: (criteria) => {
     return Matches.find({
       $or: [
         { 'game_ids.0': { $exists: true }, ...criteria },
@@ -20,15 +20,15 @@ const matchGetters = {
       ],
     }).populate('games')
   },
-  seasons: criteria => {
+  seasons: (criteria) => {
     return Seasons.find({ ...criteria })
       .populate({
         path: 'matches',
         populate: { path: 'games' },
       })
-      .then(seasons => reduceArray(seasons, 'matches'))
+      .then((seasons) => reduceArray(seasons, 'matches'))
   },
-  leagues: criteria => {
+  leagues: (criteria) => {
     return Leagues.find({ ...criteria })
       .populate({
         path: 'seasons',
@@ -37,13 +37,13 @@ const matchGetters = {
           populate: { path: 'games' },
         },
       })
-      .then(leagues => reduceArray(leagues, 'seasons'))
-      .then(seasons => reduceArray(seasons, 'matches'))
+      .then((leagues) => reduceArray(leagues, 'seasons'))
+      .then((seasons) => reduceArray(seasons, 'matches'))
   },
-  players: criteria => {
-    return Players.find({ ...criteria }).then(players => {
+  players: (criteria) => {
+    return Players.find({ ...criteria }).then((players) => {
       return Matches.find({
-        'players_to_teams.player_id': { $in: players.map(p => p._id) },
+        'players_to_teams.player_id': { $in: players.map((p) => p._id) },
       }).populate('games')
     })
   },
@@ -52,13 +52,13 @@ const matchGetters = {
 module.exports = async (collection, criteria) => {
   if (!matchGetters[collection]) throw new Error(`no query implemented for collection: ${collection}`)
   const messages = (await matchGetters[collection](criteria))
-    .filter(match => (match.games && match.games.length > 0) || match.forfeited_by_team)
-    .map(match => {
+    .filter((match) => (match.games && match.games.length > 0) || match.forfeited_by_team)
+    .map((match) => {
       const matchMessage = {
         match_id: match._id.toHexString(),
       }
       if (match.games && match.games.length > 0) {
-        matchMessage.game_ids = match.games.map(g => g.ballchasing_id)
+        matchMessage.game_ids = match.games.map((g) => g.ballchasing_id)
       }
       if (match.forfeited_by_team) {
         matchMessage.forfeit_team_id = match.forfeited_by_team

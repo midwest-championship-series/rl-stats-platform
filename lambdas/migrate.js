@@ -7,7 +7,7 @@ const { Teams, Matches, Leagues, Seasons } = require('../src/model/mongodb')
 const mncsSchedule = JSON.parse(fs.readFileSync(path.join(__dirname, 'mncs-schedule.json')))
 const clmnSchedule = JSON.parse(fs.readFileSync(path.join(__dirname, 'clmn-schedule.json')))
 
-const getTeams = schedule => {
+const getTeams = (schedule) => {
   const teamIds = [
     ...new Set(
       schedule.reduce((acc, item) => {
@@ -22,7 +22,7 @@ const getTeams = schedule => {
   })
 }
 
-const formatMatches = schedule => {
+const formatMatches = (schedule) => {
   return schedule.map((match, index) => {
     return new Matches({
       team_ids: [match.team_1_id, match.team_2_id],
@@ -39,7 +39,7 @@ const formatMatches = schedule => {
 const createSchedule = async (leagueName, schedule) => {
   const matches = formatMatches(schedule)
   const league = await Leagues.findOne({ name: leagueName }).populate('seasons')
-  const season3 = league.seasons.find(s => s.name === '3')
+  const season3 = league.seasons.find((s) => s.name === '3')
   if (season3.match_ids.length < 1) {
     for (let match of matches) {
       await match.save()
@@ -50,16 +50,18 @@ const createSchedule = async (leagueName, schedule) => {
   }
 }
 
-const getCityName = teamName => {
+const getCityName = (teamName) => {
   const splitName = teamName.toLowerCase().split(' ')
   return splitName.splice(0, splitName.length - 1).join(' ')
 }
 
 const handler = async () => {
   // make sure season 3 exists
-  const leagues = (await Leagues.find().populate('seasons')).filter(l => ['mncs', 'clmn 1', 'clmn 2'].includes(l.name))
+  const leagues = (await Leagues.find().populate('seasons')).filter((l) =>
+    ['mncs', 'clmn 1', 'clmn 2'].includes(l.name),
+  )
   for (let league of leagues) {
-    let s3 = league.seasons.find(s => s.name === '3')
+    let s3 = league.seasons.find((s) => s.name === '3')
     if (!s3) {
       console.log(`${league.name} has no season 3`)
       s3 = new Seasons({
@@ -91,7 +93,7 @@ const handler = async () => {
   for (let team of clmnTeams) {
     if (!team.franchise_id) {
       const teamCity = getCityName(team.name)
-      const parentTeam = mncsTeams.find(t => getCityName(t.name) === teamCity)
+      const parentTeam = mncsTeams.find((t) => getCityName(t.name) === teamCity)
       if (!parentTeam) throw new Error(`no parent found for ${team.name}. teamCity: ${teamCity}`)
       team.franchise_id = parentTeam.franchise_id
       await team.save()
@@ -119,18 +121,18 @@ const handler = async () => {
   for (let team of clmn2Teams) {
     if (!team.franchise_id) {
       const teamCity = getCityName(team.name)
-      const parentTeam = mncsTeams.find(t => getCityName(t.name) === teamCity)
+      const parentTeam = mncsTeams.find((t) => getCityName(t.name) === teamCity)
       if (!parentTeam) throw new Error(`no parent found for ${team.name}`)
       team.franchise_id = parentTeam.franchise_id
       await team.save()
     }
   }
 
-  const clmn2Schedule = mncsSchedule.map(match => {
-    const team1Franchise = mncsTeams.find(team => team._id.equals(match.team_1_id)).franchise_id
-    const team2Franchise = mncsTeams.find(team => team._id.equals(match.team_2_id)).franchise_id
-    const team1ClmnTeam = clmn2Teams.find(team => team.franchise_id.equals(team1Franchise))
-    const team2ClmnTeam = clmn2Teams.find(team => team.franchise_id.equals(team2Franchise))
+  const clmn2Schedule = mncsSchedule.map((match) => {
+    const team1Franchise = mncsTeams.find((team) => team._id.equals(match.team_1_id)).franchise_id
+    const team2Franchise = mncsTeams.find((team) => team._id.equals(match.team_2_id)).franchise_id
+    const team1ClmnTeam = clmn2Teams.find((team) => team.franchise_id.equals(team1Franchise))
+    const team2ClmnTeam = clmn2Teams.find((team) => team.franchise_id.equals(team2Franchise))
     if (!team1ClmnTeam) console.log('no team found for franchise id', team1Franchise)
     if (!team2ClmnTeam) console.log('no team found for franchise id', team2Franchise)
     const returnMatch = {

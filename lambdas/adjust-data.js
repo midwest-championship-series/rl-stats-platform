@@ -9,16 +9,16 @@ const handler = async () => {
     populate: { path: 'matches' },
   })
   for (let league of leagues) {
-    const currentSeason = league.seasons.find(s => s._id.equals(league.current_season_id))
+    const currentSeason = league.seasons.find((s) => s._id.equals(league.current_season_id))
     if (!currentSeason) throw new Error(`no current season found for league: ${league.name}`)
     const sortedMatches = currentSeason.matches.sort((a, b) => a.week - b.week)
-    const lastPlayedMatch = sortedMatches.find(m => m.status !== 'closed')
+    const lastPlayedMatch = sortedMatches.find((m) => m.status !== 'closed')
     league.current_week = (lastPlayedMatch && lastPlayedMatch.week) || sortedMatches.reverse()[0].week
     await league.save()
     for (let season of league.seasons) {
       const allTeams = season.matches.reduce((result, match) => {
         for (let id of match.team_ids) {
-          if (!result.some(x => x.equals(id))) {
+          if (!result.some((x) => x.equals(id))) {
             result.push(id)
           }
         }
@@ -28,7 +28,7 @@ const handler = async () => {
         if (match.players_to_teams) {
           for (let map of match.players_to_teams) {
             const playerId = map.player_id
-            if (playerId && !result.some(x => x.equals(playerId))) {
+            if (playerId && !result.some((x) => x.equals(playerId))) {
               result.push(playerId)
             }
           }

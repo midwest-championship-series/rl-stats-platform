@@ -58,7 +58,7 @@ const search = async (index, body) => {
     return {
       total: results.total.value,
       returned: results.hits.length,
-      hits: results.hits && results.hits.map(h => h._source),
+      hits: results.hits && results.hits.map((h) => h._source),
       aggregations,
     }
   } catch (err) {
@@ -66,7 +66,7 @@ const search = async (index, body) => {
   }
 }
 
-const formatError = err => {
+const formatError = (err) => {
   return {
     source: 'elastic',
     statusCode: err.statusCode,
@@ -74,7 +74,7 @@ const formatError = err => {
   }
 }
 
-const deleteByQuery = async query => {
+const deleteByQuery = async (query) => {
   try {
     const conn = await getConnection()
     return conn.deleteByQuery({

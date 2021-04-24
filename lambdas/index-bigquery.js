@@ -8,7 +8,7 @@ const schemas = require('../src/schemas')
 const conform = require('../src/util/conform-schema')
 const tables = ['player_games', 'team_games']
 
-const handler = async event => {
+const handler = async (event) => {
   let currentKey, currentSource
   try {
     const { key, source } = event.detail.bucket
@@ -19,20 +19,20 @@ const handler = async event => {
     const { processedAt, matchId } = stats
 
     const responses = await Promise.all(
-      tables.map(name => {
-        const loadData = stats[name].map(s => {
+      tables.map((name) => {
+        const loadData = stats[name].map((s) => {
           return { epoch_processed: processedAt, ...conform(s, schemas[name]) }
         })
         return load(loadData, name)
       }),
     )
-    const errors = responses.flatMap(item => item.errors || [])
+    const errors = responses.flatMap((item) => item.errors || [])
     if (errors.length > 1) {
       console.error(errors)
       throw new Error(`${errors.length} errors occurred while indexing into bigquery`)
     }
     await Promise.all([
-      tables.map(name => {
+      tables.map((name) => {
         const where = `epoch_processed < ${processedAt} AND match_id = '${matchId}'`
         return query('DELETE', name, where)
       }),

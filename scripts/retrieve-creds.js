@@ -10,7 +10,7 @@ var client = new AWS.SecretsManager({
   region: region,
 })
 
-client.getSecretValue({ SecretId: secretName }, function(err, data) {
+client.getSecretValue({ SecretId: secretName }, function (err, data) {
   if (err) {
     throw new Error(`${err.code}: ${err.message}`)
   }

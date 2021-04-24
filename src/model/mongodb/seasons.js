@@ -15,7 +15,7 @@ const Model = createModel(
     team_ids: [{ type: Schema.Types.ObjectId, required: true }],
     player_ids: [{ type: Schema.Types.ObjectId, required: true }],
   },
-  schema => {
+  (schema) => {
     schema.virtual('players', {
       ref: 'Player',
       localField: 'player_ids',

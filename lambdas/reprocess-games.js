@@ -1,7 +1,7 @@
 const reprocessGames = require('../src/reprocess-games')
 require('../src/model/mongodb')
 
-const handler = async event => {
+const handler = async (event) => {
   try {
     const {
       queryStringParameters,
