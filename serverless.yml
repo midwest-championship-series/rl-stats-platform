@@ -224,7 +224,7 @@ resources:
         DelaySeconds: 0
         MessageRetentionPeriod: 345600
         ReceiveMessageWaitTimeSeconds: 20
-        VisibilityTimeout: 40
+        VisibilityTimeout: 120
     ReportMatchQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -232,7 +232,7 @@ resources:
         DelaySeconds: 0
         MessageRetentionPeriod: 345600
         ReceiveMessageWaitTimeSeconds: 20
-        VisibilityTimeout: 40
+        VisibilityTimeout: 120
     StatsBucket:
       Type: AWS::S3::Bucket
       Properties:

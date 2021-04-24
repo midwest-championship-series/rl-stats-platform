@@ -1,14 +1,28 @@
 const { Model: Games } = require('./model/mongodb/games')
 const { eventBridge, s3 } = require('./services/aws')
-const { getReplayStream } = require('./services/ballchasing')
+const { getReplayStream, getReplayIdsFromGroup } = require('./services/ballchasing')
 const wait = require('./util/wait')
 
 const replayBucket = process.env.REPLAY_FILES_BUCKET
 
+const getGameIds = async (urls) => {
+  const gameIds = []
+  for (let url of urls.map((url) => url.split('?')[0])) {
+    if (url.match(/\/group\//g)) {
+      const groupId = url.split('/').slice(-1)[0]
+      const ids = await getReplayIdsFromGroup(groupId)
+      gameIds.push(...ids)
+    } else if (url.match(/\/replay\//g)) {
+      gameIds.push(url.split('/').slice(-1)[0])
+    }
+  }
+  return gameIds
+}
+
 module.exports = async (params) => {
   const { league_id, urls, reply_to_channel } = params
-  const game_ids = urls.map((url) => url.split('?')[0].split('/').slice(-1)[0])
-  const gameIdsToProcess = [...new Set(game_ids)]
+  const gameIds = await getGameIds(urls)
+  const gameIdsToProcess = [...new Set(gameIds)]
   /**
    * if games with these ballchasing ids have already been reported, throw an error - we only want new games to
    * be reported with this mechanism. all other games should go through the reprocess-games function.
