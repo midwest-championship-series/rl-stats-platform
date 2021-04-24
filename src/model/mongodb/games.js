@@ -9,7 +9,7 @@ const Model = createModel(
     date_time_played: { type: Date },
     date_time_processed: { type: Date },
   },
-  schema => {
+  (schema) => {
     schema.virtual('match', {
       ref: 'Match',
       localField: '_id',

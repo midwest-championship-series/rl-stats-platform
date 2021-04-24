@@ -18,8 +18,8 @@ const schema = {
   },
 }
 
-const Model = createModel('League', schema, schema => {
-  schema.path('urls').validate(function(val) {
+const Model = createModel('League', schema, (schema) => {
+  schema.path('urls').validate(function (val) {
     const allNames = val.map(({ name }) => name)
     const uniqueNames = [...new Set(allNames)]
     return allNames.length === uniqueNames.length

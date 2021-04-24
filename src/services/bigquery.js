@@ -8,7 +8,7 @@ const { BigQuery } = require('@google-cloud/bigquery')
 const bigquery = new BigQuery()
 const dataset = bigquery.dataset(dataSetId)
 
-const createTableName = table => {
+const createTableName = (table) => {
   return [googleProjectId, dataSetId, table].join('.')
 }
 

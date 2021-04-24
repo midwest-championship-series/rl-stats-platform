@@ -1,4 +1,4 @@
-const virtuals = Model => {
+const virtuals = (Model) => {
   const modelVirtuals = Model.schema.virtuals
   const res = Object.keys(modelVirtuals).reduce((result, item) => {
     result[item] = { ...modelVirtuals[item], ...modelVirtuals[item].options }
@@ -23,7 +23,7 @@ const virtuals = Model => {
   }
 }
 
-const core = Model => {
+const core = (Model) => {
   let description = `Core properties are properties which belong directly to ${Model.collection.collectionName}. `
   description += `They are queriable by using their name in a query parameter, e.g. GET /v2/${Model.collection.collectionName}?_id=5ebc62b0d09245d2a7c63401 would return an array of one with that id. `
   description += `Since the queries are passed through to mongodb, you can also query for properties in arrays, objects, and arrays of objects using dot notation. For example, `
@@ -38,7 +38,7 @@ const core = Model => {
   }
 }
 
-const query = Model => {
+const query = (Model) => {
   let description = `Query helpers are available on some models in order to support queries which are not possible via a direct match. `
   description += `They are placed in the query parameters on the GET /v2/${Model.collection.collectionName} endpoint. Each query helper has its own description of how it operates.`
   let orDescription = `'or' allows you to specify fields which exist in the query string, but should be considered optional rather than mandatory. `
@@ -57,7 +57,7 @@ const query = Model => {
   }
 }
 
-module.exports = Model => {
+module.exports = (Model) => {
   return async (req, res, next) => {
     const docs = {
       core: core(Model),

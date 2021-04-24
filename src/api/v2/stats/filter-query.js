@@ -2,7 +2,7 @@ const stage = process.env.SERVERLESS_STAGE
 
 const { search } = require('../../../services/elastic')
 
-module.exports = indexName => {
+module.exports = (indexName) => {
   return async (req, res, next) => {
     const params = { ...req.query }
     const query = {

@@ -1,4 +1,4 @@
-module.exports = stats => {
+module.exports = (stats) => {
   return stats.reduce((result, item) => {
     const concat = [item]
     if (!item.skipOpponent) {

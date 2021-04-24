@@ -27,13 +27,13 @@ const schema = {
   permissions: [{ type: String }],
 }
 
-const Model = createModel('Player', schema, schema => {
-  schema.query.onTeams = function(teamIds, date) {
+const Model = createModel('Player', schema, (schema) => {
+  schema.query.onTeams = function (teamIds, date) {
     const query = {
       $or: [],
     }
     // return this.find(query)
-    teamIds.forEach(teamId => {
+    teamIds.forEach((teamId) => {
       query.$or.push({
         team_history: {
           $elemMatch: {

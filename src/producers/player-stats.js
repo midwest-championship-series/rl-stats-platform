@@ -53,7 +53,7 @@ module.exports = (game, processedAt) => {
   const playerStats = colors.reduce(
     (result, color) =>
       result.concat(
-        game[color].players.map(player => {
+        game[color].players.map((player) => {
           player.team_color = color
           player.opponent_color = color === 'blue' ? 'orange' : 'blue'
           return processPlayer(game, player, processedAt)
@@ -62,9 +62,9 @@ module.exports = (game, processedAt) => {
     [],
   )
   // assign match mvp
-  const winners = playerStats.filter(p => p.wins > 0)
-  const mvpScore = Math.max(...winners.map(p => p.score))
-  playerStats.forEach(p => {
+  const winners = playerStats.filter((p) => p.wins > 0)
+  const mvpScore = Math.max(...winners.map((p) => p.score))
+  playerStats.forEach((p) => {
     if (p.wins > 0) {
       p.mvps = p.score === mvpScore ? 1 : 0
     } else {

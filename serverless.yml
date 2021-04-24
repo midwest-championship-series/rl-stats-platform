@@ -126,7 +126,7 @@ functions:
             parameters:
               path:
                 collection: true
-  
+
   process-match:
     handler: lambdas/process-match.handler
     name: ${self:service}-process-match-${self:provider.stage}
@@ -169,7 +169,7 @@ functions:
     handler: lambdas/migrate.handler
     name: ${self:service}-migrate-${self:provider.stage}
     timeout: 300
-  
+
   adjust-data:
     handler: lambdas/adjust-data.handler
     name: ${self:service}-adjust-data-${self:provider.stage}
@@ -241,9 +241,9 @@ resources:
           Rules:
             - ExpirationInDays: 1
               Status: Enabled
-    RLStatsEventBus:    
+    RLStatsEventBus:
       Type: AWS::Events::EventBus
-      Properties: 
+      Properties:
         Name: ${self:service}-${self:provider.stage}
     ForfeitMatchRule:
       Type: AWS::Events::Rule
@@ -286,17 +286,17 @@ resources:
       Properties:
         PolicyDocument:
           Statement:
-          - Effect: Allow
-            Principal:
-              Service: events.amazonaws.com
-            Action: SQS:SendMessage
-            Resource: 
-              - Fn::GetAtt:
-                  - GamesQueue
-                  - Arn
-              - Fn::GetAtt:
-                  - ReportMatchQueue
-                  - Arn
+            - Effect: Allow
+              Principal:
+                Service: events.amazonaws.com
+              Action: SQS:SendMessage
+              Resource:
+                - Fn::GetAtt:
+                    - GamesQueue
+                    - Arn
+                - Fn::GetAtt:
+                    - ReportMatchQueue
+                    - Arn
         Queues:
           - Ref: GamesQueue
           - Ref: ReportMatchQueue

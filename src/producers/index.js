@@ -12,7 +12,7 @@ const assignWins = (games, match, leagueGames) => {
     [orangeId]: 0,
     [blueId]: 0,
   }
-  games.forEach(game => {
+  games.forEach((game) => {
     const winner = game.orange.stats.core.goals > game.blue.stats.core.goals ? 'orange' : 'blue'
     const winnerId = game[winner].team._id
     game.winning_team_id = winnerId
@@ -29,13 +29,13 @@ const assignWins = (games, match, leagueGames) => {
     const errMsg = `expected a team to win the best of ${match.best_of} match, but winning team has only ${maxWins}`
     throw new UnRecoverableError('BEST_OF_NOT_MET', errMsg)
   }
-  games.forEach(game => {
-    const winnerColor = colors.find(color => game[color].team._id.equals(winnerId))
+  games.forEach((game) => {
+    const winnerColor = colors.find((color) => game[color].team._id.equals(winnerId))
     game[winnerColor].match_id_win = game.match_id
   })
   // map the wins back to the games which will be saved in the db
-  leagueGames.forEach(game => {
-    const dataGame = games.find(g => game._id.equals(g.game_id))
+  leagueGames.forEach((game) => {
+    const dataGame = games.find((g) => game._id.equals(g.game_id))
     game.winning_team_id = dataGame.winning_team_id
   })
 }
@@ -55,7 +55,7 @@ module.exports = (games, leagueInfo, processedAt) => {
     teamStats: games.reduce((result, game) => result.concat(teamStats(game, processedAt)), []),
     playerStats: games.reduce((result, game) => result.concat(playerStats(game, processedAt)), []),
     playerTeamMap: playersToTeams.reduce((result, item) => {
-      if (!result.find(i => i.player_id === item.player_id)) {
+      if (!result.find((i) => i.player_id === item.player_id)) {
         result.push(item)
       }
       return result

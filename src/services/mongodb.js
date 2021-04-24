@@ -17,7 +17,7 @@ const setup = () => {
 
   // when something interrupts the process, disconnect from mongodb
   process.on('SIGINT', () => {
-    mongoose.disconnect(err => {
+    mongoose.disconnect((err) => {
       process.exit(err ? 1 : 0)
     })
   })

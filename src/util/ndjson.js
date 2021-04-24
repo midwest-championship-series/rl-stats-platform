@@ -3,7 +3,7 @@ const fs = require('fs')
 module.exports = (path, data) => {
   return new Promise((resolve, reject) => {
     const outStream = fs.createWriteStream(path)
-    outStream.on('error', err => {
+    outStream.on('error', (err) => {
       return reject(err)
     })
     outStream.on('finish', () => {
