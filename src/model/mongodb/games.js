@@ -1,5 +1,5 @@
 const { Schema } = require('mongoose')
-const createModel = require('../../services/mongodb')
+const { createModel } = require('../../services/mongodb')
 
 const Model = createModel(
   'Game',

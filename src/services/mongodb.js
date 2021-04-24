@@ -8,11 +8,14 @@ mongoose.Promise = Promise
 mongoose.connectionConfigured = false
 mongoose.connecting = false
 
-const setup = () => {
+const setup = (cb) => {
   mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
   mongoose.connection.once('open', () => {
     console.log('Connected to Mongo!')
     mongoose.connecting = false
+    if (typeof cb === 'function') {
+      cb()
+    }
   })
 
   // when something interrupts the process, disconnect from mongodb
@@ -23,14 +26,13 @@ const setup = () => {
   })
 }
 
-const connect = () => {
-  if (!mongoose.connectionConfigured) {
-    console.info('configuring mongodb connection')
-    setup()
-    mongoose.connectionConfigured = true
-  }
-
-  if (!mongoose.connecting && mongoose.connection.readyState !== 1) {
+const connect = (hardRefresh, cb) => {
+  if (hardRefresh === true || (!mongoose.connecting && mongoose.connection.readyState !== 1)) {
+    if (!mongoose.connectionConfigured) {
+      console.info('configuring mongodb connection')
+      setup(cb)
+      mongoose.connectionConfigured = true
+    }
     mongoose.connecting = true
     console.info('wiring up the database for ' + process.env.SERVERLESS_STAGE)
     mongoose.connect(connStr, {
@@ -40,7 +42,6 @@ const connect = () => {
       useUnifiedTopology: true,
     })
   }
-  return mongoose
 }
 
 const createModel = (modelName, schemaJson, decorator) => {
@@ -61,4 +62,4 @@ const createModel = (modelName, schemaJson, decorator) => {
   return mongoose.model(modelName, schema)
 }
 
-module.exports = createModel
+module.exports = { createModel, connect }
