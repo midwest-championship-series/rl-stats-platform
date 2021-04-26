@@ -6,7 +6,10 @@ const getOpponentColor = (color) => colors.filter((c) => c !== color)[0]
 
 module.exports = (game, { league, season, match, players, teams, games }) => {
   const playerTeamMap = []
-  game.game_id = games.find((g) => g.ballchasing_id === game.id)._id.toHexString()
+  /** @todo remove hardcoded ballchasing here */
+  game.game_id = games
+    .find((g) => g.replay_origin.source === 'ballchasing' && g.replay_origin.key === game.id)
+    ._id.toHexString()
   game.match_id = match._id.toHexString()
   game.match_type = match.season.season_type
   game.week = match.week

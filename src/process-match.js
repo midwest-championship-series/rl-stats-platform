@@ -175,7 +175,12 @@ const handleReplays = async (filters, processedAt) => {
   let games
   if (!match.games || match.games.length < 1) {
     // create games
-    games = reportGames.map((g) => new Games({ ballchasing_id: g.id, date_time_played: g.date }))
+    games = reportGames.map((g) => {
+      return new Games({
+        replay_origin: { source: 'ballchasing', key: g.id },
+        date_time_played: g.date,
+      })
+    })
     // update match
     match.game_ids = games.map((g) => g._id)
   } else {

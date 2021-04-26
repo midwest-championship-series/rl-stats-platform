@@ -29,7 +29,6 @@ jest.mock('../util/wait')
 const reportGames = require('../report-match')
 
 describe('report-games', () => {
-  process.env.GAMES_QUEUE_URL = 'fake queue url'
   afterEach(() => {
     matchesFindByIdMock.mockClear()
     matchesFindMock.mockClear()

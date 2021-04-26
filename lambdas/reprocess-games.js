@@ -1,23 +1,14 @@
 const reprocessGames = require('../src/reprocess-games')
+const { reportError } = require('../src/services/rl-bot')
 require('../src/model/mongodb')
 
 const handler = async (event) => {
+  const { collection, params } = event.detail
   try {
-    const {
-      queryStringParameters,
-      pathParameters: { collection },
-    } = event
-    const reportedGames = await reprocessGames(collection, queryStringParameters)
-    return {
-      statusCode: 200,
-      body: JSON.stringify(reportedGames),
-    }
+    await reprocessGames(collection, params)
   } catch (err) {
     console.error(err)
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message }),
-    }
+    await reportError(err, `error while reprocessing ${collection}`)
   }
 }
 
