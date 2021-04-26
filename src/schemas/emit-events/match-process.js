@@ -11,6 +11,16 @@ const bucketSchema = joi
 
 module.exports = [
   registerSchema({
+    type: 'MATCH_REPROCESS',
+    detail: joi
+      .object()
+      .keys({
+        collection: joi.string().required(),
+        params: joi.object().unknown(true).required(),
+      })
+      .required(),
+  }),
+  registerSchema({
     type: 'MATCH_PROCESS_GAMES_REPORTED',
     detail: joi
       .object()
@@ -34,19 +44,31 @@ module.exports = [
   }),
   registerSchema({
     type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
-    detail: joi.object().keys({
-      league_id: joi.string().required(),
-      reply_to_channel: joi.string().required(),
-      replays: joi
-        .array()
-        .min(1)
-        .items({
-          id: joi.string().required(),
-          upload_source: joi.string().valid('ballchasing').required(),
-          bucket: bucketSchema,
-        })
-        .required(),
-    }),
+    detail: joi.alternatives().try(
+      joi.object().keys({
+        league_id: joi.string().required(),
+        reply_to_channel: joi.string().required(),
+        replays: joi
+          .array()
+          .min(1)
+          .items({
+            id: joi.string().required(),
+            upload_source: joi.string().valid('ballchasing').required(),
+            bucket: bucketSchema,
+          })
+          .required(),
+      }),
+      joi.object().keys({
+        match_id: joi.string().required(),
+        replays: joi
+          .array()
+          .min(1)
+          .items({
+            bucket: bucketSchema,
+          })
+          .required(),
+      }),
+    ),
   }),
   registerSchema({
     type: 'MATCH_PROCESS_REPLAYS_PARSED',
@@ -67,12 +89,14 @@ module.exports = [
   registerSchema({
     type: 'MATCH_PROCESS_INIT',
     detail: joi
-      .object()
-      .keys({
-        game_ids: joi.array().items(joi.string()),
-        league_id: joi.objectId().required(),
-        reply_to_channel: joi.string().required(),
-      })
+      .alternatives()
+      .try(
+        joi.object().keys({
+          game_ids: joi.array().items(joi.string()),
+          league_id: joi.objectId().required(),
+          reply_to_channel: joi.string().required(),
+        }),
+      )
       .required(),
   }),
   registerSchema({
