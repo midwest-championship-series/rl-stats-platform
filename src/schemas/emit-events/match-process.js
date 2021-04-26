@@ -96,6 +96,10 @@ module.exports = [
           league_id: joi.objectId().required(),
           reply_to_channel: joi.string().required(),
         }),
+        joi.object().keys({
+          game_ids: joi.array().min(1).items(joi.string()),
+          match_id: joi.objectId().required(),
+        }),
       )
       .required(),
   }),

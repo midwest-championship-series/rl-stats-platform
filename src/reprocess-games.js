@@ -2,7 +2,7 @@ const { Model: Players } = require('./model/mongodb/players')
 const { Model: Matches } = require('./model/mongodb/matches')
 const { Model: Seasons } = require('./model/mongodb/seasons')
 const { Model: Leagues } = require('./model/mongodb/leagues')
-const sqs = require('./services/aws').sqs
+const { eventBridge } = require('./services/aws')
 
 const reduceArray = (docs, prop) => {
   return docs.reduce((result, item) => {
@@ -54,17 +54,19 @@ module.exports = async (collection, criteria) => {
   const messages = (await matchGetters[collection](criteria))
     .filter((match) => (match.games && match.games.length > 0) || match.forfeited_by_team)
     .map((match) => {
-      const matchMessage = {
+      const detail = {
         match_id: match._id.toHexString(),
       }
       if (match.games && match.games.length > 0) {
-        matchMessage.game_ids = match.games.map((g) => g.ballchasing_id)
+        detail.game_ids = match.games.map((g) => g.ballchasing_id)
       }
       if (match.forfeited_by_team) {
-        matchMessage.forfeit_team_id = match.forfeited_by_team
+        detail.forfeit_team_id = match.forfeited_by_team
       }
-      return matchMessage
+      return {
+        type: 'MATCH_PROCESS_INIT',
+        detail,
+      }
     })
-  await sqs.sendMessageBatch(process.env.GAMES_QUEUE_URL, messages)
-  return { messages }
+  await eventBridge.emitEvents(messages)
 }
