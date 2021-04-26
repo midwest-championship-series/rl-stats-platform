@@ -164,6 +164,7 @@ const handleReplays = async (filters, processedAt) => {
   const options = { mentioned_team_ids: [] }
   console.info('validating filters')
   validateFilters(filters)
+
   const { league_id, match_id, report_games, mentioned_team_ids } = { ...options, ...filters }
   // separate games which have replay data from full manual reports
   const { replayGames, manualGames } = report_games.reduce(
@@ -189,6 +190,24 @@ const handleReplays = async (filters, processedAt) => {
       const errMsg = `no players found for games: ${game_ids.join(', ')}`
       throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
     }
+    // const { league_id, match_id } = filters
+    // let reportGames, gameIds
+    // if (match_id) {
+    //   /** @todo fix the ".populate(nothing)" calls below, just there for temp test fix below */
+    //   gameIds = (
+    //     await Matches.findById(match_id).populate('nothing').populate('nothing').populate('nothing')
+    //   ).game_ids.map((id) => id.toHexString())
+    // } else {
+    //   gameIds = filters.game_ids
+    // }
+    // console.info('retrieving replays')
+    // reportGames = await ballchasing.getReplayData(gameIds)
+
+    // console.info('retrieving players')
+    // const players = await Players.find(buildPlayersQuery(reportGames))
+    // if (players.length < 1) {
+    //   const errMsg = `no players found for games: ${gameIds.join(', ')}`
+    //   throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
   }
 
   console.info('retrieving league info')

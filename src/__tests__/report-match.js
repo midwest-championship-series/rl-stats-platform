@@ -81,14 +81,6 @@ describe('report-games', () => {
       },
     ]
     expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
-      type: 'MATCH_PROCESS_INIT',
-      detail: {
-        league_id: '5ebc62b1d09245d2a7c63516',
-        report_games: gameReports,
-        reply_to_channel: '692994579305332806',
-      },
-    })
-    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
       type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
       detail: {
         league_id: '5ebc62b1d09245d2a7c63516',
@@ -148,15 +140,6 @@ describe('report-games', () => {
       },
     ]
     expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
-      type: 'MATCH_PROCESS_INIT',
-      detail: {
-        league_id: '5ebc62b1d09245d2a7c63516',
-        report_games: gameReports,
-        reply_to_channel: '692994579305332806',
-        mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
-      },
-    })
-    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
       type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
       detail: {
         league_id: '5ebc62b1d09245d2a7c63516',
@@ -208,15 +191,6 @@ describe('report-games', () => {
         game_number: 4,
       },
     ]
-    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
-      type: 'MATCH_PROCESS_INIT',
-      detail: {
-        league_id: '5ebc62b1d09245d2a7c63516',
-        report_games: gameReports,
-        reply_to_channel: '692994579305332806',
-        mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
-      },
-    })
     expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
       type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
       detail: {

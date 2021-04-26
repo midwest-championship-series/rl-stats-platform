@@ -1,7 +1,6 @@
 const { Model: Games } = require('./model/mongodb/games')
 const { eventBridge, s3 } = require('./services/aws')
 const { getReplayStream, getReplayIdsFromGroup } = require('./services/ballchasing')
-const wait = require('./util/wait')
 
 const replayBucket = process.env.REPLAY_FILES_BUCKET
 
@@ -37,12 +36,12 @@ module.exports = async (params) => {
     const replayData = await getReplayStream(id)
     await s3.upload(replayBucket, key, replayData)
     replays.push({
-      id,
-      upload_source: uploadSource,
       bucket: {
         source: replayBucket,
         key,
       },
+      id,
+      upload_source: uploadSource,
     })
   }
   replays.push(...manualReports.map((r) => ({ ...r, report_type: 'MANUAL_REPORT' })))
@@ -59,6 +58,7 @@ module.exports = async (params) => {
   if (gameIdsToProcess.length > 0) {
     /** @todo remove hardcoded ballchasing */
     /** @todo use rocket_league_id to dedup */
+    /** @todo move this validation above the replay download/upload */
     const games = await Games.find({
       $or: gameIdsToProcess.map((id) => ({
         'replay_origin.source': 'ballchasing',
@@ -69,10 +69,6 @@ module.exports = async (params) => {
       throw new Error('games have already been reported - please use the !reprocess command')
     }
   }
-  await eventBridge.emitEvent({
-    type: 'MATCH_PROCESS_INIT',
-    detail: { report_games: replays, league_id, reply_to_channel, mentioned_team_ids },
-  })
 
   return detail
 }

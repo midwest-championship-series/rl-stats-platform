@@ -127,7 +127,7 @@ describe('reprocess-games', () => {
     await reprocessGames('matches', { week: 1 })
     expect(aws.eventBridge.emitEvents).toHaveBeenCalledWith([
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
           report_games: [
@@ -167,7 +167,7 @@ describe('reprocess-games', () => {
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63402',
           report_games: [
@@ -205,7 +205,7 @@ describe('reprocess-games', () => {
     await reprocessGames('seasons', { season_type: 'REG' })
     expect(aws.eventBridge.emitEvents).toHaveBeenCalledWith([
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
           report_games: [
@@ -233,7 +233,7 @@ describe('reprocess-games', () => {
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63402',
           report_games: [
@@ -256,7 +256,7 @@ describe('reprocess-games', () => {
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
           report_games: [
@@ -285,7 +285,7 @@ describe('reprocess-games', () => {
     await reprocessGames('leagues', {})
     expect(aws.eventBridge.emitEvents).toHaveBeenCalledWith([
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
           report_games: [
@@ -313,7 +313,7 @@ describe('reprocess-games', () => {
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63402',
           report_games: [
@@ -336,7 +336,7 @@ describe('reprocess-games', () => {
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
           report_games: [
@@ -382,7 +382,7 @@ describe('reprocess-games', () => {
             },
           ],
         },
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
       },
     ])
   })

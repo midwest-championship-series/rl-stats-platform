@@ -164,12 +164,12 @@ describe('emit-events', () => {
           reply_to_channel: '692994579305332806',
           replays: [
             {
+              id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+              upload_source: 'ballchasing',
               bucket: {
                 key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
                 source: 'mock-bucket',
               },
-              id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-              upload_source: 'ballchasing',
             },
           ],
         },
@@ -218,8 +218,6 @@ describe('emit-events', () => {
                 key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
                 source: 'mock-bucket',
               },
-              id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-              upload_source: 'ballchasing',
             },
           ],
         },

@@ -79,7 +79,7 @@ module.exports = async (collection, criteria) => {
         detail.forfeit_team_id = match.forfeited_by_team
       }
       return {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail,
       }
     })
