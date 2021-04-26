@@ -1,7 +1,6 @@
 const { Model: Games } = require('./model/mongodb/games')
 const { eventBridge, s3 } = require('./services/aws')
 const { getReplayStream, getReplayIdsFromGroup } = require('./services/ballchasing')
-const wait = require('./util/wait')
 
 const replayBucket = process.env.REPLAY_FILES_BUCKET
 

@@ -124,6 +124,17 @@ functions:
           pattern:
             detail-type:
               - MATCH_REPROCESS
+  
+  map-stats:
+    handler: lambdas/map-stats.handler
+    name: ${self:service}-map-stats-${self:provider.stage}
+    timeout: 30
+    events:
+      - eventBridge:
+          eventBus: !Ref RLStatsEventBus
+          pattern:
+            detail-type:
+              - MATCH_PROCESS_REPLAYS_PARSED
 
   process-match:
     handler: lambdas/process-match.handler
