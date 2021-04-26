@@ -45,8 +45,6 @@ provider:
     BALLCHASING_KEY: ${ssm:BALLCHASING_KEY}
     MNCS_STAT_SHEET_ID: ${ssm:${self:provider.stage}-MNCS_STAT_SHEET_ID}
     MNRL_SHEET_ID: ${ssm:${self:provider.stage}-MNRL_SHEET_ID}
-    GAMES_QUEUE_URL:
-      Ref: GamesQueue
     MONGODB_PASSWORD: ${ssm:${self:provider.stage}-mnrl-db-pass~true}
     MONGODB_HOST: ${self:custom.dbHost.${self:provider.stage}, self:custom.dbHost.notprod}
     MNRL_BOT_URL: https://rl-rank-bot.herokuapp.com
@@ -117,15 +115,11 @@ functions:
     name: ${self:service}-reprocess-games-${self:provider.stage}
     timeout: 30
     events:
-      - http:
-          path: /platform/{collection}/_reprocess
-          method: post
-          private: true
-          cors: true
-          request:
-            parameters:
-              path:
-                collection: true
+      - eventBridge:
+          eventBus: !Ref RLStatsEventBus
+          pattern:
+            detail-type:
+              - MATCH_REPROCESS
 
   process-match:
     handler: lambdas/process-match.handler
@@ -139,10 +133,6 @@ functions:
               - GamesQueue
               - Arn
           batchSize: 1
-
-  authorize:
-    handler: lambdas/authorize.handler
-    name: ${self:service}-authorize-${self:provider.stage}
 
   rest-api-versioned:
     handler: lambdas/rest-api.handler
@@ -206,17 +196,6 @@ functions:
 
 resources:
   Resources:
-    AuthTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: auth-table-${self:provider.stage}
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
     GamesQueue:
       Type: AWS::SQS::Queue
       Properties:

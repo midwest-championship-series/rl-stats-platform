@@ -33,13 +33,19 @@ const createEvent = (event) => {
 
 const emit = async (events) => {
   const messageRequests = chunk(events, 10)
-  let responses = []
+  let failed = 0
+  const entries = []
   for (let msg of messageRequests) {
-    console.log('msg', JSON.stringify(msg))
+    console.info('msg', JSON.stringify(msg))
     const res = await client.putEvents({ Entries: msg }).promise()
-    responses = responses.concat(res)
+    entries.push(...res.Entries)
+    failed += res.FailedEntryCount
   }
-  return responses
+  return {
+    failed,
+    succeeded: entries.length,
+    entries,
+  }
 }
 
 module.exports = {
