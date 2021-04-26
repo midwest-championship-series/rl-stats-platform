@@ -158,12 +158,9 @@ const handleReplays = async (filters, processedAt) => {
   validateFilters(filters)
   const { league_id, match_id, game_ids } = filters
   let reportGames
-  try {
-    console.info('retrieving replays')
-    reportGames = await ballchasing.getReplayData({ game_ids })
-  } catch (err) {
-    throw new RecoverableError(err.message)
-  }
+  console.info('retrieving replays')
+  reportGames = await ballchasing.getReplayData(game_ids)
+
   console.info('retrieving players')
   const players = await Players.find(buildPlayersQuery(reportGames))
   if (players.length < 1) {

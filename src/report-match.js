@@ -32,7 +32,6 @@ module.exports = async (params) => {
     const uploadSource = 'ballchasing'
     const key = `${uploadSource}:${id}.replay`
     const replayData = await getReplayStream(id)
-    await wait(1.5)
     await s3.upload(replayBucket, key, replayData)
     replays.push({
       id,
