@@ -75,7 +75,10 @@ module.exports = [
     type: 'MATCH_PROCESS_REPLAYS_PARSED',
     detail: joi.object().keys({
       league_id: joi.string().required(),
+<<<<<<< HEAD
       reply_to_channel: joi.string().required(),
+=======
+>>>>>>> add league_id to replay parsing object
       parsed_replays: joi
         .array()
         .min(1)
