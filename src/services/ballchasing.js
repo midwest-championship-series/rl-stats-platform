@@ -5,25 +5,41 @@ const bluebird = require('bluebird')
 const wait = require('../util/wait')
 const { UnRecoverableError } = require('../util/errors')
 
-const getReplayData = async (params = {}) => {
-  if (params.game_ids) {
-    return bluebird.mapSeries(params.game_ids, async (id) => {
-      const { data } = await axios.get(`${BASE_URL}/replays/${id}`, { params, headers: { Authorization: API_KEY } })
-      await wait(1) // workaround for api rate limit which is currently 2rps
-      return data
-    })
-  } else {
-    const { data } = await axios.get(`${BASE_URL}/replays`, { params, headers: { Authorization: API_KEY } })
-    return data
+const callForReplayData = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/replays/${id}`, { headers: { Authorization: API_KEY } })
+    return response.data
+  } catch (err) {
+    if (err.response && err.response.status === 429) {
+      console.info('debouncing ballchasing request')
+      await wait(1)
+      return callForReplayData(id)
+    }
+    throw err
   }
 }
 
-const getReplayStream = async (id) => {
-  const response = await axios.get(`${BASE_URL}/replays/${id}/file`, {
-    responseType: 'stream',
-    headers: { Authorization: API_KEY },
+const getReplayData = async (gameIds) => {
+  return bluebird.mapSeries(gameIds, async (id) => {
+    return callForReplayData(id)
   })
-  return response.data
+}
+
+const getReplayStream = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/replays/${id}/file`, {
+      responseType: 'stream',
+      headers: { Authorization: API_KEY },
+    })
+    return response.data
+  } catch (err) {
+    if (err.response && err.response.status === 429) {
+      console.info('debouncing ballchasing request')
+      await wait(1)
+      return getReplayStream(id)
+    }
+    throw err
+  }
 }
 
 const getReplayIdsFromGroup = async (groupId) => {

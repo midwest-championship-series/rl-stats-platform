@@ -47,6 +47,20 @@ module.exports = [
     }),
   }),
   registerSchema({
+    type: 'MATCH_PROCESS_REPLAYS_PARSED',
+    detail: joi.object().keys({
+      parsed_replays: joi
+        .array()
+        .min(1)
+        .items({
+          id: joi.string().required(),
+          upload_source: joi.string().valid('ballchasing').required(),
+          bucket: bucketSchema,
+        })
+        .required(),
+    }),
+  }),
+  registerSchema({
     type: 'MATCH_PROCESS_INIT',
     detail: joi
       .object()

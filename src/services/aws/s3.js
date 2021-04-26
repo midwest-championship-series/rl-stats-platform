@@ -40,7 +40,12 @@ const writeToFile = (bucket, fileName, writePath) => {
 }
 
 const upload = (bucket, fileName, stream) => {
-  return s3.upload({ Bucket: bucket, Key: fileName, Body: stream }).promise()
+  return new Promise((resolve, reject) => {
+    s3.upload({ Bucket: bucket, Key: fileName, Body: stream }, (err, data) => {
+      if (err) return reject(err)
+      return resolve(data)
+    })
+  })
 }
 
 module.exports = {
