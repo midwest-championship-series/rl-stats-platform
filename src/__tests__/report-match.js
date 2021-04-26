@@ -60,6 +60,7 @@ describe('report-games', () => {
       },
     })
     const replayLocations = {
+      league_id: '5ebc62b1d09245d2a7c63516',
       replays: [
         {
           bucket: {

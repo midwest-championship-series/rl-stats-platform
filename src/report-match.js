@@ -44,7 +44,10 @@ module.exports = async (params) => {
   }
   await eventBridge.emitEvent({
     type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
-    detail: { replays },
+    detail: {
+      league_id,
+      replays,
+    },
   })
   const games = await Games.find({ ballchasing_id: { $in: gameIdsToProcess } })
   if (games.length > 0) {
@@ -55,5 +58,5 @@ module.exports = async (params) => {
     detail: { game_ids: gameIdsToProcess, league_id, reply_to_channel },
   })
 
-  return { replays }
+  return { league_id, replays }
 }
