@@ -36,6 +36,7 @@ module.exports = [
     type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
     detail: joi.object().keys({
       league_id: joi.string().required(),
+      reply_to_channel: joi.string().required(),
       replays: joi
         .array()
         .min(1)
@@ -51,6 +52,7 @@ module.exports = [
     type: 'MATCH_PROCESS_REPLAYS_PARSED',
     detail: joi.object().keys({
       league_id: joi.string().required(),
+      reply_to_channel: joi.string().required(),
       parsed_replays: joi
         .array()
         .min(1)
