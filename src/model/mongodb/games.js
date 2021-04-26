@@ -4,7 +4,7 @@ const { createModel } = require('../../services/mongodb')
 const Model = createModel(
   'Game',
   {
-    ballchasing_id: { type: String, required: true },
+    ballchasing_id: { type: String },
     // where we got the replay from
     replay_origin: {
       type: {
@@ -12,6 +12,7 @@ const Model = createModel(
         // unique identifier used in combination with source to identify resource
         key: { type: String, required: true },
       },
+      required: true,
     },
     // where we store the replay internally, s3 at the moment
     replay_stored: {

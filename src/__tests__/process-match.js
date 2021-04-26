@@ -166,19 +166,19 @@ const mockClosedMatch = mockDoc({
   games: [
     mockDoc({
       _id: ObjectId('5ebc62afd09245d2a7c6333f'),
-      ballchasing_id: '9aee7f5f-7d75-40b0-8116-a8e1e2c9d4c5',
+      replay_origin: { key: '9aee7f5f-7d75-40b0-8116-a8e1e2c9d4c5', source: 'ballchasing' },
     }),
     mockDoc({
       _id: ObjectId('5ebc62afd09245d2a7c63338'),
-      ballchasing_id: '6903ac8a-d480-4f41-84a0-321ffb5cd17d',
+      replay_origin: { key: '6903ac8a-d480-4f41-84a0-321ffb5cd17d', source: 'ballchasing' },
     }),
     mockDoc({
       _id: ObjectId('5ebc62afd09245d2a7c6335e'),
-      ballchasing_id: '2493a4bd-aeb5-49ba-8cac-059cc99865c1',
+      replay_origin: { key: '2493a4bd-aeb5-49ba-8cac-059cc99865c1', source: 'ballchasing' },
     }),
     mockDoc({
       _id: ObjectId('5ebc62afd09245d2a7c63350'),
-      ballchasing_id: '111c0144-7219-426a-8263-8cff260d030d',
+      replay_origin: { key: '111c0144-7219-426a-8263-8cff260d030d', source: 'ballchasing' },
     }),
   ],
   season: {

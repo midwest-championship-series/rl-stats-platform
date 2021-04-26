@@ -58,7 +58,8 @@ module.exports = async (collection, criteria) => {
         match_id: match._id.toHexString(),
       }
       if (match.games && match.games.length > 0) {
-        detail.game_ids = match.games.map((g) => g.ballchasing_id)
+        /** @todo change this to consider source and key */
+        detail.game_ids = match.games.map((g) => g.replay_origin.key)
       }
       if (match.forfeited_by_team) {
         detail.forfeit_team_id = match.forfeited_by_team

@@ -29,6 +29,7 @@ module.exports = async (params) => {
    */
   const replays = []
   for (let id of gameIdsToProcess) {
+    /** @todo remove hardcoded ballchasing */
     const uploadSource = 'ballchasing'
     const key = `${uploadSource}:${id}.replay`
     const replayData = await getReplayStream(id)
@@ -51,7 +52,13 @@ module.exports = async (params) => {
     type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
     detail,
   })
-  const games = await Games.find({ ballchasing_id: { $in: gameIdsToProcess } })
+  /** @todo remove hardcoded ballchasing */
+  const games = await Games.find({
+    $or: gameIdsToProcess.map((id) => ({
+      'replay_origin.source': 'ballchasing',
+      'replay_origin.key': id,
+    })),
+  })
   if (games.length > 0) {
     throw new Error('games have already been reported - please use the !reprocess command')
   }
