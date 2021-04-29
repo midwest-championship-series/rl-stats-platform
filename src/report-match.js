@@ -66,13 +66,5 @@ module.exports = async (params) => {
     detail: { game_ids: gameIdsToProcess, league_id, reply_to_channel },
   })
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   return detail
-=======
-  return { league_id, replays }
->>>>>>> add league_id to replay parsing object
-=======
-  return detail
->>>>>>> pass reply_to_channel through replay parsing
 }
