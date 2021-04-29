@@ -9,7 +9,7 @@ const schema = {
     type: [
       {
         key: { type: String, required: true },
-        value: { type: Object, required: true },
+        value: { type: String, required: true },
       },
     ],
     default: [],
