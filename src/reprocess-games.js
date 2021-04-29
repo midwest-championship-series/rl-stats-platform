@@ -52,7 +52,7 @@ const matchGetters = {
 module.exports = async (collection, criteria) => {
   if (!matchGetters[collection]) throw new Error(`no query implemented for collection: ${collection}`)
   const messages = (await matchGetters[collection](criteria))
-    .filter((match) => (match.games && match.games.length > 0) || match.forfeited_by_team)
+    .filter((match) => match.status === 'closed')
     .map((match) => {
       const detail = {
         match_id: match._id.toHexString(),

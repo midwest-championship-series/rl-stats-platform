@@ -4,7 +4,6 @@ const { createModel } = require('../../services/mongodb')
 const Model = createModel(
   'Game',
   {
-    ballchasing_id: { type: String },
     // where we got the replay from
     replay_origin: {
       type: {
