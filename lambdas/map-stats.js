@@ -12,7 +12,6 @@ const handler = async (event) => {
       games.push(JSON.parse(Body))
     }
     await map(games)
-    console.log(games)
   } catch (err) {
     console.error(err)
     await reportError(err, 'mapping match stats')
