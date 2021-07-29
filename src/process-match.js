@@ -201,7 +201,7 @@ const handleReplays = async (filters, processedAt) => {
     console.info('created players', newPlayers)
     throw new RecoverableError(
       'NO_PLAYER_FOUND',
-      `created new players: ${newPlayers.map((p) => p.screen_name).join(', ')}`,
+      `created new players:\n${newPlayers.map((p) => `${p.screen_name} _id:${p._id}`).join('\n')}`,
     )
   }
   console.info('processing match stats')
