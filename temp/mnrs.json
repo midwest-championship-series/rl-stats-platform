@@ -1,0 +1,902 @@
+[
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "7/22/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 1,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
+    "scheduled_date": "7/22/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211468",
+    "team_2_id": "600c98b22c38930008d9cbd6",
+    "week": 1,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
+    "scheduled_date": "7/22/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "600c8fc9f87c0c000826a31e",
+    "week": 1,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
+    "scheduled_date": "7/22/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "600c98b22c38930008d9cbd5",
+    "week": 1,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
+    "scheduled_date": "7/22/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c97cceedc0d0008211463",
+    "week": 1,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
+    "scheduled_date": "7/29/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b3eedc0d0008211468",
+    "week": 2,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddca",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
+    "scheduled_date": "7/29/3021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211467",
+    "team_2_id": "600c8fc9f87c0c000826a31e",
+    "week": 2,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
+    "scheduled_date": "7/29/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "600c97cceedc0d0008211463",
+    "week": 2,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "7/29/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd5",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 2,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
+    "scheduled_date": "7/29/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "600c98b22c38930008d9cbd6",
+    "week": 2,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "scheduled_date": "7/29/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c98b2eedc0d0008211466",
+    "week": 2,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
+    "scheduled_date": "7/29/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c98b3eedc0d0008211468",
+    "week": 2,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "7/29/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd6",
+    "team_2_id": "600c97e2eedc0d0008211464",
+    "week": 2,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
+    "scheduled_date": "7/29/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c98b22c38930008d9cbd5",
+    "week": 2,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "7/29/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c8fc9f87c0c000826a31e",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 2,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "8/5/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd6",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 3,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc4",
+    "scheduled_date": "8/5/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c8fc9f87c0c000826a31e",
+    "team_2_id": "600c98b32c38930008d9cbd8",
+    "week": 3,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "scheduled_date": "8/5/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd5",
+    "team_2_id": "600c98b2eedc0d0008211466",
+    "week": 3,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "8/5/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 3,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "8/5/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211468",
+    "team_2_id": "600c97e2eedc0d0008211464",
+    "week": 3,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c8fc9f87c0c000826a31e",
+    "team_2_id": "600c98b2eedc0d0008211466",
+    "week": 4,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "600c98b3eedc0d0008211468",
+    "week": 4,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd6",
+    "team_2_id": "600c98b22c38930008d9cbd5",
+    "week": 4,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c97e2eedc0d0008211464",
+    "week": 4,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc4",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b32c38930008d9cbd8",
+    "week": 4,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd5",
+    "team_2_id": "600c8fc9f87c0c000826a31e",
+    "week": 4,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211468",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 4,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c98b22c38930008d9cbd6",
+    "week": 4,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 4,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddca",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
+    "scheduled_date": "8/12/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211467",
+    "team_2_id": "600c97cceedc0d0008211463",
+    "week": 4,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "8/19/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 5,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddca",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "8/19/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211467",
+    "team_2_id": "600c97e2eedc0d0008211464",
+    "week": 5,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
+    "scheduled_date": "8/19/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c98b3eedc0d0008211468",
+    "week": 5,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
+    "scheduled_date": "8/19/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd5",
+    "team_2_id": "600c97cceedc0d0008211463",
+    "week": 5,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
+    "scheduled_date": "8/19/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c8fc9f87c0c000826a31e",
+    "team_2_id": "600c98b22c38930008d9cbd6",
+    "week": 5,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c8fc9f87c0c000826a31e",
+    "week": 6,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd6",
+    "team_2_id": "600c98b2eedc0d0008211466",
+    "week": 6,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211468",
+    "team_2_id": "600c98b22c38930008d9cbd5",
+    "week": 6,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc4",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "600c98b32c38930008d9cbd8",
+    "week": 6,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 6,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd5",
+    "team_2_id": "600c97e2eedc0d0008211464",
+    "week": 6,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 6,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 6,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c8fc9f87c0c000826a31e",
+    "team_2_id": "600c98b3eedc0d0008211468",
+    "week": 6,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
+    "scheduled_date": "9/16/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd6",
+    "team_2_id": "600c97cceedc0d0008211463",
+    "week": 6,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "9/23/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 7,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
+    "scheduled_date": "9/23/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd6",
+    "team_2_id": "600c98b3eedc0d0008211468",
+    "week": 7,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "9/23/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c8fc9f87c0c000826a31e",
+    "team_2_id": "600c97e2eedc0d0008211464",
+    "week": 7,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "9/23/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd5",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 7,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "scheduled_date": "9/23/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b2eedc0d0008211466",
+    "week": 7,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211468",
+    "team_2_id": "600c97cceedc0d0008211463",
+    "week": 8,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddca",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211467",
+    "team_2_id": "600c98b22c38930008d9cbd5",
+    "week": 8,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "600c8fc9f87c0c000826a31e",
+    "week": 8,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "600c98b22c38930008d9cbd6",
+    "week": 8,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc4",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c98b32c38930008d9cbd8",
+    "week": 8,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c8fc9f87c0c000826a31e",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 8,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c97e2eedc0d0008211464",
+    "week": 8,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd6",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 8,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211468",
+    "team_2_id": "600c98b2eedc0d0008211466",
+    "week": 8,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc4",
+    "scheduled_date": "9/30/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd5",
+    "team_2_id": "600c98b32c38930008d9cbd8",
+    "week": 8,
+    "offstream": "x"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddca",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
+    "scheduled_date": "10/7/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211467",
+    "team_2_id": "600c98b22c38930008d9cbd6",
+    "week": 9,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
+    "scheduled_date": "10/7/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c8fc9f87c0c000826a31e",
+    "week": 9,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
+    "scheduled_date": "10/7/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c98b22c38930008d9cbd5",
+    "week": 9,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
+    "scheduled_date": "10/7/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "600c97cceedc0d0008211463",
+    "week": 9,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
+    "scheduled_date": "10/7/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "600c98b3eedc0d0008211468",
+    "week": 9,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "10/14/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211468",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 10,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "scheduled_date": "10/14/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "600c98b2eedc0d0008211466",
+    "week": 10,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "10/14/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 10,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc4",
+    "scheduled_date": "10/14/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd6",
+    "team_2_id": "600c98b32c38930008d9cbd8",
+    "week": 10,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
+    "scheduled_date": "10/14/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c8fc9f87c0c000826a31e",
+    "team_2_id": "600c98b22c38930008d9cbd5",
+    "week": 10,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
+    "scheduled_date": "10/21/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c8fc9f87c0c000826a31e",
+    "week": 11,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
+    "scheduled_date": "10/21/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd5",
+    "team_2_id": "600c98b22c38930008d9cbd6",
+    "week": 11,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
+    "scheduled_date": "10/21/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c97cceedc0d0008211463",
+    "week": 11,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddca",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
+    "scheduled_date": "10/21/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211467",
+    "team_2_id": "600c98b3eedc0d0008211468",
+    "week": 11,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "10/21/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "600c97e2eedc0d0008211464",
+    "week": 11,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "scheduled_date": "11/4/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "600c98b2eedc0d0008211466",
+    "week": 12,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddca",
+    "scheduled_date": "11/4/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "600c98b2eedc0d0008211467",
+    "week": 12,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc4",
+    "scheduled_date": "11/4/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211468",
+    "team_2_id": "600c98b32c38930008d9cbd8",
+    "week": 12,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
+    "scheduled_date": "11/4/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b22c38930008d9cbd5",
+    "week": 12,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
+    "scheduled_date": "11/4/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd6",
+    "team_2_id": "600c8fc9f87c0c000826a31e",
+    "week": 12,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
+    "scheduled_date": "11/11/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c8fc9f87c0c000826a31e",
+    "team_2_id": "600c97cceedc0d0008211463",
+    "week": 13,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
+    "scheduled_date": "11/11/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c98b22c38930008d9cbd6",
+    "week": 13,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
+    "scheduled_date": "11/11/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b22c38930008d9cbd5",
+    "team_2_id": "600c98b3eedc0d0008211468",
+    "week": 13,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "11/11/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd8",
+    "team_2_id": "600c97e2eedc0d0008211464",
+    "week": 13,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddca",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "11/11/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211467",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 13,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
+    "scheduled_date": "11/18/2021",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "600c98b22c38930008d9cbd5",
+    "week": 14,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc4",
+    "scheduled_date": "11/18/2021",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "600c98b32c38930008d9cbd8",
+    "week": 14,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddca",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "scheduled_date": "11/18/2021",
+    "scheduled_time": "7:30:00 PM",
+    "team_1_id": "600c98b2eedc0d0008211467",
+    "team_2_id": "600c98b2eedc0d0008211466",
+    "week": 14,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
+    "scheduled_date": "11/18/2021",
+    "scheduled_time": "8:15:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211468",
+    "team_2_id": "600c8fc9f87c0c000826a31e",
+    "week": 14,
+    "offstream": ""
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
+    "scheduled_date": "11/18/2021",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b22c38930008d9cbd6",
+    "week": 14,
+    "offstream": ""
+  }
+ ]
