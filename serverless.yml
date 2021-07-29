@@ -12,7 +12,6 @@ package:
     - .vscode*
     - README*
     - ./**/__tests__/**
-    - temp/**
     - .env
 
 custom:
