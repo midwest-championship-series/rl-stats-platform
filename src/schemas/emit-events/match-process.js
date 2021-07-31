@@ -17,6 +17,7 @@ module.exports = [
       .keys({
         collection: joi.string().required(),
         params: joi.object().unknown(true).required(),
+        reply_to_channel: joi.string(),
       })
       .required(),
   }),
@@ -99,6 +100,10 @@ module.exports = [
         joi.object().keys({
           game_ids: joi.array().min(1).items(joi.string()),
           match_id: joi.objectId().required(),
+        }),
+        joi.object().keys({
+          match_id: joi.string().required(),
+          forfeit_team_id: joi.object().required(), // it's an actual objectid for some reason
         }),
       )
       .required(),

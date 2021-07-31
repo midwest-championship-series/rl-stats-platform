@@ -69,5 +69,5 @@ module.exports = async (collection, criteria) => {
         detail,
       }
     })
-  await eventBridge.emitEvents(messages)
+  return eventBridge.emitEvents(messages)
 }
