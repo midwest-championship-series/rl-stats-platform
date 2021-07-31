@@ -28,6 +28,15 @@ describe('emit-events', () => {
     expect(() => validate(invalid)).toThrowError('"detail" is required')
   })
   describe('process match schemas', () => {
+    it('should validate a match reprocess', () => {
+      validate({
+        type: 'MATCH_REPROCESS',
+        detail: {
+          collection: 'matches',
+          params: { week: 1 },
+        },
+      })
+    })
     it('should validate a process match end', () => {
       validate({
         type: 'MATCH_PROCESS_ENDED',
