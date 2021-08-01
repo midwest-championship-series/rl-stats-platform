@@ -40,10 +40,7 @@ const handler = async (event) => {
         }
         throw err // this will put the message back on the queue for re-processing
       } else {
-        if (!err.code || !message.reply_to_channel) {
-          // this is an error which we have not planned for
-          await reportError(err, errContext, message.reply_to_channel)
-        }
+        await reportError(err, errContext, message.reply_to_channel)
       }
     }
   }

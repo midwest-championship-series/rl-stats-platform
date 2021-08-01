@@ -43,8 +43,7 @@ const handler = async () => {
     if (match.team_ids.some((id) => id.equals('600c97cceedc0d0008211463'))) {
       const newTeams = match.team_ids.filter((id) => !id.equals('600c97cceedc0d0008211463'))
       newTeams.push('600c98b3eedc0d0008211469')
-      match.team_ids = newTeams
-      await match.save()
+      await Matches.updateOne({ _id: match._id }, { $set: { team_ids: newTeams } })
     }
   }
   console.log('finished')
