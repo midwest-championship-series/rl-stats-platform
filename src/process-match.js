@@ -278,6 +278,7 @@ const handleForfeit = async (filters, processedAt) => {
   )
 
   match.forfeited_by_team = forfeit_team_id
+  match.forfeit_datetime = forfeit_date
   await match.save()
 
   return {
