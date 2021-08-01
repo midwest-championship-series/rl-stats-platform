@@ -249,7 +249,7 @@ const handleForfeit = async (filters, processedAt) => {
         path: 'league',
       },
     })
-  const forfeit_date = match.scheduled_datetime || new Date()
+  const forfeit_date = match.forfeit_datetime || match.scheduled_datetime || new Date()
   const players = await Players.find().onTeams(match.team_ids, forfeit_date)
   const { teams, season } = match
   const league = season.league

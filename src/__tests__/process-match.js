@@ -795,24 +795,6 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(new Error('forfeited match must have best_of property'))
   })
-  it('should fail if forfeit match is not open', async () => {
-    Match.findById = jest.fn(() => ({
-      populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
-    }))
-    players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
-    matchesFindByIdMock.mockResolvedValue({
-      ...mockOpenMatch(),
-      status: 'closed',
-    })
-    await expect(
-      processMatch({
-        league_id: '5ebc62b1d09245d2a7c63516',
-        match_id: '5f2c5e4e08c88e00084b44a6',
-        forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
-        reply_to_channel: '692994579305332806',
-      }),
-    ).rejects.toEqual(new Error('forfeited match cannot be reported as it is already closed'))
-  })
   it('should not add stats for games which are not played by league teams', async () => {
     players.Model.find.mockResolvedValue([mockPlayers[0]])
     const mockTeam = { _id: new ObjectId('5ebc62a9d09245d2a7c62e5a') }
