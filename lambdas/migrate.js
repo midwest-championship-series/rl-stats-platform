@@ -33,30 +33,21 @@ const createSchedule = async (leagueName, seasonName, schedule) => {
 }
 
 const handler = async () => {
-  const newSeasonName = '4'
-  // make sure season exists
-  const leagues = await Leagues.find({
-    $or: [{ name: 'mncs' }, { name: 'clmn' }, { name: 'mnrs' }],
-  }).populate('seasons')
-  for (let league of leagues) {
-    let newSeason = league.seasons.find((s) => s.name === newSeasonName)
-    if (!newSeason) {
-      console.log(`${league.name} has no season ${newSeasonName}`)
-      newSeason = new Seasons({
-        name: newSeasonName,
-        season_type: 'REG',
-        match_ids: [],
-      })
-      await newSeason.save()
-      league.season_ids.push(newSeason._id)
+  const [mnrs] = await Leagues.find({ name: 'mnrs' }).populate({
+    path: 'current_season',
+    populate: {
+      path: 'matches',
+    },
+  })
+  for (let match of mnrs.current_season.matches) {
+    if (match.team_ids.some((id) => id.equals('600c97cceedc0d0008211463'))) {
+      const newTeams = match.team_ids.filter((id) => !id.equals('600c97cceedc0d0008211463'))
+      newTeams.push('600c98b3eedc0d0008211469')
+      match.team_ids = newTeams
+      await match.save()
     }
-    league.current_season_id = newSeason._id
-    await league.save()
   }
-
-  await createSchedule('mncs', newSeasonName, parseSchedule('mncs.json'))
-  await createSchedule('clmn', newSeasonName, parseSchedule('clmn.json'))
-  await createSchedule('mnrs', newSeasonName, parseSchedule('mnrs.json'))
+  console.log('finished')
 }
 
 module.exports = { handler }
