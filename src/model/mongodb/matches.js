@@ -22,6 +22,7 @@ const Model = createModel(
     game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
     best_of: { type: Number },
     forfeited_by_team: { type: Schema.Types.ObjectId },
+    forfeit_datetime: { type: Date },
     winning_team_id: { type: Schema.Types.ObjectId },
     scheduled_datetime: { type: Date },
   },
