@@ -3,9 +3,12 @@ const axios = require('axios').default
 const botUrl = process.env.MNRL_BOT_URL
 const errorChannelId = process.env.ERROR_CHANNEL_ID
 
-const reportError = (error, context) => {
+const reportError = async (error, context, copyToChannel) => {
   const message = `context:\n${context}\n${error.stack || error.message || error}`
-  return sendToChannel(errorChannelId, message)
+  await sendToChannel(errorChannelId, message)
+  if (copyToChannel) {
+    await sendToChannel(copyToChannel, error.message)
+  }
 }
 
 const sendToChannel = (channelId, message) => {

@@ -42,10 +42,7 @@ const handler = async (event) => {
       } else {
         if (!err.code || !message.reply_to_channel) {
           // this is an error which we have not planned for
-          await reportError(err, errContext)
-        }
-        if (message.reply_to_channel) {
-          await sendToChannel(message.reply_to_channel, err.message)
+          await reportError(err, errContext, message.reply_to_channel)
         }
       }
     }

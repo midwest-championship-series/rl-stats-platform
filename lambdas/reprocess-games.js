@@ -11,7 +11,7 @@ const handler = async (event) => {
     }
   } catch (err) {
     console.error(err)
-    await reportError(err, `error while reprocessing ${collection}`)
+    await reportError(err, `error while reprocessing ${collection}`, reply_to_channel)
   }
 }
 

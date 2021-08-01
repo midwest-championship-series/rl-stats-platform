@@ -249,12 +249,6 @@ const handleForfeit = async (filters, processedAt) => {
         path: 'league',
       },
     })
-  if (match.status !== 'open') {
-    throw new UnRecoverableError(
-      'MATCH_STATUS_VALIDATION',
-      'forfeited match cannot be reported as it is already closed',
-    )
-  }
   const forfeit_date = match.scheduled_datetime || new Date()
   const players = await Players.find().onTeams(match.team_ids, forfeit_date)
   const { teams, season } = match
