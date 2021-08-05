@@ -7,6 +7,7 @@ const { reportError } = require('../src/services/rl-bot')
 const schemas = require('../src/schemas')
 const conform = require('../src/util/conform-schema')
 const tables = ['player_games', 'team_games']
+const { RecoverableError, UnRecoverableError } = require('../src/util/errors')
 
 const handler = async (event) => {
   let currentKey, currentSource
@@ -31,12 +32,16 @@ const handler = async (event) => {
       console.error(errors)
       throw new Error(`${errors.length} errors occurred while indexing into bigquery`)
     }
-    await Promise.all([
-      tables.map((name) => {
-        const where = `epoch_processed < ${processedAt} AND match_id = '${matchId}'`
-        return query('DELETE', name, where)
-      }),
-    ])
+    try {
+      await Promise.all([
+        tables.map((name) => {
+          const where = `epoch_processed < ${processedAt} AND match_id = '${matchId}'`
+          return query('DELETE', name, where)
+        }),
+      ])
+    } catch (err) {
+      throw new UnRecoverableError('ERR_BIGQUERY_UPDATE', err.message)
+    }
     await aws.eventBridge.emitEvent({
       type: 'MATCH_BIGQUERY_STATS_LOADED',
       detail: { match_id: matchId },
@@ -47,6 +52,9 @@ const handler = async (event) => {
       err,
       `encountered error while indexing stats to bigquery. key: ${currentKey}, source: ${currentSource}`,
     )
+    if (err instanceof RecoverableError) {
+      throw err // causes lambda to retry
+    }
   }
 }
 
