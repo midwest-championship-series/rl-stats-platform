@@ -14,7 +14,6 @@ router.post('/', async (req, res, next) => {
     next()
   } catch (err) {
     err.source = 'event-validation'
-    console.error(err)
     next(err)
   }
 })
