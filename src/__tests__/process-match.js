@@ -797,7 +797,7 @@ describe('process-match', () => {
   })
   it('should not add stats for games which are not played by league teams', async () => {
     players.Model.find.mockResolvedValue([mockPlayers[0]])
-    const mockTeam = { _id: new ObjectId('5ebc62a9d09245d2a7c62e5a') }
+    const mockTeam = { _id: new ObjectId('5ebc62a9d09245d2a7c62e5a'), name: 'Duluth Superiors' }
     teams.Model.find.mockResolvedValue([mockTeam])
     await expect(
       processMatch({
@@ -810,7 +810,9 @@ describe('process-match', () => {
         ],
       }),
     ).rejects.toEqual(
-      new Error(`expected to process match between two teams but got 1. Teams: ${mockTeam._id.toHexString()}.`),
+      new Error(
+        `expected to process match between two teams but got 1. Teams:\n${mockTeam._id.toHexString()} Duluth Superiors`,
+      ),
     )
   })
   it('should throw an error if the match does not meet best_of requirements', async () => {

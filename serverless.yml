@@ -50,6 +50,7 @@ provider:
     ERROR_CHANNEL_ID: '692994579305332806'
     ELASTIC_HOST: ${ssm:${self:provider.stage}-mnrl-elastic-host~true}
     PRODUCED_STATS_BUCKET: ${self:resources.Outputs.ProducedStatsBucketName.Value}
+    LIVE_STATS_BUCKET: ${self:resources.Outputs.LiveStatsBucketName.Value}
     GOOGLE_PROJECT_ID: mnrl-269717
     EVENT_BUS: ${self:resources.Outputs.RLStatsEventBus.Value}
     REPLAY_FILES_BUCKET: ${cf:rl-stats-setup-prod.ReplayBucket}
@@ -137,6 +138,7 @@ functions:
     handler: lambdas/rest-api.handler
     name: ${self:service}-rest-api-versioned-${self:provider.stage}
     timeout: 30
+    memorySize: 1048
     events:
       - http:
           path: /
@@ -193,6 +195,17 @@ functions:
     name: ${self:service}-sync-bigquery-${self:provider.stage}
     timeout: 300
 
+  live-game-events:
+    handler: lambdas/live-game-events.handler
+    name: ${self:service}-live-game-events-${self:provider.stage}
+    timeout: 30
+    events:
+      - eventBridge:
+          eventBus: !Ref RLStatsEventBus
+          pattern:
+            detail-type:
+              - LIVE_GAME_EVENTS
+
 resources:
   Resources:
     GamesQueue:
@@ -215,6 +228,14 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:service}-produced-stats-${self:provider.stage}-${self:provider.region}
+        LifecycleConfiguration:
+          Rules:
+            - ExpirationInDays: 1
+              Status: Enabled
+    LiveStatsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-live-stats-${self:provider.stage}-${self:provider.region}
         LifecycleConfiguration:
           Rules:
             - ExpirationInDays: 1
@@ -285,6 +306,9 @@ resources:
     ProducedStatsBucketName:
       Value:
         Ref: StatsBucket
+    LiveStatsBucketName:
+      Value:
+        Ref: LiveStatsBucket
     RLStatsEventBus:
       Value:
         Ref: RLStatsEventBus
