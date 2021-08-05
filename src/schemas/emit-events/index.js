@@ -1,4 +1,4 @@
-const schemas = [...require('./match-process')]
+const schemas = [...require('./match-process'), ...require('./live-game')]
 
 module.exports = (event) => {
   const schemaMatch = schemas.find((schema) => schema.type === event.type)

@@ -10,10 +10,10 @@ router.post('/', async (req, res, next) => {
     } else {
       req.context = await eventBridge.emitEvent(body)
     }
+    console.log(req.context)
     next()
   } catch (err) {
     err.source = 'event-validation'
-    console.error(err)
     next(err)
   }
 })

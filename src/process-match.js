@@ -99,7 +99,7 @@ const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
   )
   if (teams.length !== 2) {
     let errMsg = `expected to process match between two teams but got ${teams.length}.`
-    if (teams.length > 0) errMsg += ` Teams: ${teams.map((t) => t._id.toHexString()).join(', ')}.`
+    if (teams.length > 0) errMsg += ` Teams:\n${teams.map((t) => `${t._id.toHexString()} ${t.name}`).join('\n')}`
     throw new UnRecoverableError('MATCH_TEAM_COUNT', errMsg)
   }
   const matches = (
