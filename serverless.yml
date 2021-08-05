@@ -21,6 +21,9 @@ custom:
   dbHost:
     notprod: mnrl-dev-7nmqy.mongodb.net
     prod: mnrl-7nmqy.mongodb.net
+  playByPlayChannelId:
+    notprod: '692994579305332806'
+    prod: '872698617629143040'
 
 provider:
   name: aws
@@ -51,6 +54,7 @@ provider:
     ELASTIC_HOST: ${ssm:${self:provider.stage}-mnrl-elastic-host~true}
     PRODUCED_STATS_BUCKET: ${self:resources.Outputs.ProducedStatsBucketName.Value}
     LIVE_STATS_BUCKET: ${self:resources.Outputs.LiveStatsBucketName.Value}
+    LIVE_STATS_CHANNEL_ID: ${self:custom.playByPlayChannelId.${self:provider.stage}, self:custom.playByPlayChannelId.notprod}
     GOOGLE_PROJECT_ID: mnrl-269717
     EVENT_BUS: ${self:resources.Outputs.RLStatsEventBus.Value}
     REPLAY_FILES_BUCKET: ${cf:rl-stats-setup-prod.ReplayBucket}
