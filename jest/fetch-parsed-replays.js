@@ -2,20 +2,20 @@ const AWS = require('aws-sdk')
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'rl-stats' })
 AWS.config.credentials = credentials
 const bb = require('bluebird')
+const fs = require('fs')
 const path = require('path')
-const axios = require('axios').default
 require('dotenv').config()
 const { s3, eventBridge } = require('../src/services/aws')
 const { gzipObject } = require('../src/util/gzip')
 
-const apiKey = process.env.RL_STATS_API_KEY
-const outName = path.join(__dirname, '..', 'lambdas', '__tests__', 'games.json.gz')
+const outPath = path.join(__dirname, '..', 'lambdas', '__tests__')
 const bucket = 'rl-stats-producer-event-stats-dev-us-east-1'
 const files = [
-  'ballchasing:3ff70d9e-078f-47fd-901b-5b92a1aea2d3.json',
-  'ballchasing:7a462c90-ad57-4ce9-a73e-0a49652d3824.json',
-  'ballchasing:a1dcfeff-eba5-4880-9b25-137f5fe83d33.json',
-  'ballchasing:f02e4f07-4e8c-43b1-9397-e1ecba5284a0.json',
+  'ballchasing:b8135479-b364-41d0-a78a-7a49ed468521.json',
+  'ballchasing:984bd5a4-4a3e-4e2f-b520-47a5bdf8388c.json',
+  'ballchasing:7b30993d-bc1e-4c7c-81c5-6ed226888dc8.json',
+  'ballchasing:5abd5cb5-e760-45da-8df2-ba0356cf778f.json',
+  'ballchasing:5229c01b-9229-4821-86cc-59171b541b70.json',
 ]
 
 const fetchData = () => {
@@ -26,7 +26,8 @@ const fetchData = () => {
 
 try {
   fetchData().then((replays) => {
-    return gzipObject(outName, replays)
+    fs.writeFileSync(path.join(outPath, 'example-game.json'), JSON.stringify(replays[0], null, 2))
+    return gzipObject(path.join(outPath, 'games.json.gz'), replays)
   })
 } catch (err) {
   console.error(err)
