@@ -187,7 +187,6 @@ functions:
     handler: lambdas/index-bigquery.handler
     name: ${self:service}-index-bigquery-${self:provider.stage}
     timeout: 300
-    reservedConcurrency: 1
     events:
       - eventBridge:
           eventBus: !Ref RLStatsEventBus

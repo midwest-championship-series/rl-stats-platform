@@ -32,16 +32,6 @@ const handler = async (event) => {
       console.error(errors)
       throw new Error(`${errors.length} errors occurred while indexing into bigquery`)
     }
-    try {
-      await Promise.all([
-        tables.map((name) => {
-          const where = `epoch_processed < ${processedAt} AND match_id = '${matchId}'`
-          return query('DELETE', name, where)
-        }),
-      ])
-    } catch (err) {
-      throw new UnRecoverableError('ERR_BIGQUERY_UPDATE', err.message)
-    }
     await aws.eventBridge.emitEvent({
       type: 'MATCH_BIGQUERY_STATS_LOADED',
       detail: { match_id: matchId },
