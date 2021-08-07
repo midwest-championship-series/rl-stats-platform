@@ -10,6 +10,7 @@ const { gzipObject } = require('../src/util/gzip')
 
 const outPath = path.join(__dirname, '..', 'lambdas', '__tests__')
 const bucket = 'rl-stats-producer-event-stats-dev-us-east-1'
+// this is match id 6102ff0234129d000872c442
 const files = [
   'ballchasing:b8135479-b364-41d0-a78a-7a49ed468521.json',
   'ballchasing:984bd5a4-4a3e-4e2f-b520-47a5bdf8388c.json',
@@ -26,8 +27,16 @@ const fetchData = () => {
 
 try {
   fetchData().then((replays) => {
-    fs.writeFileSync(path.join(outPath, 'example-game.json'), JSON.stringify(replays[0], null, 2))
-    return gzipObject(path.join(outPath, 'games.json.gz'), replays)
+    replays.forEach((replay) => {
+      replay[1].players.forEach((player) => {
+        player.id.platform = 'Steam'
+      })
+    })
+    fs.writeFileSync(path.join(outPath, 'example-game.json'), JSON.stringify(replays[0][1], null, 2))
+    return gzipObject(
+      path.join(outPath, 'games.json.gz'),
+      replays.map((r) => r[1]),
+    )
   })
 } catch (err) {
   console.error(err)
