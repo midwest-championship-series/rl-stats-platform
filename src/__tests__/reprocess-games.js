@@ -30,18 +30,60 @@ const mockMatches = [
   {
     _id: new ObjectId('5ebc62b0d09245d2a7c63401'),
     games: [
-      { replay_origin: { source: 'ballchasing', key: '595ac248-5f25-48a5-bf39-9b50f25e97a1' } },
-      { replay_origin: { source: 'ballchasing', key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e' } },
-      { replay_origin: { source: 'ballchasing', key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6' } },
-      { replay_origin: { source: 'ballchasing', key: '877f66a5-23c9-4397-9c47-97c9870351c0' } },
+      {
+        replay_origin: { source: 'ballchasing', key: '595ac248-5f25-48a5-bf39-9b50f25e97a1' },
+        replay_stored: {
+          source: 'rl-stats-setup-replays-prod-us-east-1',
+          key: '595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
+        },
+      },
+      {
+        replay_origin: { source: 'ballchasing', key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e' },
+        replay_stored: {
+          source: 'rl-stats-setup-replays-prod-us-east-1',
+          key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+        },
+      },
+      {
+        replay_origin: { source: 'ballchasing', key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6' },
+        replay_stored: {
+          source: 'rl-stats-setup-replays-prod-us-east-1',
+          key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
+        },
+      },
+      {
+        replay_origin: { source: 'ballchasing', key: '877f66a5-23c9-4397-9c47-97c9870351c0' },
+        replay_stored: {
+          source: 'rl-stats-setup-replays-prod-us-east-1',
+          key: '877f66a5-23c9-4397-9c47-97c9870351c0.replay',
+        },
+      },
     ],
   },
   {
     _id: new ObjectId('5ebc62b0d09245d2a7c63402'),
     games: [
-      { replay_origin: { source: 'ballchasing', key: '126f416e-d845-45b9-b843-8afe300d4e2a' } },
-      { replay_origin: { source: 'ballchasing', key: 'ab847408-5927-442b-b888-c5a2d68c96e4' } },
-      { replay_origin: { source: 'ballchasing', key: 'c813c19a-2a4e-4df9-9fda-608425b1a356' } },
+      {
+        replay_origin: { source: 'ballchasing', key: '126f416e-d845-45b9-b843-8afe300d4e2a' },
+        replay_stored: {
+          source: 'rl-stats-setup-replays-prod-us-east-1',
+          key: '126f416e-d845-45b9-b843-8afe300d4e2a.replay',
+        },
+      },
+      {
+        replay_origin: { source: 'ballchasing', key: 'ab847408-5927-442b-b888-c5a2d68c96e4' },
+        replay_stored: {
+          source: 'rl-stats-setup-replays-prod-us-east-1',
+          key: 'ab847408-5927-442b-b888-c5a2d68c96e4.replay',
+        },
+      },
+      {
+        replay_origin: { source: 'ballchasing', key: 'c813c19a-2a4e-4df9-9fda-608425b1a356' },
+        replay_stored: {
+          source: 'rl-stats-setup-replays-prod-us-east-1',
+          key: 'c813c19a-2a4e-4df9-9fda-608425b1a356.replay',
+        },
+      },
     ],
   },
   {
@@ -52,9 +94,27 @@ const mockMatches = [
 const extraMockMatch = {
   _id: new ObjectId('5ebc62b0d09245d2a7c63401'),
   games: [
-    { replay_origin: { source: 'ballchasing', key: '126f416e-d845-45b9-b843-8afe300d4e2b' } },
-    { replay_origin: { source: 'ballchasing', key: 'ab847408-5927-442b-b888-c5a2d68c96eb' } },
-    { replay_origin: { source: 'ballchasing', key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b' } },
+    {
+      replay_origin: { source: 'ballchasing', key: '126f416e-d845-45b9-b843-8afe300d4e2b' },
+      replay_stored: {
+        source: 'rl-stats-setup-replays-prod-us-east-1',
+        key: '126f416e-d845-45b9-b843-8afe300d4e2b.replay',
+      },
+    },
+    {
+      replay_origin: { source: 'ballchasing', key: 'ab847408-5927-442b-b888-c5a2d68c96eb' },
+      replay_stored: {
+        source: 'rl-stats-setup-replays-prod-us-east-1',
+        key: 'ab847408-5927-442b-b888-c5a2d68c96eb.replay',
+      },
+    },
+    {
+      replay_origin: { source: 'ballchasing', key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b' },
+      replay_stored: {
+        source: 'rl-stats-setup-replays-prod-us-east-1',
+        key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b.replay',
+      },
+    },
   ],
 }
 const mockSeasons = [
@@ -85,26 +145,26 @@ describe('reprocess-games', () => {
           replays: [
             {
               bucket: {
-                key: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-                source: 'ballchasing',
+                key: '595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-                source: 'ballchasing',
+                key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-                source: 'ballchasing',
+                key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: '877f66a5-23c9-4397-9c47-97c9870351c0',
-                source: 'ballchasing',
+                key: '877f66a5-23c9-4397-9c47-97c9870351c0.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
           ],
@@ -117,20 +177,20 @@ describe('reprocess-games', () => {
           replays: [
             {
               bucket: {
-                key: '126f416e-d845-45b9-b843-8afe300d4e2a',
-                source: 'ballchasing',
+                key: '126f416e-d845-45b9-b843-8afe300d4e2a.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'ab847408-5927-442b-b888-c5a2d68c96e4',
-                source: 'ballchasing',
+                key: 'ab847408-5927-442b-b888-c5a2d68c96e4.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'c813c19a-2a4e-4df9-9fda-608425b1a356',
-                source: 'ballchasing',
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a356.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
           ],
@@ -149,26 +209,26 @@ describe('reprocess-games', () => {
           replays: [
             {
               bucket: {
-                key: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-                source: 'ballchasing',
+                key: '595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-                source: 'ballchasing',
+                key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-                source: 'ballchasing',
+                key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: '877f66a5-23c9-4397-9c47-97c9870351c0',
-                source: 'ballchasing',
+                key: '877f66a5-23c9-4397-9c47-97c9870351c0.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
           ],
@@ -181,20 +241,20 @@ describe('reprocess-games', () => {
           replays: [
             {
               bucket: {
-                key: '126f416e-d845-45b9-b843-8afe300d4e2a',
-                source: 'ballchasing',
+                key: '126f416e-d845-45b9-b843-8afe300d4e2a.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'ab847408-5927-442b-b888-c5a2d68c96e4',
-                source: 'ballchasing',
+                key: 'ab847408-5927-442b-b888-c5a2d68c96e4.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'c813c19a-2a4e-4df9-9fda-608425b1a356',
-                source: 'ballchasing',
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a356.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
           ],
@@ -207,20 +267,20 @@ describe('reprocess-games', () => {
           replays: [
             {
               bucket: {
-                key: '126f416e-d845-45b9-b843-8afe300d4e2b',
-                source: 'ballchasing',
+                key: '126f416e-d845-45b9-b843-8afe300d4e2b.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'ab847408-5927-442b-b888-c5a2d68c96eb',
-                source: 'ballchasing',
+                key: 'ab847408-5927-442b-b888-c5a2d68c96eb.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b',
-                source: 'ballchasing',
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
           ],
@@ -239,26 +299,26 @@ describe('reprocess-games', () => {
           replays: [
             {
               bucket: {
-                key: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-                source: 'ballchasing',
+                key: '595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-                source: 'ballchasing',
+                key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-                source: 'ballchasing',
+                key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: '877f66a5-23c9-4397-9c47-97c9870351c0',
-                source: 'ballchasing',
+                key: '877f66a5-23c9-4397-9c47-97c9870351c0.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
           ],
@@ -271,20 +331,20 @@ describe('reprocess-games', () => {
           replays: [
             {
               bucket: {
-                key: '126f416e-d845-45b9-b843-8afe300d4e2a',
-                source: 'ballchasing',
+                key: '126f416e-d845-45b9-b843-8afe300d4e2a.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'ab847408-5927-442b-b888-c5a2d68c96e4',
-                source: 'ballchasing',
+                key: 'ab847408-5927-442b-b888-c5a2d68c96e4.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'c813c19a-2a4e-4df9-9fda-608425b1a356',
-                source: 'ballchasing',
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a356.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
           ],
@@ -297,20 +357,20 @@ describe('reprocess-games', () => {
           replays: [
             {
               bucket: {
-                key: '126f416e-d845-45b9-b843-8afe300d4e2b',
-                source: 'ballchasing',
+                key: '126f416e-d845-45b9-b843-8afe300d4e2b.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'ab847408-5927-442b-b888-c5a2d68c96eb',
-                source: 'ballchasing',
+                key: 'ab847408-5927-442b-b888-c5a2d68c96eb.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
             {
               bucket: {
-                key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b',
-                source: 'ballchasing',
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b.replay',
+                source: 'rl-stats-setup-replays-prod-us-east-1',
               },
             },
           ],

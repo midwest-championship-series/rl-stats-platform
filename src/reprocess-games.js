@@ -59,8 +59,8 @@ module.exports = async (collection, criteria) => {
         replays: match.games.map((game) => {
           return {
             bucket: {
-              key: game.replay_origin.key,
-              source: game.replay_origin.source,
+              key: game.replay_stored.key,
+              source: game.replay_stored.source,
             },
           }
         }),

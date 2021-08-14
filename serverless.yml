@@ -259,18 +259,18 @@ resources:
       Type: AWS::Events::EventBus
       Properties:
         Name: ${self:service}-${self:provider.stage}
-    ForfeitMatchRule:
-      Type: AWS::Events::Rule
-      Properties:
-        Description: Indicates that a forfeit was reported
-        EventBusName: ${self:resources.Outputs.RLStatsEventBus.Value}
-        EventPattern:
-          detail-type:
-            - MATCH_PROCESS_FORFEIT_REPORTED
-        Targets:
-          - Arn: !GetAtt GamesQueue.Arn
-            InputPath: $.detail
-            Id: SQSqueue
+    # ForfeitMatchRule:
+    #   Type: AWS::Events::Rule
+    #   Properties:
+    #     Description: Indicates that a forfeit was reported
+    #     EventBusName: ${self:resources.Outputs.RLStatsEventBus.Value}
+    #     EventPattern:
+    #       detail-type:
+    #         - MATCH_PROCESS_FORFEIT_REPORTED
+    #     Targets:
+    #       - Arn: !GetAtt GamesQueue.Arn
+    #         InputPath: $.detail
+    #         Id: SQSqueue
     # ProcessMatchRule:
     #   Type: AWS::Events::Rule
     #   Properties:
