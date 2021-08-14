@@ -136,18 +136,18 @@ functions:
             detail-type:
               - MATCH_PROCESS_REPLAYS_PARSED
 
-  process-match:
-    handler: lambdas/process-match.handler
-    name: ${self:service}-process-match-${self:provider.stage}
-    timeout: 30
-    reservedConcurrency: 1
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-              - GamesQueue
-              - Arn
-          batchSize: 1
+  # process-match:
+  #   handler: lambdas/process-match.handler
+  #   name: ${self:service}-process-match-${self:provider.stage}
+  #   timeout: 30
+  #   reservedConcurrency: 1
+  #   events:
+  #     - sqs:
+  #         arn:
+  #           Fn::GetAtt:
+  #             - GamesQueue
+  #             - Arn
+  #         batchSize: 1
 
   rest-api-versioned:
     handler: lambdas/rest-api.handler
@@ -223,14 +223,14 @@ functions:
 
 resources:
   Resources:
-    GamesQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${self:service}-process-games-queue-${self:provider.stage}
-        DelaySeconds: 0
-        MessageRetentionPeriod: 345600
-        ReceiveMessageWaitTimeSeconds: 20
-        VisibilityTimeout: 120
+    # GamesQueue:
+    #   Type: AWS::SQS::Queue
+    #   Properties:
+    #     QueueName: ${self:service}-process-games-queue-${self:provider.stage}
+    #     DelaySeconds: 0
+    #     MessageRetentionPeriod: 345600
+    #     ReceiveMessageWaitTimeSeconds: 20
+    #     VisibilityTimeout: 120
     ReportMatchQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -271,18 +271,18 @@ resources:
           - Arn: !GetAtt GamesQueue.Arn
             InputPath: $.detail
             Id: SQSqueue
-    ProcessMatchRule:
-      Type: AWS::Events::Rule
-      Properties:
-        Description: Process match after game data has been retrieved
-        EventBusName: ${self:resources.Outputs.RLStatsEventBus.Value}
-        EventPattern:
-          detail-type:
-            - MATCH_PROCESS_INIT
-        Targets:
-          - Arn: !GetAtt GamesQueue.Arn
-            InputPath: $.detail
-            Id: SQSqueue
+    # ProcessMatchRule:
+    #   Type: AWS::Events::Rule
+    #   Properties:
+    #     Description: Process match after game data has been retrieved
+    #     EventBusName: ${self:resources.Outputs.RLStatsEventBus.Value}
+    #     EventPattern:
+    #       detail-type:
+    #         - MATCH_PROCESS_INIT
+    #     Targets:
+    #       - Arn: !GetAtt GamesQueue.Arn
+    #         InputPath: $.detail
+    #         Id: SQSqueue
     ReportMatchRule:
       Type: AWS::Events::Rule
       Properties:
@@ -295,29 +295,30 @@ resources:
           - Arn: !GetAtt ReportMatchQueue.Arn
             InputPath: $.detail
             Id: SQSqueue
-    EventBridgeToSqsPolicy:
-      Type: AWS::SQS::QueuePolicy
-      Properties:
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Principal:
-                Service: events.amazonaws.com
-              Action: SQS:SendMessage
-              Resource:
-                - Fn::GetAtt:
-                    - GamesQueue
-                    - Arn
-                - Fn::GetAtt:
-                    - ReportMatchQueue
-                    - Arn
-        Queues:
-          - Ref: GamesQueue
-          - Ref: ReportMatchQueue
+    # @todo stage this queue in front of the replay parser
+    # EventBridgeToSqsPolicy:
+    #   Type: AWS::SQS::QueuePolicy
+    #   Properties:
+    #     PolicyDocument:
+    #       Statement:
+    #         - Effect: Allow
+    #           Principal:
+    #             Service: events.amazonaws.com
+    #           Action: SQS:SendMessage
+    #           Resource:
+    #             - Fn::GetAtt:
+    #                 - GamesQueue
+    #                 - Arn
+    #             - Fn::GetAtt:
+    #                 - ReportMatchQueue
+    #                 - Arn
+    #     Queues:
+    #       - Ref: GamesQueue
+    #       - Ref: ReportMatchQueue
   Outputs:
-    GamesQueue:
-      Value:
-        Ref: GamesQueue
+    # GamesQueue:
+    #   Value:
+    #     Ref: GamesQueue
     ProducedStatsBucketName:
       Value:
         Ref: StatsBucket

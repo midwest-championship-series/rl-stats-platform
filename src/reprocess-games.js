@@ -56,16 +56,17 @@ module.exports = async (collection, criteria) => {
     .map((match) => {
       const detail = {
         match_id: match._id.toHexString(),
-      }
-      if (match.games && match.games.length > 0) {
-        /** @todo change this to consider source and key */
-        detail.game_ids = match.games.map((g) => g.replay_origin.key)
-      }
-      if (match.forfeited_by_team) {
-        detail.forfeit_team_id = match.forfeited_by_team
+        replays: match.games.map((game) => {
+          return {
+            bucket: {
+              key: game.replay_origin.key,
+              source: game.replay_origin.source,
+            },
+          }
+        }),
       }
       return {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail,
       }
     })

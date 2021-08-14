@@ -4,10 +4,12 @@ const { gunzipObject } = require('../../src/util/gzip')
 
 const { handler: map } = require('../map-stats')
 
+const mockLeague = require('../mocks/league')
 const mockPlayers = require('../mocks/players')
 const mockTeams = require('../mocks/teams')
-const mockEvent = {
-  type: '',
+const mockMatch = require('../mocks/match')
+const mockEventReplaysParsed = {
+  type: 'MATCH_PROCESS_REPLAYS_PARSED',
   detail: {
     parsed_replays: [
       {
@@ -43,6 +45,13 @@ const mockEvent = {
     ],
   },
 }
+const mockEventMatchReprocess = {
+  type: 'MATCH_PROCESS_REPLAYS_PARSED',
+  detail: {
+    match_id: '6102ff0234129d000872c442',
+    parsed_replays: [...mockEventReplaysParsed.detail.parsed_replays],
+  },
+}
 
 jest.mock('../../src/services/aws')
 const aws = require('../../src/services/aws')
@@ -60,10 +69,28 @@ describe('map-stats', () => {
       aws.s3.get.mockResolvedValue({ Body: JSON.stringify(game) })
     })
   })
-  it('should map stats for a game', async () => {
+  it('should map stats for a new match', async () => {
     models.Players.find.mockResolvedValue(mockPlayers)
     models.Teams.find.mockResolvedValue(mockTeams)
-    await map(mockEvent)
+    models.Leagues.findById.mockReturnValue({
+      populate: jest.fn().mockResolvedValue(mockLeague),
+    })
+    models.Matches.findById.mockReturnValue({
+      populate: jest.fn().mockResolvedValue(mockMatch),
+    })
+    await map(mockEventReplaysParsed)
+    expect(aws.s3.get).toBeCalledTimes(5)
+  })
+  it('should map stats for an existing match', async () => {
+    models.Players.find.mockResolvedValue(mockPlayers)
+    models.Teams.find.mockResolvedValue(mockTeams)
+    models.Leagues.findById.mockReturnValue({
+      populate: jest.fn().mockResolvedValue(mockLeague),
+    })
+    models.Matches.findById.mockReturnValue({
+      populate: jest.fn().mockResolvedValue(mockMatch),
+    })
+    await map(mockEventMatchReprocess)
     expect(aws.s3.get).toBeCalledTimes(5)
   })
 })

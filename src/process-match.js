@@ -156,15 +156,23 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
 const handleReplays = async (filters, processedAt) => {
   console.info('validating filters')
   validateFilters(filters)
-  const { league_id, match_id, game_ids } = filters
-  let reportGames
+  const { league_id, match_id } = filters
+  let reportGames, gameIds
+  if (match_id) {
+    /** @todo fix the ".populate(nothing)" calls below, just there for temp test fix below */
+    gameIds = (
+      await Matches.findById(match_id).populate('nothing').populate('nothing').populate('nothing')
+    ).game_ids.map((id) => id.toHexString())
+  } else {
+    gameIds = filters.game_ids
+  }
   console.info('retrieving replays')
-  reportGames = await ballchasing.getReplayData(game_ids)
+  reportGames = await ballchasing.getReplayData(gameIds)
 
   console.info('retrieving players')
   const players = await Players.find(buildPlayersQuery(reportGames))
   if (players.length < 1) {
-    const errMsg = `no players found for games: ${game_ids.join(', ')}`
+    const errMsg = `no players found for games: ${gameIds.join(', ')}`
     throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
   }
 

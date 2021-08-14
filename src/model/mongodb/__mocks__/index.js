@@ -7,4 +7,10 @@ module.exports = {
   Teams: {
     find: jest.fn(),
   },
+  Leagues: {
+    findById: jest.fn(),
+  },
+  Matches: {
+    findById: jest.fn(),
+  },
 }

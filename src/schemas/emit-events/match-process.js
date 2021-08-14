@@ -53,8 +53,6 @@ module.exports = [
           .array()
           .min(1)
           .items({
-            id: joi.string().required(),
-            upload_source: joi.string().valid('ballchasing').required(),
             bucket: bucketSchema,
           })
           .required(),
@@ -73,19 +71,29 @@ module.exports = [
   }),
   registerSchema({
     type: 'MATCH_PROCESS_REPLAYS_PARSED',
-    detail: joi.object().keys({
-      league_id: joi.string().required(),
-      reply_to_channel: joi.string().required(),
-      parsed_replays: joi
-        .array()
-        .min(1)
-        .items({
-          id: joi.string().required(),
-          upload_source: joi.string().valid('ballchasing').required(),
-          bucket: bucketSchema,
-        })
-        .required(),
-    }),
+    detail: joi.alternatives().try(
+      joi.object().keys({
+        league_id: joi.string().required(),
+        reply_to_channel: joi.string().required(),
+        parsed_replays: joi
+          .array()
+          .min(1)
+          .items({
+            bucket: bucketSchema,
+          })
+          .required(),
+      }),
+      joi.object().keys({
+        match_id: joi.objectId(),
+        parsed_replays: joi
+          .array()
+          .min(1)
+          .items({
+            bucket: bucketSchema,
+          })
+          .required(),
+      }),
+    ),
   }),
   registerSchema({
     type: 'MATCH_PROCESS_INIT',

@@ -4,6 +4,7 @@ const map = require('../src/map')
 
 const handler = async (event) => {
   try {
+    // if match_id, get replay locations from match
     const { parsed_replays } = event.detail
     const games = []
     for (let replay of parsed_replays) {
@@ -11,7 +12,7 @@ const handler = async (event) => {
       const { Body } = await s3.get(source, key)
       games.push(JSON.parse(Body))
     }
-    await map(games)
+    await map(games, event.detail)
   } catch (err) {
     console.error(err)
     await reportError(err, 'mapping match stats')

@@ -34,8 +34,6 @@ module.exports = async (params) => {
     const replayData = await getReplayStream(id)
     await s3.upload(replayBucket, key, replayData)
     replays.push({
-      id,
-      upload_source: uploadSource,
       bucket: {
         source: replayBucket,
         key,
@@ -52,6 +50,7 @@ module.exports = async (params) => {
     detail,
   })
   /** @todo remove hardcoded ballchasing */
+  /** @todo move this validation above the replay download/upload */
   const games = await Games.find({
     $or: gameIdsToProcess.map((id) => ({
       'replay_origin.source': 'ballchasing',

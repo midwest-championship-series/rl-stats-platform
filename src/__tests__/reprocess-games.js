@@ -79,25 +79,60 @@ describe('reprocess-games', () => {
     await reprocessGames('matches', { week: 1 })
     expect(aws.eventBridge.emitEvents).toHaveBeenCalledWith([
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-            'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-            'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-            '877f66a5-23c9-4397-9c47-97c9870351c0',
+          replays: [
+            {
+              bucket: {
+                key: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: '877f66a5-23c9-4397-9c47-97c9870351c0',
+                source: 'ballchasing',
+              },
+            },
           ],
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63402',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2a',
-            'ab847408-5927-442b-b888-c5a2d68c96e4',
-            'c813c19a-2a4e-4df9-9fda-608425b1a356',
+          replays: [
+            {
+              bucket: {
+                key: '126f416e-d845-45b9-b843-8afe300d4e2a',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'ab847408-5927-442b-b888-c5a2d68c96e4',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a356',
+                source: 'ballchasing',
+              },
+            },
           ],
         },
       },
@@ -108,36 +143,86 @@ describe('reprocess-games', () => {
     await reprocessGames('seasons', { season_type: 'REG' })
     expect(aws.eventBridge.emitEvents).toHaveBeenCalledWith([
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-            'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-            'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-            '877f66a5-23c9-4397-9c47-97c9870351c0',
+          replays: [
+            {
+              bucket: {
+                key: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: '877f66a5-23c9-4397-9c47-97c9870351c0',
+                source: 'ballchasing',
+              },
+            },
           ],
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63402',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2a',
-            'ab847408-5927-442b-b888-c5a2d68c96e4',
-            'c813c19a-2a4e-4df9-9fda-608425b1a356',
+          replays: [
+            {
+              bucket: {
+                key: '126f416e-d845-45b9-b843-8afe300d4e2a',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'ab847408-5927-442b-b888-c5a2d68c96e4',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a356',
+                source: 'ballchasing',
+              },
+            },
           ],
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2b',
-            'ab847408-5927-442b-b888-c5a2d68c96eb',
-            'c813c19a-2a4e-4df9-9fda-608425b1a35b',
+          replays: [
+            {
+              bucket: {
+                key: '126f416e-d845-45b9-b843-8afe300d4e2b',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'ab847408-5927-442b-b888-c5a2d68c96eb',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b',
+                source: 'ballchasing',
+              },
+            },
           ],
         },
       },
@@ -148,36 +233,86 @@ describe('reprocess-games', () => {
     await reprocessGames('leagues', {})
     expect(aws.eventBridge.emitEvents).toHaveBeenCalledWith([
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-            'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-            'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-            '877f66a5-23c9-4397-9c47-97c9870351c0',
+          replays: [
+            {
+              bucket: {
+                key: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: '877f66a5-23c9-4397-9c47-97c9870351c0',
+                source: 'ballchasing',
+              },
+            },
           ],
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63402',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2a',
-            'ab847408-5927-442b-b888-c5a2d68c96e4',
-            'c813c19a-2a4e-4df9-9fda-608425b1a356',
+          replays: [
+            {
+              bucket: {
+                key: '126f416e-d845-45b9-b843-8afe300d4e2a',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'ab847408-5927-442b-b888-c5a2d68c96e4',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a356',
+                source: 'ballchasing',
+              },
+            },
           ],
         },
       },
       {
-        type: 'MATCH_PROCESS_INIT',
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2b',
-            'ab847408-5927-442b-b888-c5a2d68c96eb',
-            'c813c19a-2a4e-4df9-9fda-608425b1a35b',
+          replays: [
+            {
+              bucket: {
+                key: '126f416e-d845-45b9-b843-8afe300d4e2b',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'ab847408-5927-442b-b888-c5a2d68c96eb',
+                source: 'ballchasing',
+              },
+            },
+            {
+              bucket: {
+                key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b',
+                source: 'ballchasing',
+              },
+            },
           ],
         },
       },
