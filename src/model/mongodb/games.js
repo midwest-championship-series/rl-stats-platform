@@ -24,6 +24,7 @@ const Model = createModel(
     winning_team_id: { type: Schema.Types.ObjectId },
     date_time_played: { type: Date },
     date_time_processed: { type: Date },
+    game_restarted: { type: Boolean },
   },
   (schema) => {
     schema.virtual('match', {

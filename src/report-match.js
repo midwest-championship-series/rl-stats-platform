@@ -9,11 +9,11 @@ const getGameIds = async (urls) => {
   const gameIds = []
   for (let url of urls.map((url) => url.split('?')[0])) {
     if (url.match(/\/group\//g)) {
-      const groupId = url.split('/').slice(-1)[0]
+      const groupId = url.split('/group/')[1].split('/')[0]
       const ids = await getReplayIdsFromGroup(groupId)
       gameIds.push(...ids)
     } else if (url.match(/\/replay\//g)) {
-      gameIds.push(url.split('/').slice(-1)[0])
+      gameIds.push(url.split('/replay/')[1].split('/')[0])
     }
   }
   return gameIds
