@@ -172,6 +172,15 @@ const handleReplays = async (filters, processedAt) => {
   const { league, season, match, teams } = await (match_id
     ? getMatchInfoById(match_id) // this is a reprocessed match
     : getMatchInfoByPlayers(league_id, players, getEarliestGameDate(reportGames))) // this is a new match
+
+  if (
+    match.status === 'open' &&
+    match.hasOwnProperty('week') &&
+    Math.abs(match.week - parseInt(league.current_week)) > 1
+  ) {
+    const errMsg = `expected match within 1 week of ${league.current_week} but recieved ${match.week}`
+    throw new UnRecoverableError('ERR_WRONG_WEEK', errMsg)
+  }
   let games
   if (!match.games || match.games.length < 1) {
     // create games

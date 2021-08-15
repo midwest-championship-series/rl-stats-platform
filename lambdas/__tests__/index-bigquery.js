@@ -55,12 +55,6 @@ describe('index-bigquery', () => {
       [{ epoch_processed: 1618089471185, team_id: '5ec9358e8c0dd900074685c3', team_name: 'Hibbing Rangers' }],
       'team_games',
     )
-    expect(bq.query).toHaveBeenCalledTimes(2)
-    expect(bq.query).toHaveBeenLastCalledWith(
-      'DELETE',
-      'team_games',
-      "epoch_processed < 1618089471185 AND match_id = '5ec935998c0dd900074686c9'",
-    )
     expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
       type: 'MATCH_BIGQUERY_STATS_LOADED',
       detail: { match_id: '5ec935998c0dd900074686c9' },
