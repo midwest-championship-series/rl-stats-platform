@@ -32,6 +32,7 @@ describe('report-games', () => {
   afterEach(() => {
     matchesFindByIdMock.mockClear()
     matchesFindMock.mockClear()
+    ballchasing.getReplayIdsFromGroup.mockClear()
   })
   it('should process new games given urls', async () => {
     // simulate first game reported
@@ -101,6 +102,15 @@ describe('report-games', () => {
       detail: replayLocations,
     })
     expect(result).toMatchObject(replayLocations)
+  })
+  it('should report a match with a group url', async () => {
+    games.Model.find.mockResolvedValueOnce([])
+    const result = await reportGames({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      urls: ['https://ballchasing.com/group/test-upload-gmix5xcfhp/player-stats'],
+      reply_to_channel: '692994579305332806',
+    })
+    expect(ballchasing.getReplayIdsFromGroup).toHaveBeenCalledWith('test-upload-gmix5xcfhp')
   })
   it('should not allow reported games to be re-reported', async () => {
     matchesFindMock.mockResolvedValueOnce([])
