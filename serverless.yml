@@ -223,14 +223,14 @@ functions:
 
 resources:
   Resources:
-    # GamesQueue:
-    #   Type: AWS::SQS::Queue
-    #   Properties:
-    #     QueueName: ${self:service}-process-games-queue-${self:provider.stage}
-    #     DelaySeconds: 0
-    #     MessageRetentionPeriod: 345600
-    #     ReceiveMessageWaitTimeSeconds: 20
-    #     VisibilityTimeout: 120
+    MatchProcessQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-process-games-queue-${self:provider.stage}
+        DelaySeconds: 0
+        MessageRetentionPeriod: 345600
+        ReceiveMessageWaitTimeSeconds: 20
+        VisibilityTimeout: 120
     ReportMatchQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -316,9 +316,9 @@ resources:
     #       - Ref: GamesQueue
     #       - Ref: ReportMatchQueue
   Outputs:
-    # GamesQueue:
-    #   Value:
-    #     Ref: GamesQueue
+    MatchProcessQueue:
+      Value:
+        Ref: MatchProcessQueue
     ProducedStatsBucketName:
       Value:
         Ref: StatsBucket

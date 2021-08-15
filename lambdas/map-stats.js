@@ -10,7 +10,13 @@ const handler = async (event) => {
     for (let replay of parsed_replays) {
       const { source, key } = replay.bucket
       const { Body } = await s3.get(source, key)
-      games.push(JSON.parse(Body))
+      const game = JSON.parse(Body)
+      game.replay_origin = {
+        source: key.split(':')[0],
+        key: key.split(':')[1].split('.')[0],
+      }
+      game.replay_stored = { source, key }
+      games.push(game)
     }
     await map(games, event.detail)
   } catch (err) {

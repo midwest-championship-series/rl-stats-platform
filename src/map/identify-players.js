@@ -1,6 +1,7 @@
+const { UnRecoverableError } = require('../util/errors')
 const { Players } = require('../model/mongodb')
 
-module.exports = (games) => {
+module.exports = async (games) => {
   const accounts = games
     .flatMap((game) => {
       return game.players
@@ -18,5 +19,10 @@ module.exports = (games) => {
       return { accounts: { $elemMatch: p } }
     }),
   }
-  return Players.find(query)
+  const players = await Players.find(query)
+  if (players.length < 1) {
+    const errMsg = `no players found for games: ${gameIds.join(', ')}`
+    throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
+  }
+  return players
 }

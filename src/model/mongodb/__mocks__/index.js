@@ -1,3 +1,9 @@
+class Games {
+  constructor(game) {
+    this.save = jest.fn()
+  }
+}
+
 module.exports = {
   Players: {
     create: jest.fn(),
@@ -13,4 +19,5 @@ module.exports = {
   Matches: {
     findById: jest.fn(),
   },
+  Games,
 }

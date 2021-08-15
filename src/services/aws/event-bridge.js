@@ -12,10 +12,6 @@ const emitEvent = (event) => {
 }
 
 const emitEvents = (events) => {
-  console.log(
-    'making eventbridge call',
-    events.map((e) => createEvent(e)),
-  )
   return emit(events.map((e) => createEvent(e)))
 }
 
@@ -36,7 +32,6 @@ const emit = async (events) => {
   let failed = 0
   const entries = []
   for (let msg of messageRequests) {
-    console.info('msg', JSON.stringify(msg))
     const res = await client.putEvents({ Entries: msg }).promise()
     entries.push(...res.Entries)
     failed += res.FailedEntryCount
