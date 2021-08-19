@@ -8,6 +8,7 @@ const schema = {
   season_ids: [{ type: Schema.Types.ObjectId }],
   command_channel_ids: [{ type: String, unique: true }],
   report_channel_ids: [{ type: String, required: true }],
+  default_timezone: { type: String },
   urls: {
     type: [
       {
