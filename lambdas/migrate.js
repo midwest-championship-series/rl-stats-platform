@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const { Matches, Leagues, Seasons } = require('../src/model/mongodb')
+const { Leagues, Matches } = require('../src/model/mongodb')
+const { ObjectId } = require('bson')
 
 const handler = async () => {
   const [league] = await Leagues.find({ name: 'nsi' }).populate({
