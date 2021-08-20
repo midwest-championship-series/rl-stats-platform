@@ -1,32 +1,29 @@
 const fs = require('fs')
 const path = require('path')
-const { Leagues, Matches } = require('../src/model/mongodb')
-const { ObjectId } = require('bson')
+const { Leagues, Matches, Seasons, Games } = require('../src/model/mongodb')
 
-const handler = async () => {
-  const [league] = await Leagues.find({ name: 'nsi' }).populate({
-    path: 'seasons',
-    populate: {
-      path: 'matches',
-      populate: {
-        path: 'games',
-      },
+const deleteOrphans = async (baseModel, subModel, propName) => {
+  const baseDocs = await baseModel.find()
+  const orphans = await subModel.find({
+    _id: {
+      $nin: baseDocs.reduce((result, doc) => {
+        result.push(...doc[propName])
+        return result
+      }, []),
     },
   })
-  for (let season of league.seasons) {
-    for (let match of season.matches) {
-      for (let game of match.games) {
-        console.log('deleting game', game._id)
-        await game.remove()
-      }
-      console.log('deleting match', match._id)
-      await match.remove()
-    }
-    console.log('deleting season', season._id)
-    await season.remove()
+
+  for (let orphan of orphans) {
+    console.log(`deleting orphan ${subModel.collection.name}`, orphan._id)
+    await orphan.remove()
   }
-  console.log('deleting league', league._id)
-  await league.remove()
+}
+
+const handler = async () => {
+  await deleteOrphans(Matches, Games, 'game_ids')
+  await deleteOrphans(Seasons, Matches, 'match_ids')
+  await deleteOrphans(Leagues, Seasons, 'season_ids')
+  console.log('finished')
 }
 
 module.exports = { handler }
