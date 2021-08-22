@@ -6,7 +6,10 @@ const handler = async (trigger) => {
   const { LIVE_STATS_BUCKET, LIVE_STATS_CHANNEL_ID } = process.env
   for (let event of trigger.detail.events) {
     if (event.event === 'game:statfeed_event') {
-      await sendToChannel(LIVE_STATS_CHANNEL_ID, messageProcessor(event))
+      const message = messageProcessor(event)
+      if (message) {
+        await sendToChannel(LIVE_STATS_CHANNEL_ID, message)
+      }
     }
   }
   await s3.uploadJSON(LIVE_STATS_BUCKET, `${Date.now()}.json`, trigger.detail)
