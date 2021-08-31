@@ -32,7 +32,9 @@ const handleEvents = (err, req, res, next) => {
 
 const defaultError = (err, req, res, next) => {
   console.error(err)
-  return res.status(500).send({ error: process.env.SERVERLESS_STAGE === 'prod' ? err.name : err })
+  return res
+    .status(500)
+    .send({ error: process.env.SERVERLESS_STAGE === 'prod' ? err.name : { message: err.message, stack: err.stack } })
 }
 
 module.exports = [mongooseValidation, queryValidation, handleElastic, handleEvents, defaultError]
