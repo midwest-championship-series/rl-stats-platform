@@ -4,5 +4,6 @@ const { player_games, team_games } = require('./../../../schemas')
 
 router.use(attach('player_games', player_games))
 router.use(attach('team_games', team_games))
+router.use('/modules', require('./modules'))
 
 module.exports = router
