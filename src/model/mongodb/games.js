@@ -5,6 +5,7 @@ const Model = createModel(
   'Game',
   {
     ballchasing_id: { type: String },
+    rl_game_id: { type: String },
     // where we got the replay from
     replay_origin: {
       type: {
