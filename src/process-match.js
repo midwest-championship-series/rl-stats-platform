@@ -187,6 +187,7 @@ const handleReplays = async (filters, processedAt) => {
     games = reportGames.map((g) => {
       return new Games({
         replay_origin: { source: 'ballchasing', key: g.id },
+        rl_game_id: g.rocket_league_id,
         date_time_played: g.date,
       })
     })
