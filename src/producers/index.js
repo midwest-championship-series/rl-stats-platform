@@ -18,9 +18,6 @@ const assignWins = (games, match, leagueGames) => {
     game.winning_team_id = winnerId
     wins[winnerId]++
   })
-  if (wins[orangeId] === wins[blueId]) {
-    throw new UnRecoverableError('BEST_OF_NOT_MET', `both teams should not have win count equal to ${wins[orangeId]}`)
-  }
 
   const winnerId = wins[orangeId] > wins[blueId] ? orangeId : blueId
   const maxWins = Math.max(wins[orangeId], wins[blueId])
@@ -41,6 +38,7 @@ const assignWins = (games, match, leagueGames) => {
 }
 
 module.exports = (games, leagueInfo, processedAt) => {
+  // expects games to be sorted
   const sortedGames = games.sort((a, b) => new Date(a.date) - new Date(b.date))
   let playersToTeams = []
   let gameNumber = 1

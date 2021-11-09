@@ -156,22 +156,27 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
 const handleReplays = async (filters, processedAt) => {
   console.info('validating filters')
   validateFilters(filters)
-  const { league_id, match_id, game_ids } = filters
-  let reportGames
+  const { league_id, match_id, games: reportGames } = filters
   console.info('retrieving replays')
-  reportGames = await ballchasing.getReplayData(game_ids)
+  for (let game of reportGames) {
+    if (game.type === 'game') {
+      game.data = await ballchasing.getReplayData(game.id)
+    }
+  }
+  const gameData = reportGames.sort((a, b) => new Date(a.date) - new Date(b.date))
+  console.log(gameData)
 
   console.info('retrieving players')
-  const players = await Players.find(buildPlayersQuery(reportGames))
+  const players = await Players.find(buildPlayersQuery(gameData))
   if (players.length < 1) {
-    const errMsg = `no players found for games: ${game_ids.join(', ')}`
+    const errMsg = `no players found for games: ${reportGames.map((g) => g.id).join(', ')}`
     throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
   }
 
   console.info('retrieving league info')
   const { league, season, match, teams } = await (match_id
     ? getMatchInfoById(match_id) // this is a reprocessed match
-    : getMatchInfoByPlayers(league_id, players, getEarliestGameDate(reportGames))) // this is a new match
+    : getMatchInfoByPlayers(league_id, players, getEarliestGameDate(gameData))) // this is a new match
 
   if (
     match.status === 'open' &&
@@ -185,18 +190,24 @@ const handleReplays = async (filters, processedAt) => {
   if (!match.games || match.games.length < 1) {
     // create games
     games = reportGames.map((g) => {
-      return new Games({
-        replay_origin: { source: 'ballchasing', key: g.id },
-        rl_game_id: g.rocket_league_id,
-        date_time_played: g.date,
-      })
+      if (g.id) {
+        return new Games({
+          replay_origin: { source: 'ballchasing', key: g.id },
+          rl_game_id: g.rocket_league_id,
+          date_time_played: g.date,
+        })
+      } else if (g.forfeit_team_id) {
+        return new Games({
+          forfeit_team_id: g.forfeit_team_id,
+        })
+      }
     })
     // update match
     match.game_ids = games.map((g) => g._id)
   } else {
     games = match.games
   }
-  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(reportGames))
+  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(gameData))
   if (unlinkedPlayers.length > 0) {
     const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
     console.info('created players', newPlayers)
@@ -207,7 +218,7 @@ const handleReplays = async (filters, processedAt) => {
   }
   console.info('processing match stats')
   const { teamStats, playerStats, playerTeamMap } = processMatch(
-    reportGames,
+    gameData,
     {
       league,
       season,
@@ -311,9 +322,9 @@ const handleForfeit = async (filters, processedAt) => {
  */
 module.exports = async (filters) => {
   const processedAt = Date.now()
-  if (filters.forfeit_team_id) {
-    return handleForfeit(filters, processedAt)
-  } else {
-    return handleReplays(filters, processedAt)
-  }
+  // if (filters.forfeit_team_id) {
+  //   return handleForfeit(filters, processedAt)
+  // } else {
+  return handleReplays(filters, processedAt)
+  // }
 }

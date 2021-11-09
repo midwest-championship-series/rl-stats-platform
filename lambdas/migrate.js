@@ -1,29 +1,21 @@
 const fs = require('fs')
 const path = require('path')
-const { Leagues, Matches, Seasons, Games } = require('../src/model/mongodb')
-
-const deleteOrphans = async (baseModel, subModel, propName) => {
-  const baseDocs = await baseModel.find()
-  const orphans = await subModel.find({
-    _id: {
-      $nin: baseDocs.reduce((result, doc) => {
-        result.push(...doc[propName])
-        return result
-      }, []),
-    },
-  })
-
-  for (let orphan of orphans) {
-    console.log(`deleting orphan ${subModel.collection.name}`, orphan._id)
-    await orphan.remove()
-  }
-}
+const { Games } = require('../src/model/mongodb')
+const { getReplayData } = require('../src/services/ballchasing')
+const wait = require('../src/util/wait')
 
 const handler = async () => {
-  await deleteOrphans(Matches, Games, 'game_ids')
-  await deleteOrphans(Seasons, Matches, 'match_ids')
-  await deleteOrphans(Leagues, Seasons, 'season_ids')
-  console.log('finished')
+  const games = await Games.find({ 'replay_origin.key': { $exists: true }, rl_game_id: { $exists: false } })
+  for (let game of games) {
+    try {
+      const [data] = await getReplayData([game.replay_origin.key])
+      await game.update({ $set: { rl_game_id: data.rocket_league_id } })
+      console.log(`updated game ${game._id}`)
+      await wait(1)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 }
 
 module.exports = { handler }

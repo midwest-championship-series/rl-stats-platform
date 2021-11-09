@@ -1,7 +1,7 @@
 const { getPlayerTeamsAtDate, getMatchGameId } = require('./common')
 
 module.exports = (params, processedAt) => {
-  const { league, season, match, teams, players, forfeit_date } = params
+  const { league, season, match, players, forfeit_date } = params
   const context = {
     epoch_processed: processedAt,
     league_id: league._id.toHexString(),

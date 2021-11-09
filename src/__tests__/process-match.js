@@ -295,16 +295,17 @@ describe('process-match', () => {
   afterEach(() => {
     elastic.indexDocs.mockClear()
   })
-  it('should process a match with a match_id', async () => {
+  it.only('should process a match with a match_id', async () => {
+    console.log('hi')
     players.Model.find.mockResolvedValue(mockPlayers)
     matchesFindByIdMock.mockResolvedValue(mockClosedMatch)
     const result = await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
-      game_ids: [
-        'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-        '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-        '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-        '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+      games: [
+        { type: 'game', id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+        { type: 'game', id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+        { type: 'game', id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+        { type: 'game', id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
       ],
     })
     expect(result).toMatchObject({
