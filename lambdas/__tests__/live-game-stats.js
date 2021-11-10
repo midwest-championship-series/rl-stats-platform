@@ -42,7 +42,7 @@ describe('live-game-stats', () => {
   it('should save the stats to s3', async () => {
     await liveStats({ type: 'LIVE_GAME_EVENTS', detail: { events } })
     expect(aws.s3.uploadJSON).toHaveBeenCalledTimes(1)
-    expect(rlBot.sendToChannel).toHaveBeenCalledTimes(2)
-    expect(rlBot.sendToChannel.mock.calls[0]).toEqual(['692994579305332806', 'Casper put a shot on goal'])
+    expect(rlBot.sendToChannel).toHaveBeenCalledTimes(1)
+    expect(rlBot.sendToChannel.mock.calls[0]).toEqual(['692994579305332806', 'Casper put a :soccer: shot on goal'])
   })
 })
