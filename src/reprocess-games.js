@@ -59,7 +59,13 @@ module.exports = async (collection, criteria) => {
       }
       if (match.games && match.games.length > 0) {
         /** @todo change this to consider source and key */
-        detail.game_ids = match.games.map((g) => g.replay_origin.key)
+        detail.report_games = match.games.map((g) => {
+          return {
+            bucket: g.replay_stored,
+            id: g.replay_origin.key,
+            upload_source: g.replay_origin.source,
+          }
+        })
       }
       if (match.forfeited_by_team) {
         detail.forfeit_team_id = match.forfeited_by_team

@@ -11,14 +11,12 @@ const { getPlayerTeamsAtDate } = require('./producers/common')
 const { RecoverableError, UnRecoverableError } = require('./util/errors')
 const { eventBridge } = require('./services/aws')
 
-const teamGameIndex = `${process.env.SERVERLESS_STAGE}_stats_team_games`
-const playerGameIndex = `${process.env.SERVERLESS_STAGE}_stats_player_games`
 const producedStatsBucket = process.env.PRODUCED_STATS_BUCKET
 
-const validateFilters = ({ league_id, match_id, game_ids }) => {
+const validateFilters = ({ league_id, match_id, report_games }) => {
   if (match_id) return
-  if (!league_id || !game_ids)
-    throw new UnRecoverableError('INVALID_CRITERIA', 'no league id or game ids passed for new match')
+  if (!league_id || !report_games)
+    throw new UnRecoverableError('INVALID_CRITERIA', 'no league id or games passed for new match')
 }
 
 const getEarliestGameDate = (games) => new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
@@ -156,7 +154,8 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
 const handleReplays = async (filters, processedAt) => {
   console.info('validating filters')
   validateFilters(filters)
-  const { league_id, match_id, game_ids } = filters
+  const { league_id, match_id, report_games } = filters
+  const game_ids = report_games.map((g) => g.id)
   let reportGames
   console.info('retrieving replays')
   reportGames = await ballchasing.getReplayData(game_ids)

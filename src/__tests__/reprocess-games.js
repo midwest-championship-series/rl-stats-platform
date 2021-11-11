@@ -30,18 +30,39 @@ const mockMatches = [
   {
     _id: new ObjectId('5ebc62b0d09245d2a7c63401'),
     games: [
-      { replay_origin: { source: 'ballchasing', key: '595ac248-5f25-48a5-bf39-9b50f25e97a1' } },
-      { replay_origin: { source: 'ballchasing', key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e' } },
-      { replay_origin: { source: 'ballchasing', key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6' } },
-      { replay_origin: { source: 'ballchasing', key: '877f66a5-23c9-4397-9c47-97c9870351c0' } },
+      {
+        replay_stored: { key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay', source: 'mock-bucket' },
+        replay_origin: { source: 'ballchasing', key: '595ac248-5f25-48a5-bf39-9b50f25e97a1' },
+      },
+      {
+        replay_stored: { key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay', source: 'mock-bucket' },
+        replay_origin: { source: 'ballchasing', key: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e' },
+      },
+      {
+        replay_stored: { key: 'ballchasing:a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay', source: 'mock-bucket' },
+        replay_origin: { source: 'ballchasing', key: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6' },
+      },
+      {
+        replay_stored: { key: 'ballchasing:877f66a5-23c9-4397-9c47-97c9870351c0.replay', source: 'mock-bucket' },
+        replay_origin: { source: 'ballchasing', key: '877f66a5-23c9-4397-9c47-97c9870351c0' },
+      },
     ],
   },
   {
     _id: new ObjectId('5ebc62b0d09245d2a7c63402'),
     games: [
-      { replay_origin: { source: 'ballchasing', key: '126f416e-d845-45b9-b843-8afe300d4e2a' } },
-      { replay_origin: { source: 'ballchasing', key: 'ab847408-5927-442b-b888-c5a2d68c96e4' } },
-      { replay_origin: { source: 'ballchasing', key: 'c813c19a-2a4e-4df9-9fda-608425b1a356' } },
+      {
+        replay_stored: { key: 'ballchasing:126f416e-d845-45b9-b843-8afe300d4e2a.replay', source: 'mock-bucket' },
+        replay_origin: { source: 'ballchasing', key: '126f416e-d845-45b9-b843-8afe300d4e2a' },
+      },
+      {
+        replay_stored: { key: 'ballchasing:ab847408-5927-442b-b888-c5a2d68c96e4.replay', source: 'mock-bucket' },
+        replay_origin: { source: 'ballchasing', key: 'ab847408-5927-442b-b888-c5a2d68c96e4' },
+      },
+      {
+        replay_stored: { key: 'ballchasing:c813c19a-2a4e-4df9-9fda-608425b1a356.replay', source: 'mock-bucket' },
+        replay_origin: { source: 'ballchasing', key: 'c813c19a-2a4e-4df9-9fda-608425b1a356' },
+      },
     ],
   },
   {
@@ -52,9 +73,18 @@ const mockMatches = [
 const extraMockMatch = {
   _id: new ObjectId('5ebc62b0d09245d2a7c63401'),
   games: [
-    { replay_origin: { source: 'ballchasing', key: '126f416e-d845-45b9-b843-8afe300d4e2b' } },
-    { replay_origin: { source: 'ballchasing', key: 'ab847408-5927-442b-b888-c5a2d68c96eb' } },
-    { replay_origin: { source: 'ballchasing', key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b' } },
+    {
+      replay_stored: { key: 'ballchasing:126f416e-d845-45b9-b843-8afe300d4e2b.replay', source: 'mock-bucket' },
+      replay_origin: { source: 'ballchasing', key: '126f416e-d845-45b9-b843-8afe300d4e2b' },
+    },
+    {
+      replay_stored: { key: 'ballchasing:ab847408-5927-442b-b888-c5a2d68c96eb.replay', source: 'mock-bucket' },
+      replay_origin: { source: 'ballchasing', key: 'ab847408-5927-442b-b888-c5a2d68c96eb' },
+    },
+    {
+      replay_stored: { key: 'ballchasing:c813c19a-2a4e-4df9-9fda-608425b1a35b.replay', source: 'mock-bucket' },
+      replay_origin: { source: 'ballchasing', key: 'c813c19a-2a4e-4df9-9fda-608425b1a35b' },
+    },
   ],
 }
 const mockSeasons = [
@@ -82,11 +112,39 @@ describe('reprocess-games', () => {
         type: 'MATCH_PROCESS_INIT',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-            'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-            'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-            '877f66a5-23c9-4397-9c47-97c9870351c0',
+          report_games: [
+            {
+              bucket: {
+                key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
+                source: 'mock-bucket',
+              },
+              id: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+              upload_source: 'ballchasing',
+            },
+            {
+              bucket: {
+                key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+                source: 'mock-bucket',
+              },
+              id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+              upload_source: 'ballchasing',
+            },
+            {
+              bucket: {
+                key: 'ballchasing:a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
+                source: 'mock-bucket',
+              },
+              id: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+              upload_source: 'ballchasing',
+            },
+            {
+              bucket: {
+                key: 'ballchasing:877f66a5-23c9-4397-9c47-97c9870351c0.replay',
+                source: 'mock-bucket',
+              },
+              id: '877f66a5-23c9-4397-9c47-97c9870351c0',
+              upload_source: 'ballchasing',
+            },
           ],
         },
       },
@@ -94,10 +152,31 @@ describe('reprocess-games', () => {
         type: 'MATCH_PROCESS_INIT',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63402',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2a',
-            'ab847408-5927-442b-b888-c5a2d68c96e4',
-            'c813c19a-2a4e-4df9-9fda-608425b1a356',
+          report_games: [
+            {
+              bucket: {
+                key: 'ballchasing:126f416e-d845-45b9-b843-8afe300d4e2a.replay',
+                source: 'mock-bucket',
+              },
+              id: '126f416e-d845-45b9-b843-8afe300d4e2a',
+              upload_source: 'ballchasing',
+            },
+            {
+              bucket: {
+                key: 'ballchasing:ab847408-5927-442b-b888-c5a2d68c96e4.replay',
+                source: 'mock-bucket',
+              },
+              id: 'ab847408-5927-442b-b888-c5a2d68c96e4',
+              upload_source: 'ballchasing',
+            },
+            {
+              bucket: {
+                key: 'ballchasing:c813c19a-2a4e-4df9-9fda-608425b1a356.replay',
+                source: 'mock-bucket',
+              },
+              id: 'c813c19a-2a4e-4df9-9fda-608425b1a356',
+              upload_source: 'ballchasing',
+            },
           ],
         },
       },
@@ -111,11 +190,27 @@ describe('reprocess-games', () => {
         type: 'MATCH_PROCESS_INIT',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-            'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-            'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-            '877f66a5-23c9-4397-9c47-97c9870351c0',
+          report_games: [
+            {
+              bucket: { key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+            },
+            {
+              bucket: { key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+            },
+            {
+              bucket: { key: 'ballchasing:a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+            },
+            {
+              bucket: { key: 'ballchasing:877f66a5-23c9-4397-9c47-97c9870351c0.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: '877f66a5-23c9-4397-9c47-97c9870351c0',
+            },
           ],
         },
       },
@@ -123,10 +218,22 @@ describe('reprocess-games', () => {
         type: 'MATCH_PROCESS_INIT',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63402',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2a',
-            'ab847408-5927-442b-b888-c5a2d68c96e4',
-            'c813c19a-2a4e-4df9-9fda-608425b1a356',
+          report_games: [
+            {
+              bucket: { key: 'ballchasing:126f416e-d845-45b9-b843-8afe300d4e2a.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: '126f416e-d845-45b9-b843-8afe300d4e2a',
+            },
+            {
+              bucket: { key: 'ballchasing:ab847408-5927-442b-b888-c5a2d68c96e4.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'ab847408-5927-442b-b888-c5a2d68c96e4',
+            },
+            {
+              bucket: { key: 'ballchasing:c813c19a-2a4e-4df9-9fda-608425b1a356.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'c813c19a-2a4e-4df9-9fda-608425b1a356',
+            },
           ],
         },
       },
@@ -134,10 +241,22 @@ describe('reprocess-games', () => {
         type: 'MATCH_PROCESS_INIT',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2b',
-            'ab847408-5927-442b-b888-c5a2d68c96eb',
-            'c813c19a-2a4e-4df9-9fda-608425b1a35b',
+          report_games: [
+            {
+              bucket: { key: 'ballchasing:126f416e-d845-45b9-b843-8afe300d4e2b.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: '126f416e-d845-45b9-b843-8afe300d4e2b',
+            },
+            {
+              bucket: { key: 'ballchasing:ab847408-5927-442b-b888-c5a2d68c96eb.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'ab847408-5927-442b-b888-c5a2d68c96eb',
+            },
+            {
+              bucket: { key: 'ballchasing:c813c19a-2a4e-4df9-9fda-608425b1a35b.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'c813c19a-2a4e-4df9-9fda-608425b1a35b',
+            },
           ],
         },
       },
@@ -151,11 +270,27 @@ describe('reprocess-games', () => {
         type: 'MATCH_PROCESS_INIT',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-            'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-            'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-            '877f66a5-23c9-4397-9c47-97c9870351c0',
+          report_games: [
+            {
+              bucket: { key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+            },
+            {
+              bucket: { key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+            },
+            {
+              bucket: { key: 'ballchasing:a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+            },
+            {
+              bucket: { key: 'ballchasing:877f66a5-23c9-4397-9c47-97c9870351c0.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: '877f66a5-23c9-4397-9c47-97c9870351c0',
+            },
           ],
         },
       },
@@ -163,10 +298,22 @@ describe('reprocess-games', () => {
         type: 'MATCH_PROCESS_INIT',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63402',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2a',
-            'ab847408-5927-442b-b888-c5a2d68c96e4',
-            'c813c19a-2a4e-4df9-9fda-608425b1a356',
+          report_games: [
+            {
+              bucket: { key: 'ballchasing:126f416e-d845-45b9-b843-8afe300d4e2a.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: '126f416e-d845-45b9-b843-8afe300d4e2a',
+            },
+            {
+              bucket: { key: 'ballchasing:ab847408-5927-442b-b888-c5a2d68c96e4.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'ab847408-5927-442b-b888-c5a2d68c96e4',
+            },
+            {
+              bucket: { key: 'ballchasing:c813c19a-2a4e-4df9-9fda-608425b1a356.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'c813c19a-2a4e-4df9-9fda-608425b1a356',
+            },
           ],
         },
       },
@@ -174,10 +321,22 @@ describe('reprocess-games', () => {
         type: 'MATCH_PROCESS_INIT',
         detail: {
           match_id: '5ebc62b0d09245d2a7c63401',
-          game_ids: [
-            '126f416e-d845-45b9-b843-8afe300d4e2b',
-            'ab847408-5927-442b-b888-c5a2d68c96eb',
-            'c813c19a-2a4e-4df9-9fda-608425b1a35b',
+          report_games: [
+            {
+              bucket: { key: 'ballchasing:126f416e-d845-45b9-b843-8afe300d4e2b.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: '126f416e-d845-45b9-b843-8afe300d4e2b',
+            },
+            {
+              bucket: { key: 'ballchasing:ab847408-5927-442b-b888-c5a2d68c96eb.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'ab847408-5927-442b-b888-c5a2d68c96eb',
+            },
+            {
+              bucket: { key: 'ballchasing:c813c19a-2a4e-4df9-9fda-608425b1a35b.replay', source: 'mock-bucket' },
+              upload_source: 'ballchasing',
+              id: 'c813c19a-2a4e-4df9-9fda-608425b1a35b',
+            },
           ],
         },
       },

@@ -53,6 +53,7 @@ module.exports = async (params) => {
     detail,
   })
   /** @todo remove hardcoded ballchasing */
+  /** @todo use rocket_league_id to dedup */
   const games = await Games.find({
     $or: gameIdsToProcess.map((id) => ({
       'replay_origin.source': 'ballchasing',
@@ -64,7 +65,8 @@ module.exports = async (params) => {
   }
   await eventBridge.emitEvent({
     type: 'MATCH_PROCESS_INIT',
-    detail: { game_ids: gameIdsToProcess, league_id, reply_to_channel },
+    // detail: { game_ids: gameIdsToProcess, league_id, reply_to_channel },
+    detail: { report_games: replays, league_id, reply_to_channel },
   })
 
   return detail

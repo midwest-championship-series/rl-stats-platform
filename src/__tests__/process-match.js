@@ -155,11 +155,11 @@ const mockTeams = [
 const mockClosedMatch = mockDoc({
   _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
   week: 1,
-  game_ids: [
-    '5ebc62afd09245d2a7c6333f',
-    '5ebc62afd09245d2a7c63338',
-    '5ebc62afd09245d2a7c6335e',
-    '5ebc62afd09245d2a7c63350',
+  report_games: [
+    { id: '5ebc62afd09245d2a7c6333f' },
+    { id: '5ebc62afd09245d2a7c63338' },
+    { id: '5ebc62afd09245d2a7c6335e' },
+    { id: '5ebc62afd09245d2a7c63350' },
   ],
   best_of: 5,
   teams: mockTeams,
@@ -300,11 +300,11 @@ describe('process-match', () => {
     matchesFindByIdMock.mockResolvedValue(mockClosedMatch)
     const result = await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
-      game_ids: [
-        'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-        '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-        '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-        '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+      report_games: [
+        { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+        { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+        { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+        { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
       ],
     })
     expect(result).toMatchObject({
@@ -427,11 +427,11 @@ describe('process-match', () => {
     matchesFindMock.mockResolvedValue(mockClosedMatch)
     await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
-      game_ids: [
-        'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-        '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-        '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-        '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+      report_games: [
+        { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+        { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+        { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+        { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
       ],
     })
     const { team_games } = aws.s3.uploadJSON.mock.calls[0][2]
@@ -500,11 +500,11 @@ describe('process-match', () => {
     matchesFindMock.mockResolvedValue(mockClosedMatch)
     await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
-      game_ids: [
-        'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-        '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-        '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-        '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+      report_games: [
+        { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+        { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+        { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+        { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
       ],
     })
     const { player_games } = aws.s3.uploadJSON.mock.calls[0][2]
@@ -596,11 +596,11 @@ describe('process-match', () => {
     matchesFindMock.mockResolvedValue([mockOpenMatch()])
     const result = await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
-      game_ids: [
-        'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-        '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-        '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-        '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+      report_games: [
+        { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+        { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+        { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+        { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
       ],
     })
     expect(result.game_ids).toHaveLength(4)
@@ -617,11 +617,11 @@ describe('process-match', () => {
     const result = await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
-        game_ids: [
-          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+        report_games: [
+          { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+          { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+          { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+          { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
         ],
       }),
     ).rejects.toEqual(new Error('expected match within 1 week of 3 but recieved 1'))
@@ -634,11 +634,11 @@ describe('process-match', () => {
     matchesFindMock.mockResolvedValue(mockMatches)
     await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
-      game_ids: [
-        'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-        '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-        '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-        '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+      report_games: [
+        { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+        { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+        { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+        { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
       ],
     })
   })
@@ -825,11 +825,11 @@ describe('process-match', () => {
     await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
-        game_ids: [
-          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+        report_games: [
+          { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+          { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+          { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+          { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
         ],
       }),
     ).rejects.toEqual(
@@ -846,10 +846,10 @@ describe('process-match', () => {
     await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
-        game_ids: [
-          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-          '111c0144-7219-426a-8263-8cff260d030d',
+        report_games: [
+          { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+          { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+          { id: '111c0144-7219-426a-8263-8cff260d030d' },
         ],
       }),
     ).rejects.toEqual(new Error('expected a team to win the best of 5 match, but winning team has only 2'))
@@ -861,11 +861,11 @@ describe('process-match', () => {
     await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
-        game_ids: [
-          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+        report_games: [
+          { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+          { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+          { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+          { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
         ],
       }),
     ).rejects.toEqual(new Error('found 0 matches between teams: Duluth Superiors, Burnsville Inferno'))
@@ -873,14 +873,14 @@ describe('process-match', () => {
   it('should throw an error if no league id is passed', async () => {
     await expect(
       processMatch({
-        game_ids: [
-          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+        report_games: [
+          { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+          { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+          { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+          { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
         ],
       }),
-    ).rejects.toEqual(new Error('no league id or game ids passed for new match'))
+    ).rejects.toEqual(new Error('no league id or games passed for new match'))
   })
   it('should create players and throw a recoverable error if players do not exist in league database', async () => {
     const missingPlayers = [...mockPlayers].slice(0, mockPlayers.length - 2)
@@ -890,11 +890,11 @@ describe('process-match', () => {
     await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
-        game_ids: [
-          'd2d31639-1e42-4f0b-9537-545d8d19f63b',
-          '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
-          '2bfd1be8-b29e-4ce8-8d75-49499354d8e0',
-          '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+        report_games: [
+          { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+          { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+          { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+          { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
         ],
       }),
     ).rejects.toEqual(new Error('NO_PLAYER_FOUND'))
