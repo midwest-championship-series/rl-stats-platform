@@ -1,7 +1,7 @@
 const { getPlayerTeamsAtDate, getMatchGameId } = require('./common')
 
 module.exports = (params, processedAt) => {
-  const { league, season, match, teams, players, forfeit_date } = params
+  const { league, season, match, players, forfeit_date } = params
   const context = {
     epoch_processed: processedAt,
     league_id: league._id.toHexString(),
@@ -18,7 +18,15 @@ module.exports = (params, processedAt) => {
     map_name: undefined,
     games_played: undefined,
   }
-  const teamStats = genTeamStats(params, context)
+  /**
+   * best of condition ensures that there are 2 team-game records per game, one for each team, and that
+   * the number of forfeited games is correct
+   */
+  const bestOfCondition = Math.ceil(match.best_of / 2)
+  const teamStats = []
+  for (let i = 1; i <= bestOfCondition; i++) {
+    teamStats.push(...genTeamStats(params, context, i))
+  }
 
   return {
     teamStats,
@@ -26,15 +34,10 @@ module.exports = (params, processedAt) => {
   }
 }
 
-const genTeamStats = (params, context) => {
+const genTeamStats = (params, context, gameNumber) => {
   const { match, teams, forfeit_team_id } = params
   const teamStats = []
-  /**
-   * best of condition ensures that there are 2 team-game records per game, one for each team, and that
-   * the number of forfeited games is correct
-   */
-  const bestOfCondition = Math.ceil(match.best_of / 2) * 2
-  for (let i = 0; i < bestOfCondition; i++) {
+  for (let i = 0; i < 2; i++) {
     const team = teams[i % 2]
     const opponent = teams[(i + 1) % 2]
     const gameNumber = Math.floor(i / 2) + 1
@@ -55,11 +58,11 @@ const genTeamStats = (params, context) => {
   return teamStats
 }
 
-const genPlayerStats = (forfeit_date, teamStats, players) => {
+const genPlayerStats = (forfeitDate, teamStats, players) => {
   const playerStats = []
   teamStats.forEach((teamStat) => {
     players.forEach((player) => {
-      if (getPlayerTeamsAtDate(player, forfeit_date).some((history) => history.team_id.equals(teamStat.team_id))) {
+      if (getPlayerTeamsAtDate(player, forfeitDate).some((history) => history.team_id.equals(teamStat.team_id))) {
         playerStats.push({
           ...teamStat,
           player_id: player._id.toHexString(),
