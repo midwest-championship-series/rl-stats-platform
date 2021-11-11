@@ -50,11 +50,39 @@ describe('report-games', () => {
       type: 'MATCH_PROCESS_INIT',
       detail: {
         league_id: '5ebc62b1d09245d2a7c63516',
-        game_ids: [
-          '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-          'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-          'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-          '877f66a5-23c9-4397-9c47-97c9870351c0',
+        report_games: [
+          {
+            bucket: {
+              key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
+              source: 'mock-bucket',
+            },
+            id: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+            upload_source: 'ballchasing',
+          },
+          {
+            bucket: {
+              key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+              source: 'mock-bucket',
+            },
+            id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+            upload_source: 'ballchasing',
+          },
+          {
+            bucket: {
+              key: 'ballchasing:a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
+              source: 'mock-bucket',
+            },
+            id: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+            upload_source: 'ballchasing',
+          },
+          {
+            bucket: {
+              key: 'ballchasing:877f66a5-23c9-4397-9c47-97c9870351c0.replay',
+              source: 'mock-bucket',
+            },
+            id: '877f66a5-23c9-4397-9c47-97c9870351c0',
+            upload_source: 'ballchasing',
+          },
         ],
         reply_to_channel: '692994579305332806',
       },

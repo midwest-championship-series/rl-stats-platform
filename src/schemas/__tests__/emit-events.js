@@ -53,10 +53,31 @@ describe('emit-events', () => {
       validate({
         type: 'MATCH_PROCESS_INIT',
         detail: {
-          game_ids: [
-            'b201a81b-3e83-47dc-9c68-5883b43724b5',
-            '631dddc2-941f-4e63-9fda-f9455495b57e',
-            '05b634d3-5df1-4088-b104-cdd5ea404391',
+          report_games: [
+            {
+              bucket: {
+                key: 'ballchasing:b201a81b-3e83-47dc-9c68-5883b43724b5.replay',
+                source: 'mock-bucket',
+              },
+              id: 'b201a81b-3e83-47dc-9c68-5883b43724b5',
+              upload_source: 'ballchasing',
+            },
+            {
+              bucket: {
+                key: 'ballchasing:631dddc2-941f-4e63-9fda-f9455495b57e.replay',
+                source: 'mock-bucket',
+              },
+              id: '631dddc2-941f-4e63-9fda-f9455495b57e',
+              upload_source: 'ballchasing',
+            },
+            {
+              bucket: {
+                key: 'ballchasing:05b634d3-5df1-4088-b104-cdd5ea404391.replay',
+                source: 'mock-bucket',
+              },
+              id: '05b634d3-5df1-4088-b104-cdd5ea404391',
+              upload_source: 'ballchasing',
+            },
           ],
           league_id: '5ec9359b8c0dd900074686d3',
           reply_to_channel: '692994579305332806',
@@ -65,10 +86,31 @@ describe('emit-events', () => {
       validate({
         type: 'MATCH_PROCESS_INIT',
         detail: {
-          game_ids: [
-            'b201a81b-3e83-47dc-9c68-5883b43724b5',
-            '631dddc2-941f-4e63-9fda-f9455495b57e',
-            '05b634d3-5df1-4088-b104-cdd5ea404391',
+          report_games: [
+            {
+              bucket: {
+                key: 'ballchasing:b201a81b-3e83-47dc-9c68-5883b43724b5.replay',
+                source: 'mock-bucket',
+              },
+              id: 'b201a81b-3e83-47dc-9c68-5883b43724b5',
+              upload_source: 'ballchasing',
+            },
+            {
+              bucket: {
+                key: 'ballchasing:631dddc2-941f-4e63-9fda-f9455495b57e.replay',
+                source: 'mock-bucket',
+              },
+              id: '631dddc2-941f-4e63-9fda-f9455495b57e',
+              upload_source: 'ballchasing',
+            },
+            {
+              bucket: {
+                key: 'ballchasing:05b634d3-5df1-4088-b104-cdd5ea404391.replay',
+                source: 'mock-bucket',
+              },
+              id: '05b634d3-5df1-4088-b104-cdd5ea404391',
+              upload_source: 'ballchasing',
+            },
           ],
           match_id: '5ec9359b8c0dd900074686d3',
         },

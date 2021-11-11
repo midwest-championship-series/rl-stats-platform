@@ -9,6 +9,12 @@ const bucketSchema = joi
   })
   .required()
 
+const gameReport = joi.object().keys({
+  id: joi.string().required(),
+  upload_source: joi.string().valid('ballchasing').required(),
+  bucket: bucketSchema.optional() /** @todo remove .optional() when all games have replays stored */,
+})
+
 module.exports = [
   registerSchema({
     type: 'MATCH_REPROCESS',
@@ -49,15 +55,7 @@ module.exports = [
       joi.object().keys({
         league_id: joi.string().required(),
         reply_to_channel: joi.string().required(),
-        replays: joi
-          .array()
-          .min(1)
-          .items({
-            id: joi.string().required(),
-            upload_source: joi.string().valid('ballchasing').required(),
-            bucket: bucketSchema,
-          })
-          .required(),
+        replays: joi.array().min(1).items(gameReport).required(),
       }),
       joi.object().keys({
         match_id: joi.string().required(),
@@ -93,12 +91,12 @@ module.exports = [
       .alternatives()
       .try(
         joi.object().keys({
-          game_ids: joi.array().items(joi.string()),
+          report_games: joi.array().min(1).items(gameReport).required(),
           league_id: joi.objectId().required(),
           reply_to_channel: joi.string().required(),
         }),
         joi.object().keys({
-          game_ids: joi.array().min(1).items(joi.string()),
+          report_games: joi.array().min(1).items(gameReport).required(),
           match_id: joi.objectId().required(),
         }),
         joi.object().keys({
