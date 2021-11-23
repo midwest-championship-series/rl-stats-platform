@@ -36,10 +36,8 @@ const assignWins = (games, match, leagueGames) => {
     throw new UnRecoverableError('BEST_OF_NOT_MET', errMsg)
   }
   games.forEach((game) => {
-    if (game.report_type !== 'MANUAL_REPORT') {
-      const winnerColor = colors.find((color) => game[color].team._id.equals(winnerId))
-      game[winnerColor].match_id_win = game.match_id
-    }
+    const winnerColor = colors.find((color) => game[color].team._id.equals(winnerId))
+    game[winnerColor].match_id_win = game.match_id
   })
   // map the wins back to the games which will be saved in the db
   leagueGames.forEach((game) => {

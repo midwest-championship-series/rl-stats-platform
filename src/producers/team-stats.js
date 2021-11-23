@@ -58,6 +58,8 @@ const processTeam = (game, color, time) => {
   } else {
     return {
       ...teamContext,
+      games_played: 1,
+      game_id_forfeit_win: undefined,
     }
   }
 }
