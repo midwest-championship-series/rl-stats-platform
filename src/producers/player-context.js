@@ -4,19 +4,9 @@ const { UnRecoverableError } = require('../util/errors')
 const colors = ['blue', 'orange']
 const getOpponentColor = (color) => colors.filter((c) => c !== color)[0]
 
-module.exports = (game, { league, season, match, players, teams, games }) => {
+module.exports = (dbGame, { players, teams }) => {
+  const game = dbGame.raw_data
   const playerTeamMap = []
-  /** @todo remove hardcoded ballchasing here */
-  game.game_id = games
-    .find((g) => g.replay_origin.source === 'ballchasing' && g.replay_origin.key === game.id)
-    ._id.toHexString()
-  game.match_id = match._id.toHexString()
-  game.match_type = match.season.season_type
-  game.week = match.week
-  game.season_name = match.season.name
-  game.season_id = season._id.toHexString()
-  game.league_name = league.name
-  game.league_id = league._id.toHexString()
 
   colors.forEach((color) => {
     if (game[color].players.length !== 3) {
@@ -45,7 +35,8 @@ module.exports = (game, { league, season, match, players, teams, games }) => {
           .map((team) => team.team_id),
       ),
     ]
-    game[color].team = teams.find((t) => playerTeams.some((team_id) => t._id.equals(team_id)))
+    const team = teams.find((t) => playerTeams.some((team_id) => t._id.equals(team_id)))
+    game[color].team = team
     if (!game[color].team) {
       const errMsg = `no team found for ${color} in match ${game.match_id}. Teams identified are: ${playerTeams.join(
         ', ',
@@ -76,5 +67,6 @@ module.exports = (game, { league, season, match, players, teams, games }) => {
       }
     })
   })
+
   return { playerTeamMap }
 }

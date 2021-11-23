@@ -13,7 +13,6 @@ const Model = createModel(
         // unique identifier used in combination with source to identify resource
         key: { type: String, required: true },
       },
-      required: true,
     },
     // where we store the replay internally, s3 at the moment
     replay_stored: {
@@ -22,6 +21,8 @@ const Model = createModel(
         key: { type: String, required: true },
       },
     },
+    report_type: { type: String },
+    forfeit_team_id: { type: Schema.Types.ObjectId },
     winning_team_id: { type: Schema.Types.ObjectId },
     date_time_played: { type: Date },
     date_time_processed: { type: Date },

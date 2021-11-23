@@ -9,11 +9,19 @@ const bucketSchema = joi
   })
   .required()
 
-const gameReport = joi.object().keys({
-  id: joi.string().required(),
-  upload_source: joi.string().valid('ballchasing').required(),
-  bucket: bucketSchema.optional() /** @todo remove .optional() when all games have replays stored */,
-})
+const gameReport = joi.alternatives([
+  joi.object().keys({
+    id: joi.string().required(),
+    upload_source: joi.string().valid('ballchasing').required(),
+    bucket: bucketSchema.optional() /** @todo remove .optional() when all games have replays stored */,
+  }),
+  joi.object().keys({
+    report_type: joi.string().valid('MANUAL_REPORT'),
+    game_number: joi.number(),
+    winning_team_id: joi.string(),
+    forfeit: joi.boolean().optional(),
+  }),
+])
 
 module.exports = [
   registerSchema({

@@ -151,17 +151,37 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
   })
 }
 
+const combineGames = (replayGames, manualGames) => {
+  manualGames
+    .sort((a, b) => new Date(a.game_number) - new Date(b.game_number))
+    .forEach((game) => {
+      replayGames.splice(game.game_number - 1, 0, game)
+    })
+}
+
 const handleReplays = async (filters, processedAt) => {
   console.info('validating filters')
   validateFilters(filters)
   const { league_id, match_id, report_games } = filters
-  const game_ids = report_games.map((g) => g.id)
-  let reportGames
+  // separate games which have replay data from full manual reports
+  const { replayGames, manualGames } = report_games.reduce(
+    (result, game) => {
+      if (game.id) {
+        result.replayGames.push(game)
+      } else {
+        result.manualGames.push(game)
+      }
+      return result
+    },
+    { replayGames: [], manualGames: [] },
+  )
+  /** @todo make sure manualGames are sorted properly */
+  const game_ids = replayGames.map((g) => g.id)
   console.info('retrieving replays')
-  reportGames = await ballchasing.getReplayData(game_ids)
+  const gamesData = (await ballchasing.getReplayData(game_ids)).sort((a, b) => new Date(a.date) - new Date(b.date))
 
   console.info('retrieving players')
-  const players = await Players.find(buildPlayersQuery(reportGames))
+  const players = await Players.find(buildPlayersQuery(gamesData))
   if (players.length < 1) {
     const errMsg = `no players found for games: ${game_ids.join(', ')}`
     throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
@@ -170,7 +190,7 @@ const handleReplays = async (filters, processedAt) => {
   console.info('retrieving league info')
   const { league, season, match, teams } = await (match_id
     ? getMatchInfoById(match_id) // this is a reprocessed match
-    : getMatchInfoByPlayers(league_id, players, getEarliestGameDate(reportGames))) // this is a new match
+    : getMatchInfoByPlayers(league_id, players, getEarliestGameDate(gamesData))) // this is a new match
 
   if (
     match.status === 'open' &&
@@ -180,22 +200,7 @@ const handleReplays = async (filters, processedAt) => {
     const errMsg = `expected match within 1 week of ${league.current_week} but recieved ${match.week}`
     throw new UnRecoverableError('ERR_WRONG_WEEK', errMsg)
   }
-  let games
-  if (!match.games || match.games.length < 1) {
-    // create games
-    games = reportGames.map((g) => {
-      return new Games({
-        replay_origin: { source: 'ballchasing', key: g.id },
-        rl_game_id: g.rocket_league_id,
-        date_time_played: g.date,
-      })
-    })
-    // update match
-    match.game_ids = games.map((g) => g._id)
-  } else {
-    games = match.games
-  }
-  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(reportGames))
+  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(gamesData))
   if (unlinkedPlayers.length > 0) {
     const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
     console.info('created players', newPlayers)
@@ -204,9 +209,35 @@ const handleReplays = async (filters, processedAt) => {
       `created new players:\n${newPlayers.map((p) => `${p.screen_name} _id:${p._id}`).join('\n')}`,
     )
   }
+  combineGames(gamesData, manualGames)
+  let games
+  if (!match.games || match.games.length < 1) {
+    // create games
+    games = gamesData.map((g) => {
+      if (g.report_type === 'MANUAL_REPORT') {
+        return new Games({
+          winning_team_id: g.winning_team_id,
+          report_type: 'MANUAL_REPORT',
+          raw_data: { ...g, orange: { team: match.teams[0] }, blue: { team: match.teams[1] } },
+        })
+      } else {
+        return new Games({
+          replay_origin: { source: 'ballchasing', key: g.id },
+          rl_game_id: g.rocket_league_id,
+          date_time_played: g.date,
+          raw_data: g,
+        })
+      }
+    })
+    // update match
+    match.game_ids = games.map((g) => g._id)
+  } else {
+    match.games.forEach((g) => (g.raw_data = gamesData.find((gm) => gm.id === g.replay_origin.key)))
+    games = match.games.sort((a, b) => new Date(a.raw_data.date) - new Date(b.raw_data.date))
+  }
+
   console.info('processing match stats')
   const { teamStats, playerStats, playerTeamMap } = processMatch(
-    reportGames,
     {
       league,
       season,

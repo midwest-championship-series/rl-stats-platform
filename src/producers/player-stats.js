@@ -8,9 +8,7 @@ const processPlayer = (game, player, processedAt) => {
   ]
   const stats = reduceStats({ ownStats, game, modifiers })
   const playerTeamWon = game.winning_team_id.equals(player.team_id)
-  // if (game.hasOwnProperty('overtime')) {
-  //   console.log(game)
-  // }
+
   return {
     epoch_processed: processedAt,
     player_id: player.league_id,
@@ -48,15 +46,17 @@ const processPlayer = (game, player, processedAt) => {
 }
 
 module.exports = (game, processedAt) => {
+  if (game.report_type === 'MANUAL_REPORT') return []
+  const gameData = game.raw_data
   // assign stats to each player
   const colors = ['blue', 'orange']
   const playerStats = colors.reduce(
     (result, color) =>
       result.concat(
-        game[color].players.map((player) => {
+        gameData[color].players.map((player) => {
           player.team_color = color
           player.opponent_color = color === 'blue' ? 'orange' : 'blue'
-          return processPlayer(game, player, processedAt)
+          return processPlayer(gameData, player, processedAt)
         }),
       ),
     [],

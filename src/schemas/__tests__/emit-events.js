@@ -115,6 +115,20 @@ describe('emit-events', () => {
           match_id: '5ec9359b8c0dd900074686d3',
         },
       })
+      validate({
+        type: 'MATCH_PROCESS_INIT',
+        detail: {
+          report_games: [
+            {
+              report_type: 'MANUAL_REPORT',
+              game_number: 3,
+              winning_team_id: '5ebc62a9d09245d2a7c62eb3',
+              forfeit: true,
+            },
+          ],
+          match_id: '5ec9359b8c0dd900074686d3',
+        },
+      })
     })
     it('should validate a replays obtained event', () => {
       validate({
