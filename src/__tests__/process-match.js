@@ -1229,10 +1229,45 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(new Error('expected a team to win the best of 5 match, but winning team has only 2'))
   })
+  it('should throw an error if the report contains too many wins', async () => {
+    players.Model.find.mockResolvedValue([])
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    ballchasing.getReplayData.mockResolvedValue([])
+    await expect(
+      processMatch({
+        league_id: '5ebc62b1d09245d2a7c63516',
+        mentioned_team_ids: ['5ebc62a9d09245d2a7c62e86', '5ebc62a9d09245d2a7c62eb3'],
+        report_games: [
+          {
+            report_type: 'MANUAL_REPORT',
+            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            game_number: 1,
+          },
+          {
+            report_type: 'MANUAL_REPORT',
+            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            game_number: 2,
+          },
+          {
+            report_type: 'MANUAL_REPORT',
+            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            game_number: 3,
+          },
+          {
+            report_type: 'MANUAL_REPORT',
+            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            game_number: 3,
+          },
+        ],
+      }),
+    ).rejects.toEqual(new Error('expected team to win 3 games in best of 5 match, but received 4 wins'))
+  })
   it('should throw an error if less than one match is returned', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     matchesFindMock.mockResolvedValue([])
+    ballchasing.getReplayData.mockResolvedValue([replays[0], replays[1], replays[3]])
     await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',

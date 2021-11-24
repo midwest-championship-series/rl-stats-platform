@@ -31,9 +31,15 @@ const assignWins = (games, match, leagueGames) => {
   const winnerId = wins[orangeId] > wins[blueId] ? orangeId : blueId
   const maxWins = Math.max(wins[orangeId], wins[blueId])
   match.winning_team_id = winnerId
-  if (match.best_of && maxWins < match.best_of / 2) {
-    const errMsg = `expected a team to win the best of ${match.best_of} match, but winning team has only ${maxWins}`
-    throw new UnRecoverableError('BEST_OF_NOT_MET', errMsg)
+  if (match.best_of) {
+    const expectedWins = Math.ceil(match.best_of / 2)
+    if (maxWins < expectedWins) {
+      const errMsg = `expected a team to win the best of ${match.best_of} match, but winning team has only ${maxWins}`
+      throw new UnRecoverableError('BEST_OF_NOT_MET', errMsg)
+    } else if (maxWins !== expectedWins) {
+      const errMsg = `expected team to win ${expectedWins} games in best of ${match.best_of} match, but received ${maxWins} wins`
+      throw new UnRecoverableError('BEST_OF_NOT_MET', errMsg)
+    }
   }
   games.forEach((game) => {
     const winnerColor = colors.find((color) => game[color].team._id.equals(winnerId))
