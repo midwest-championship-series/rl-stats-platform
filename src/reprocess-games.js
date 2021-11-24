@@ -58,12 +58,20 @@ module.exports = async (collection, criteria) => {
         match_id: match._id.toHexString(),
       }
       if (match.games && match.games.length > 0) {
-        /** @todo change this to consider source and key */
         detail.report_games = match.games.map((g) => {
-          return {
-            bucket: g.replay_stored,
-            id: g.replay_origin.key,
-            upload_source: g.replay_origin.source,
+          if (g.report_type === 'MANUAL_REPORT') {
+            return {
+              report_type: g.report_type,
+              game_number: g.game_number,
+              winning_team_id: g.winning_team_id,
+              forfeit: !!g.forfeit_team_id,
+            }
+          } else {
+            return {
+              bucket: g.replay_stored,
+              id: g.replay_origin.key,
+              upload_source: g.replay_origin.source,
+            }
           }
         })
       }

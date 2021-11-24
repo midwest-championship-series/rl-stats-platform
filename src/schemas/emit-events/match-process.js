@@ -37,14 +37,32 @@ module.exports = [
   }),
   registerSchema({
     type: 'MATCH_PROCESS_GAMES_REPORTED',
-    detail: joi
-      .object()
-      .keys({
-        league_id: joi.objectId().required(),
-        urls: joi.array().min(1).required(),
-        reply_to_channel: joi.string().required(),
-      })
-      .required(),
+    detail: joi.alternatives([
+      joi
+        .object()
+        .keys({
+          league_id: joi.objectId().required(),
+          urls: joi.array().min(1).required(),
+          reply_to_channel: joi.string().required(),
+        })
+        .required(),
+      joi
+        .object()
+        .keys({
+          league_id: joi.objectId().required(),
+          urls: joi.array().required(),
+          reply_to_channel: joi.string().required(),
+          mentioned_team_ids: joi.array().items(joi.objectId()).required(),
+          manual_reports: joi.array().items(
+            joi.object().keys({
+              game_number: joi.number().required(),
+              winning_team_id: joi.objectId().required(),
+              forfeit: joi.boolean(),
+            }),
+          ),
+        })
+        .required(),
+    ]),
   }),
   registerSchema({
     type: 'MATCH_PROCESS_FORFEIT_REPORTED',

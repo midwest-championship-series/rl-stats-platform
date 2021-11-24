@@ -19,7 +19,7 @@ const getConnection = async () => {
 }
 
 const indexDocs = async (documents, indexName, idKeys) => {
-  if (!documents || documents.length < 1) throw new Error('no documents to index')
+  if (!documents || documents.length < 1) return
   if (!indexName) throw new Error('indexDocs needs an index name')
   if (!idKeys || idKeys.length < 1) throw new Error('no id keys passed to elastic call')
   const body = documents.reduce((acc, doc) => {

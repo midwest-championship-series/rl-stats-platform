@@ -182,10 +182,13 @@ const handleReplays = async (filters, processedAt) => {
   const gamesData = (await ballchasing.getReplayData(game_ids)).sort((a, b) => new Date(a.date) - new Date(b.date))
 
   console.info('retrieving players')
-  const players = await Players.find(buildPlayersQuery(gamesData))
-  if (gamesData.length > 0 && players.length < 1) {
-    const errMsg = `no players found for games: ${game_ids.join(', ')}`
-    throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
+  const players = []
+  if (gamesData.length > 0) {
+    players.push(...(await Players.find(buildPlayersQuery(gamesData))))
+    if (players.length < 1) {
+      const errMsg = `no players found for games: ${game_ids.join(', ')}`
+      throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
+    }
   }
 
   console.info('retrieving league info')
@@ -218,8 +221,16 @@ const handleReplays = async (filters, processedAt) => {
       if (g.report_type === 'MANUAL_REPORT') {
         return new Games({
           winning_team_id: g.winning_team_id,
+          forfeit_team_id: g.forfeit
+            ? teams.filter((t) => !t._id.equals(g.winning_team_id))[0]._id.toHexString()
+            : undefined,
           report_type: 'MANUAL_REPORT',
-          raw_data: { ...g, orange: { team: match.teams[0] }, blue: { team: match.teams[1] } },
+          game_number: g.game_number,
+          /**
+           * @todo remove this assignment of teams to orange/blue
+           * it's just easy while still using ballchasing's format but it doesn't make sense
+           */
+          raw_data: { ...g, orange: { team: teams[0] }, blue: { team: teams[1] } },
         })
       } else {
         return new Games({
@@ -230,6 +241,7 @@ const handleReplays = async (filters, processedAt) => {
         })
       }
     })
+    console.log(games)
     // update match
     match.game_ids = games.map((g) => g._id)
   } else {

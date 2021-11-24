@@ -87,6 +87,24 @@ const extraMockMatch = {
     },
   ],
 }
+
+const mockManualMatch = {
+  _id: new ObjectId('5ec9359b8c0dd900074686d3'),
+  games: [
+    {
+      report_type: 'MANUAL_REPORT',
+      game_number: 1,
+      winning_team_id: '5ebc62a9d09245d2a7c62eb3',
+      forfeit_team_id: '5ec9358e8c0dd900074685c3',
+    },
+    {
+      report_type: 'MANUAL_REPORT',
+      game_number: 2,
+      winning_team_id: '5ebc62a9d09245d2a7c62eb3',
+    },
+  ],
+}
+
 const mockSeasons = [
   {
     _id: new ObjectId('5ebc62b0d09245d2a7c6340a'),
@@ -339,6 +357,32 @@ describe('reprocess-games', () => {
             },
           ],
         },
+      },
+    ])
+  })
+  it('should reprocess matches with forfeited games', async () => {
+    matchesFindMock.mockResolvedValue([mockManualMatch])
+    await reprocessGames('matches', { week: 9 })
+    expect(aws.eventBridge.emitEvents).toHaveBeenCalledWith([
+      {
+        detail: {
+          match_id: '5ec9359b8c0dd900074686d3',
+          report_games: [
+            {
+              forfeit: true,
+              game_number: 1,
+              report_type: 'MANUAL_REPORT',
+              winning_team_id: '5ebc62a9d09245d2a7c62eb3',
+            },
+            {
+              forfeit: false,
+              game_number: 2,
+              report_type: 'MANUAL_REPORT',
+              winning_team_id: '5ebc62a9d09245d2a7c62eb3',
+            },
+          ],
+        },
+        type: 'MATCH_PROCESS_INIT',
       },
     ])
   })

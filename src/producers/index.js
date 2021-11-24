@@ -6,17 +6,16 @@ const { UnRecoverableError } = require('../util/errors')
 
 const colors = ['blue', 'orange']
 
-const assignWins = (games, match, leagueGames) => {
-  const [orangeId, blueId] = match.teams.map((t) => t._id)
+const assignWins = (games, match, leagueGames, teams) => {
+  const [team1Id, team2Id] = teams.map((t) => t._id)
   const wins = {
-    [orangeId]: 0,
-    [blueId]: 0,
+    [team1Id]: 0,
+    [team2Id]: 0,
   }
   games.forEach((game) => {
     let winnerId
     if (game.report_type === 'MANUAL_REPORT') {
       winnerId = game.winning_team_id
-      console.log(typeof game.winning_team_id)
     } else {
       const winner = game.orange.stats.core.goals > game.blue.stats.core.goals ? 'orange' : 'blue'
       winnerId = game[winner].team._id
@@ -24,12 +23,12 @@ const assignWins = (games, match, leagueGames) => {
     game.winning_team_id = winnerId
     wins[winnerId]++
   })
-  if (wins[orangeId] === wins[blueId]) {
-    throw new UnRecoverableError('BEST_OF_NOT_MET', `both teams should not have win count equal to ${wins[orangeId]}`)
+  if (wins[team1Id] === wins[team2Id]) {
+    throw new UnRecoverableError('BEST_OF_NOT_MET', `both teams should not have win count equal to ${wins[team1Id]}`)
   }
 
-  const winnerId = wins[orangeId] > wins[blueId] ? orangeId : blueId
-  const maxWins = Math.max(wins[orangeId], wins[blueId])
+  const winnerId = wins[team1Id] > wins[team2Id] ? team1Id : team2Id
+  const maxWins = Math.max(wins[team1Id], wins[team2Id])
   match.winning_team_id = winnerId
   if (match.best_of) {
     const expectedWins = Math.ceil(match.best_of / 2)
@@ -67,7 +66,7 @@ module.exports = (leagueInfo, processedAt) => {
     }
     gameNumber++
   }
-  assignWins(games, leagueInfo.match, leagueInfo.games)
+  assignWins(games, leagueInfo.match, leagueInfo.games, leagueInfo.teams)
   return {
     teamStats: leagueInfo.games.reduce((result, game) => result.concat(teamStats(game, processedAt)), []),
     playerStats: leagueInfo.games.reduce((result, game) => result.concat(playerStats(game, processedAt)), []),

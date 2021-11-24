@@ -28,6 +28,31 @@ describe('emit-events', () => {
     expect(() => validate(invalid)).toThrowError('"detail" is required')
   })
   describe('process match schemas', () => {
+    it('should validate a match report', () => {
+      validate({
+        type: 'MATCH_PROCESS_GAMES_REPORTED',
+        detail: {
+          urls: ['https://ballchasing.com/group/lumberjacks-vs-flyers-96pofoolig'],
+          league_id: '5ec9359b8c0dd900074686d3',
+          reply_to_channel: '692994579305332806',
+        },
+      })
+      validate({
+        type: 'MATCH_PROCESS_GAMES_REPORTED',
+        detail: {
+          urls: [],
+          league_id: '5ec9359b8c0dd900074686d3',
+          reply_to_channel: '692994579305332806',
+          mentioned_team_ids: ['5ec9358e8c0dd900074685c3', '5ec9358d8c0dd900074685bd'],
+          manual_reports: [
+            { game_number: 1, winning_team_id: '5ec9358d8c0dd900074685bd', forfeit: false },
+            { game_number: 2, winning_team_id: '5ec9358e8c0dd900074685c3', forfeit: false },
+            { game_number: 3, winning_team_id: '5ec9358d8c0dd900074685bd' },
+            { game_number: 4, winning_team_id: '5ec9358d8c0dd900074685bd', forfeit: true },
+          ],
+        },
+      })
+    })
     it('should validate a match reprocess', () => {
       validate({
         type: 'MATCH_REPROCESS',

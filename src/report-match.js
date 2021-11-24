@@ -56,16 +56,18 @@ module.exports = async (params) => {
     type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
     detail,
   })
-  /** @todo remove hardcoded ballchasing */
-  /** @todo use rocket_league_id to dedup */
-  const games = await Games.find({
-    $or: gameIdsToProcess.map((id) => ({
-      'replay_origin.source': 'ballchasing',
-      'replay_origin.key': id,
-    })),
-  })
-  if (games.length > 0) {
-    throw new Error('games have already been reported - please use the !reprocess command')
+  if (gameIdsToProcess.length > 0) {
+    /** @todo remove hardcoded ballchasing */
+    /** @todo use rocket_league_id to dedup */
+    const games = await Games.find({
+      $or: gameIdsToProcess.map((id) => ({
+        'replay_origin.source': 'ballchasing',
+        'replay_origin.key': id,
+      })),
+    })
+    if (games.length > 0) {
+      throw new Error('games have already been reported - please use the !reprocess command')
+    }
   }
   await eventBridge.emitEvent({
     type: 'MATCH_PROCESS_INIT',

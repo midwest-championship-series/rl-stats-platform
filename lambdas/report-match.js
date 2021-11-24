@@ -20,6 +20,7 @@ const handler = async (event) => {
       }
     } catch (err) {
       console.error(err)
+      console.error('messages: ', JSON.stringify(messages))
       await reportError(err, 'error caught on initial match report', data.reply_to_channel)
     }
   }

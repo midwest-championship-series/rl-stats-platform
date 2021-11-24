@@ -27,6 +27,7 @@ const Model = createModel(
     date_time_played: { type: Date },
     date_time_processed: { type: Date },
     game_restarted: { type: Boolean },
+    raw_data: { type: Schema.Types.Mixed }, // does not actually get stored on save
   },
   (schema) => {
     schema.virtual('match', {
@@ -34,6 +35,9 @@ const Model = createModel(
       localField: '_id',
       foreignField: 'game_ids',
       justOne: true,
+    })
+    schema.pre('save', function () {
+      this.raw_data = undefined
     })
   },
 )
