@@ -66,6 +66,12 @@ module.exports = [
         replays: joi.array().min(1).items(gameReport).required(),
       }),
       joi.object().keys({
+        league_id: joi.string().required(),
+        reply_to_channel: joi.string().required(),
+        replays: joi.array().min(1).items(gameReport).required(),
+        mentioned_team_ids: joi.array().items(joi.string()),
+      }),
+      joi.object().keys({
         match_id: joi.string().required(),
         replays: joi
           .array()
@@ -102,10 +108,12 @@ module.exports = [
           report_games: joi.array().min(1).items(gameReport).required(),
           league_id: joi.objectId().required(),
           reply_to_channel: joi.string().required(),
+          mentioned_team_ids: joi.array().items(joi.string()),
         }),
         joi.object().keys({
           report_games: joi.array().min(1).items(gameReport).required(),
           match_id: joi.objectId().required(),
+          mentioned_team_ids: joi.array().items(joi.string()),
         }),
         joi.object().keys({
           match_id: joi.string().required(),

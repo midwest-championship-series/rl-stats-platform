@@ -46,93 +46,194 @@ describe('report-games', () => {
       ],
       reply_to_channel: '692994579305332806',
     })
+    const gameReports = [
+      {
+        bucket: {
+          key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
+          source: 'mock-bucket',
+        },
+        id: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+        upload_source: 'ballchasing',
+      },
+      {
+        bucket: {
+          key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+          source: 'mock-bucket',
+        },
+        id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+        upload_source: 'ballchasing',
+      },
+      {
+        bucket: {
+          key: 'ballchasing:a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
+          source: 'mock-bucket',
+        },
+        id: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
+        upload_source: 'ballchasing',
+      },
+      {
+        bucket: {
+          key: 'ballchasing:877f66a5-23c9-4397-9c47-97c9870351c0.replay',
+          source: 'mock-bucket',
+        },
+        id: '877f66a5-23c9-4397-9c47-97c9870351c0',
+        upload_source: 'ballchasing',
+      },
+    ]
     expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
       type: 'MATCH_PROCESS_INIT',
       detail: {
         league_id: '5ebc62b1d09245d2a7c63516',
-        report_games: [
-          {
-            bucket: {
-              key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
-              source: 'mock-bucket',
-            },
-            id: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-            upload_source: 'ballchasing',
-          },
-          {
-            bucket: {
-              key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
-              source: 'mock-bucket',
-            },
-            id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-            upload_source: 'ballchasing',
-          },
-          {
-            bucket: {
-              key: 'ballchasing:a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
-              source: 'mock-bucket',
-            },
-            id: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-            upload_source: 'ballchasing',
-          },
-          {
-            bucket: {
-              key: 'ballchasing:877f66a5-23c9-4397-9c47-97c9870351c0.replay',
-              source: 'mock-bucket',
-            },
-            id: '877f66a5-23c9-4397-9c47-97c9870351c0',
-            upload_source: 'ballchasing',
-          },
-        ],
+        report_games: gameReports,
         reply_to_channel: '692994579305332806',
       },
     })
-    const replayLocations = {
-      league_id: '5ebc62b1d09245d2a7c63516',
-      reply_to_channel: '692994579305332806',
-      replays: [
-        {
-          bucket: {
-            key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
-            source: 'mock-bucket',
-          },
-          id: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
-          upload_source: 'ballchasing',
-        },
-        {
-          bucket: {
-            key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
-            source: 'mock-bucket',
-          },
-          id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
-          upload_source: 'ballchasing',
-        },
-        {
-          bucket: {
-            key: 'ballchasing:a1ed2167-3f3f-46e0-b198-ef765d4adac6.replay',
-            source: 'mock-bucket',
-          },
-          id: 'a1ed2167-3f3f-46e0-b198-ef765d4adac6',
-          upload_source: 'ballchasing',
-        },
-        {
-          bucket: {
-            key: 'ballchasing:877f66a5-23c9-4397-9c47-97c9870351c0.replay',
-            source: 'mock-bucket',
-          },
-          id: '877f66a5-23c9-4397-9c47-97c9870351c0',
-          upload_source: 'ballchasing',
-        },
-      ],
-    }
     expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
       type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
-      detail: replayLocations,
+      detail: {
+        league_id: '5ebc62b1d09245d2a7c63516',
+        reply_to_channel: '692994579305332806',
+        replays: gameReports,
+      },
     })
-    expect(result).toMatchObject(replayLocations)
+    expect(result).toMatchObject({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      reply_to_channel: '692994579305332806',
+      replays: gameReports,
+    })
+  })
+  it('should process new games with a mix of urls and manual reports', async () => {
+    // simulate first game reported
+    games.Model.find.mockResolvedValueOnce([])
+    const result = await reportGames({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      urls: [
+        'https://ballchasing.com/replay/595ac248-5f25-48a5-bf39-9b50f25e97a1',
+        'https://ballchasing.com/replay/b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+      ],
+      mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
+      manual_reports: [
+        { winning_team_id: '5ec9358d8c0dd900074685bd', game_number: 2, forfeit: true },
+        { winning_team_id: '5ec9358e8c0dd900074685c3', game_number: 3 },
+      ],
+      reply_to_channel: '692994579305332806',
+    })
+    const gameReports = [
+      {
+        bucket: {
+          key: 'ballchasing:595ac248-5f25-48a5-bf39-9b50f25e97a1.replay',
+          source: 'mock-bucket',
+        },
+        id: '595ac248-5f25-48a5-bf39-9b50f25e97a1',
+        upload_source: 'ballchasing',
+      },
+      {
+        bucket: {
+          key: 'ballchasing:b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e.replay',
+          source: 'mock-bucket',
+        },
+        id: 'b63a3a3b-6b3d-433a-ab21-8a6c02d6bd8e',
+        upload_source: 'ballchasing',
+      },
+      {
+        report_type: 'MANUAL_REPORT',
+        winning_team_id: '5ec9358d8c0dd900074685bd',
+        game_number: 2,
+        forfeit: true,
+      },
+      {
+        report_type: 'MANUAL_REPORT',
+        winning_team_id: '5ec9358e8c0dd900074685c3',
+        game_number: 3,
+      },
+    ]
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
+      type: 'MATCH_PROCESS_INIT',
+      detail: {
+        league_id: '5ebc62b1d09245d2a7c63516',
+        report_games: gameReports,
+        reply_to_channel: '692994579305332806',
+        mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
+      },
+    })
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
+      type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
+      detail: {
+        league_id: '5ebc62b1d09245d2a7c63516',
+        reply_to_channel: '692994579305332806',
+        replays: gameReports,
+        mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
+      },
+    })
+    expect(result).toMatchObject({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      reply_to_channel: '692994579305332806',
+      replays: gameReports,
+    })
+  })
+  it('should process new games only manual reports', async () => {
+    // simulate first game reported
+    games.Model.find.mockResolvedValueOnce([])
+    const result = await reportGames({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
+      manual_reports: [
+        { winning_team_id: '5ec9358d8c0dd900074685bd', game_number: 1 },
+        { winning_team_id: '5ec9358d8c0dd900074685bd', game_number: 2, forfeit: true },
+        { winning_team_id: '5ec9358e8c0dd900074685c3', game_number: 3 },
+        { winning_team_id: '5ec9358d8c0dd900074685bd', game_number: 4 },
+      ],
+      reply_to_channel: '692994579305332806',
+    })
+    const gameReports = [
+      {
+        report_type: 'MANUAL_REPORT',
+        winning_team_id: '5ec9358d8c0dd900074685bd',
+        game_number: 1,
+      },
+      {
+        report_type: 'MANUAL_REPORT',
+        winning_team_id: '5ec9358d8c0dd900074685bd',
+        game_number: 2,
+        forfeit: true,
+      },
+      {
+        report_type: 'MANUAL_REPORT',
+        winning_team_id: '5ec9358e8c0dd900074685c3',
+        game_number: 3,
+      },
+      {
+        report_type: 'MANUAL_REPORT',
+        winning_team_id: '5ec9358d8c0dd900074685bd',
+        game_number: 4,
+      },
+    ]
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
+      type: 'MATCH_PROCESS_INIT',
+      detail: {
+        league_id: '5ebc62b1d09245d2a7c63516',
+        report_games: gameReports,
+        reply_to_channel: '692994579305332806',
+        mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
+      },
+    })
+    expect(aws.eventBridge.emitEvent).toHaveBeenCalledWith({
+      type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
+      detail: {
+        league_id: '5ebc62b1d09245d2a7c63516',
+        reply_to_channel: '692994579305332806',
+        replays: gameReports,
+        mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
+      },
+    })
+    expect(result).toMatchObject({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      reply_to_channel: '692994579305332806',
+      replays: gameReports,
+    })
   })
   it('should report a match with a group url', async () => {
-    games.Model.find.mockResolvedValueOnce([])
+    games.Model.find.mockResolvedValue([])
     const result = await reportGames({
       league_id: '5ebc62b1d09245d2a7c63516',
       urls: ['https://ballchasing.com/group/test-upload-gmix5xcfhp/player-stats'],
@@ -141,8 +242,8 @@ describe('report-games', () => {
     expect(ballchasing.getReplayIdsFromGroup).toHaveBeenCalledWith('test-upload-gmix5xcfhp')
   })
   it('should not allow reported games to be re-reported', async () => {
-    matchesFindMock.mockResolvedValueOnce([])
-    games.Model.find.mockResolvedValueOnce([{}])
+    matchesFindMock.mockResolvedValue([])
+    games.Model.find.mockResolvedValue([{}])
     await expect(
       reportGames({
         league_id: '5ebc62b1d09245d2a7c63516',

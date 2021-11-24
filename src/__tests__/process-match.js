@@ -770,7 +770,6 @@ describe('process-match', () => {
       game_number: '1',
     })
     const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
-    console.log(findStats({ games_played: undefined, team_id: '5ebc62a9d09245d2a7c62eb3' }))
     const burnsville = findStats({ games_played: undefined, team_id: '5ebc62a9d09245d2a7c62eb3', game_number: '3' })[0]
     const forfeitGameId = burnsville.game_id
     expect(burnsville).toMatchObject({
@@ -803,7 +802,6 @@ describe('process-match', () => {
       game_number: '3',
     })
   })
-  it.skip('should reprocess an existing match with a game forfeit', async () => {})
   it('should process a new match with manually reported games', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)

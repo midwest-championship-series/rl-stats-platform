@@ -127,6 +127,7 @@ describe('emit-events', () => {
             },
           ],
           match_id: '5ec9359b8c0dd900074686d3',
+          mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
         },
       })
     })
@@ -146,6 +147,37 @@ describe('emit-events', () => {
               upload_source: 'ballchasing',
             },
           ],
+        },
+      })
+      validate({
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
+        detail: {
+          league_id: '5ec9359b8c0dd900074686d3',
+          reply_to_channel: '692994579305332806',
+          replays: [
+            {
+              report_type: 'MANUAL_REPORT',
+              game_number: 3,
+              winning_team_id: '5ebc62a9d09245d2a7c62eb3',
+              forfeit: true,
+            },
+          ],
+        },
+      })
+      validate({
+        type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
+        detail: {
+          league_id: '5ec9359b8c0dd900074686d3',
+          reply_to_channel: '692994579305332806',
+          replays: [
+            {
+              report_type: 'MANUAL_REPORT',
+              game_number: 3,
+              winning_team_id: '5ebc62a9d09245d2a7c62eb3',
+              forfeit: true,
+            },
+          ],
+          mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
         },
       })
     })
