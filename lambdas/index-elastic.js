@@ -27,7 +27,7 @@ const handler = async (event) => {
         return indexDocs(loadData, indexName, keys)
       }),
     )
-    const errors = responses.flatMap((item) => item.errors || [])
+    const errors = responses.flatMap((item) => (item && item.errors) || [])
     if (errors.length > 1) {
       console.error(errors)
       throw new Error(`${errors.length} errors occurred while indexing into elastic`)

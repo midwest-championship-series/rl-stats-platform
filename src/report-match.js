@@ -20,7 +20,9 @@ const getGameIds = async (urls) => {
 }
 
 module.exports = async (params) => {
-  const { league_id, urls, reply_to_channel } = params
+  const options = { urls: [], manual_reports: [] }
+  const { league_id, urls, reply_to_channel, mentioned_team_ids } = { ...options, ...params }
+  const manualReports = params.manual_reports || []
   const gameIds = await getGameIds(urls)
   const gameIdsToProcess = [...new Set(gameIds)]
   /**
@@ -43,30 +45,33 @@ module.exports = async (params) => {
       },
     })
   }
+  replays.push(...manualReports.map((r) => ({ ...r, report_type: 'MANUAL_REPORT' })))
   const detail = {
     league_id,
     reply_to_channel,
+    mentioned_team_ids,
     replays,
   }
   await eventBridge.emitEvent({
     type: 'MATCH_PROCESS_REPLAYS_OBTAINED',
     detail,
   })
-  /** @todo remove hardcoded ballchasing */
-  /** @todo use rocket_league_id to dedup */
-  const games = await Games.find({
-    $or: gameIdsToProcess.map((id) => ({
-      'replay_origin.source': 'ballchasing',
-      'replay_origin.key': id,
-    })),
-  })
-  if (games.length > 0) {
-    throw new Error('games have already been reported - please use the !reprocess command')
+  if (gameIdsToProcess.length > 0) {
+    /** @todo remove hardcoded ballchasing */
+    /** @todo use rocket_league_id to dedup */
+    const games = await Games.find({
+      $or: gameIdsToProcess.map((id) => ({
+        'replay_origin.source': 'ballchasing',
+        'replay_origin.key': id,
+      })),
+    })
+    if (games.length > 0) {
+      throw new Error('games have already been reported - please use the !reprocess command')
+    }
   }
   await eventBridge.emitEvent({
     type: 'MATCH_PROCESS_INIT',
-    // detail: { game_ids: gameIdsToProcess, league_id, reply_to_channel },
-    detail: { report_games: replays, league_id, reply_to_channel },
+    detail: { report_games: replays, league_id, reply_to_channel, mentioned_team_ids },
   })
 
   return detail

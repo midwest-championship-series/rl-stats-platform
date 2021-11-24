@@ -9,11 +9,19 @@ const bucketSchema = joi
   })
   .required()
 
-const gameReport = joi.object().keys({
-  id: joi.string().required(),
-  upload_source: joi.string().valid('ballchasing').required(),
-  bucket: bucketSchema.optional() /** @todo remove .optional() when all games have replays stored */,
-})
+const gameReport = joi.alternatives([
+  joi.object().keys({
+    id: joi.string().required(),
+    upload_source: joi.string().valid('ballchasing').required(),
+    bucket: bucketSchema.optional() /** @todo remove .optional() when all games have replays stored */,
+  }),
+  joi.object().keys({
+    report_type: joi.string().valid('MANUAL_REPORT'),
+    game_number: joi.number().required(),
+    winning_team_id: joi.string().required(),
+    forfeit: joi.boolean(),
+  }),
+])
 
 module.exports = [
   registerSchema({
@@ -29,14 +37,32 @@ module.exports = [
   }),
   registerSchema({
     type: 'MATCH_PROCESS_GAMES_REPORTED',
-    detail: joi
-      .object()
-      .keys({
-        league_id: joi.objectId().required(),
-        urls: joi.array().min(1).required(),
-        reply_to_channel: joi.string().required(),
-      })
-      .required(),
+    detail: joi.alternatives([
+      joi
+        .object()
+        .keys({
+          league_id: joi.objectId().required(),
+          urls: joi.array().min(1).required(),
+          reply_to_channel: joi.string().required(),
+        })
+        .required(),
+      joi
+        .object()
+        .keys({
+          league_id: joi.objectId().required(),
+          urls: joi.array().required(),
+          reply_to_channel: joi.string().required(),
+          mentioned_team_ids: joi.array().items(joi.objectId()).required(),
+          manual_reports: joi.array().items(
+            joi.object().keys({
+              game_number: joi.number().required(),
+              winning_team_id: joi.objectId().required(),
+              forfeit: joi.boolean(),
+            }),
+          ),
+        })
+        .required(),
+    ]),
   }),
   registerSchema({
     type: 'MATCH_PROCESS_FORFEIT_REPORTED',
@@ -56,6 +82,12 @@ module.exports = [
         league_id: joi.string().required(),
         reply_to_channel: joi.string().required(),
         replays: joi.array().min(1).items(gameReport).required(),
+      }),
+      joi.object().keys({
+        league_id: joi.string().required(),
+        reply_to_channel: joi.string().required(),
+        replays: joi.array().min(1).items(gameReport).required(),
+        mentioned_team_ids: joi.array().items(joi.string()),
       }),
       joi.object().keys({
         match_id: joi.string().required(),
@@ -94,10 +126,12 @@ module.exports = [
           report_games: joi.array().min(1).items(gameReport).required(),
           league_id: joi.objectId().required(),
           reply_to_channel: joi.string().required(),
+          mentioned_team_ids: joi.array().items(joi.string()),
         }),
         joi.object().keys({
           report_games: joi.array().min(1).items(gameReport).required(),
           match_id: joi.objectId().required(),
+          mentioned_team_ids: joi.array().items(joi.string()),
         }),
         joi.object().keys({
           match_id: joi.string().required(),

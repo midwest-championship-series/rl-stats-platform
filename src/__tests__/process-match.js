@@ -167,18 +167,22 @@ const mockClosedMatch = mockDoc({
     mockDoc({
       _id: ObjectId('5ebc62afd09245d2a7c6333f'),
       replay_origin: { key: '9aee7f5f-7d75-40b0-8116-a8e1e2c9d4c5', source: 'ballchasing' },
+      game_number: 1,
     }),
     mockDoc({
       _id: ObjectId('5ebc62afd09245d2a7c63338'),
       replay_origin: { key: '6903ac8a-d480-4f41-84a0-321ffb5cd17d', source: 'ballchasing' },
+      game_number: 2,
     }),
     mockDoc({
       _id: ObjectId('5ebc62afd09245d2a7c6335e'),
       replay_origin: { key: '2493a4bd-aeb5-49ba-8cac-059cc99865c1', source: 'ballchasing' },
+      game_number: 3,
     }),
     mockDoc({
       _id: ObjectId('5ebc62afd09245d2a7c63350'),
       replay_origin: { key: '111c0144-7219-426a-8263-8cff260d030d', source: 'ballchasing' },
+      game_number: 4,
     }),
   ],
   season: {
@@ -223,8 +227,8 @@ const games = require('../model/mongodb/games')
 jest.mock('../model/mongodb/games')
 class Game {
   constructor(init) {
+    this._id = new ObjectId()
     for (let prop in init) {
-      this._id = new ObjectId()
       this[prop] = init[prop]
     }
   }
@@ -310,14 +314,14 @@ describe('process-match', () => {
     expect(result).toMatchObject({
       match_id: '5ebc62b0d09245d2a7c6340c',
       game_ids: [
+        '5ebc62afd09245d2a7c63350',
+        '5ebc62afd09245d2a7c6335e',
         '5ebc62afd09245d2a7c6333f',
         '5ebc62afd09245d2a7c63338',
-        '5ebc62afd09245d2a7c6335e',
-        '5ebc62afd09245d2a7c63350',
       ],
     })
     expect(result.games).toHaveLength(4)
-    expect(result.games[0].winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62e86'))
+    expect(result.games[0].winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62eb3'))
     expect(players.Model.find).toHaveBeenCalledWith({
       $or: [
         {
@@ -332,7 +336,7 @@ describe('process-match', () => {
           accounts: {
             $elemMatch: {
               platform: 'steam',
-              platform_id: '76561198047988955',
+              platform_id: '76561198247336622',
             },
           },
         },
@@ -340,7 +344,7 @@ describe('process-match', () => {
           accounts: {
             $elemMatch: {
               platform: 'steam',
-              platform_id: '76561198247336622',
+              platform_id: '76561198047988955',
             },
           },
         },
@@ -406,7 +410,7 @@ describe('process-match', () => {
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
     const { processedAt, team_games, player_games, matchId } = uploadStaticStats[0][2]
     expect(matchId).toEqual('5ebc62b0d09245d2a7c6340c')
-    expect(processedAt / 1000).toBeCloseTo(Date.now() / 1000, 0)
+    expect(processedAt - Date.now()).toBeLessThan(100)
     expect(team_games).toHaveLength(8)
     expect(player_games).toHaveLength(24)
     expect(aws.eventBridge.emitEvent).toHaveBeenCalledTimes(1)
@@ -424,7 +428,7 @@ describe('process-match', () => {
   it('should process team stats', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
-    matchesFindMock.mockResolvedValue(mockClosedMatch)
+    matchesFindByIdMock.mockResolvedValue(mockClosedMatch)
     await processMatch({
       match_id: '5ebc62b0d09245d2a7c6340c',
       report_games: [
@@ -436,13 +440,12 @@ describe('process-match', () => {
     })
     const { team_games } = aws.s3.uploadJSON.mock.calls[0][2]
     expect(team_games).toHaveLength(8)
-    expect(team_games[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
     const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
     expect(findStats({ game_id: '5ebc62afd09245d2a7c6333f', team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
       game_id_overtime_game: '5ebc62afd09245d2a7c6333f',
       overtime_seconds_played: 124,
     })
-    expect(team_games[6]).toMatchObject({
+    expect(findStats({ game_id: '5ebc62afd09245d2a7c63338', team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
       opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
@@ -484,7 +487,7 @@ describe('process-match', () => {
       ms_zero_boost: 162580,
       ms_full_boost: 79400,
     })
-    expect(team_games[7]).toMatchObject({
+    expect(findStats({ game_id: '5ebc62afd09245d2a7c63338', team_id: '5ebc62a9d09245d2a7c62eb3' })[0]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62eb3',
       opponent_team_id: '5ebc62a9d09245d2a7c62e86',
       game_id_win: undefined,
@@ -493,6 +496,7 @@ describe('process-match', () => {
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:4',
       game_number: '4',
     })
+    expect(team_games[0].epoch_processed - Date.now()).toBeLessThan(100)
   })
   it('should process player stats', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
@@ -513,7 +517,7 @@ describe('process-match', () => {
     }
     // ensure there are 6 player records per game
     expect(player_games).toHaveLength(24)
-    expect(player_games[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
+    expect(player_games[0].epoch_processed - Date.now()).toBeLessThan(100)
     expect(findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' })).toHaveLength(6)
     expect(
       findPlayerStats({ player_id: '5ec04239d09245d2a7d4fa26', game_id: '5ebc62afd09245d2a7c63338' })[0],
@@ -605,6 +609,377 @@ describe('process-match', () => {
     })
     expect(result.game_ids).toHaveLength(4)
   })
+  it('should process a new match with a game forfeit', async () => {
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    ballchasing.getReplayData.mockResolvedValue([replays[0], replays[1], replays[3]])
+    const result = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      report_games: [
+        {
+          id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+          upload_source: 'ballchasing',
+          bucket: { key: 'ballchasing:d2d31639-1e42-4f0b-9537-545d8d19f63b.replay', source: 'mock-bucket' },
+        },
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 3,
+          forfeit: true,
+        },
+        {
+          id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+          upload_source: 'ballchasing',
+          bucket: { key: 'ballchasing:1c76f735-5d28-4dcd-a0f2-bd9a5b129772.replay', source: 'mock-bucket' },
+        },
+        {
+          id: '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+          upload_source: 'ballchasing',
+          bucket: { key: 'ballchasing:4ed12225-7251-4d63-8bb6-15338c60bcf2.replay', source: 'mock-bucket' },
+        },
+      ],
+    })
+    expect(result).toMatchObject({
+      match_id: '5ebc62b0d09245d2a7c6340c',
+    })
+    const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(team_games).toHaveLength(8)
+    expect(player_games).toHaveLength(18)
+    const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
+    const burnsville = findStats({ games_played: undefined, team_id: '5ebc62a9d09245d2a7c62eb3' })[0]
+    const forfeitGameId = burnsville.game_id
+    expect(burnsville).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62eb3',
+      team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+      opponent_team_name: 'Duluth Superiors',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: undefined,
+      match_type: 'REG',
+      week: 1,
+      season_name: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id: forfeitGameId,
+      game_id_win: undefined,
+      game_id_forfeit_win: undefined,
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_id_win_total: undefined,
+      game_id_overtime_game: undefined,
+      game_number: '3',
+      game_date: undefined,
+      map_name: undefined,
+      wins: 0,
+      games_played: undefined,
+    })
+    expect(findStats({ game_id: forfeitGameId, team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
+      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season_name: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id: forfeitGameId,
+      game_id_win: undefined,
+      game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_id_overtime_game: undefined,
+      game_number: '3',
+      game_date: undefined,
+      map_name: undefined,
+      wins: 1,
+      games_played: undefined,
+    })
+  })
+  it('should process a new match with multiple game forfeits', async () => {
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    ballchasing.getReplayData.mockResolvedValue([replays[1], replays[3]])
+    const result = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      report_games: [
+        {
+          id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+          upload_source: 'ballchasing',
+          bucket: { key: 'ballchasing:d2d31639-1e42-4f0b-9537-545d8d19f63b.replay', source: 'mock-bucket' },
+        },
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 3,
+          forfeit: true,
+        },
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 1,
+          forfeit: true,
+        },
+        {
+          id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+          upload_source: 'ballchasing',
+          bucket: { key: 'ballchasing:1c76f735-5d28-4dcd-a0f2-bd9a5b129772.replay', source: 'mock-bucket' },
+        },
+      ],
+    })
+    expect(result).toMatchObject({
+      match_id: '5ebc62b0d09245d2a7c6340c',
+    })
+    const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(team_games).toHaveLength(8)
+    expect(player_games).toHaveLength(12)
+    const game1ForfeitId = team_games[0].game_id
+    expect(team_games[0]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62eb3',
+      team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+      opponent_team_name: 'Duluth Superiors',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: undefined,
+      game_id: game1ForfeitId,
+      game_id_win: undefined,
+      game_id_forfeit_win: undefined,
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_number: '1',
+    })
+    expect(team_games[1]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
+      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: '5ebc62b0d09245d2a7c6340c',
+      game_id: game1ForfeitId,
+      game_id_win: undefined,
+      game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_number: '1',
+    })
+    const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
+    const burnsville = findStats({ games_played: undefined, team_id: '5ebc62a9d09245d2a7c62eb3', game_number: '3' })[0]
+    const forfeitGameId = burnsville.game_id
+    expect(burnsville).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62eb3',
+      team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+      opponent_team_name: 'Duluth Superiors',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: undefined,
+      game_id: forfeitGameId,
+      game_id_win: undefined,
+      game_id_forfeit_win: undefined,
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_number: '3',
+    })
+    expect(findStats({ game_id: forfeitGameId, team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
+      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: '5ebc62b0d09245d2a7c6340c',
+      game_id: forfeitGameId,
+      game_id_win: undefined,
+      game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_number: '3',
+    })
+  })
+  it('should process a new match with manually reported games', async () => {
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    ballchasing.getReplayData.mockResolvedValue([replays[0], replays[1], replays[3]])
+    const result = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      report_games: [
+        {
+          id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b',
+          upload_source: 'ballchasing',
+          bucket: { key: 'ballchasing:d2d31639-1e42-4f0b-9537-545d8d19f63b.replay', source: 'mock-bucket' },
+        },
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 3,
+        },
+        {
+          id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772',
+          upload_source: 'ballchasing',
+          bucket: { key: 'ballchasing:1c76f735-5d28-4dcd-a0f2-bd9a5b129772.replay', source: 'mock-bucket' },
+        },
+        {
+          id: '4ed12225-7251-4d63-8bb6-15338c60bcf2',
+          upload_source: 'ballchasing',
+          bucket: { key: 'ballchasing:4ed12225-7251-4d63-8bb6-15338c60bcf2.replay', source: 'mock-bucket' },
+        },
+      ],
+    })
+    expect(result).toMatchObject({
+      match_id: '5ebc62b0d09245d2a7c6340c',
+    })
+    const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(team_games).toHaveLength(8)
+    expect(player_games).toHaveLength(18)
+    const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
+    const burnsville = findStats({ ms_played: undefined, team_id: '5ebc62a9d09245d2a7c62eb3' })[0]
+    const manualReportGameId = burnsville.game_id
+    expect(burnsville).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62eb3',
+      team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+      opponent_team_name: 'Duluth Superiors',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: undefined,
+      match_type: 'REG',
+      week: 1,
+      season_name: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id: manualReportGameId,
+      game_id_win: undefined,
+      game_id_forfeit_win: undefined,
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_id_win_total: undefined,
+      game_id_overtime_game: undefined,
+      game_number: '3',
+      game_date: undefined,
+      map_name: undefined,
+      wins: 0,
+      games_played: 1,
+    })
+    expect(findStats({ game_id: manualReportGameId, team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
+      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season_name: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id: manualReportGameId,
+      game_id_win: manualReportGameId,
+      game_id_forfeit_win: undefined,
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
+      game_id_overtime_game: undefined,
+      game_number: '3',
+      game_date: undefined,
+      map_name: undefined,
+      wins: 1,
+      games_played: 1,
+    })
+  })
+  it('should process a new match with only manually reported games', async () => {
+    players.Model.find.mockResolvedValue([])
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    ballchasing.getReplayData.mockResolvedValue([])
+    const result = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      mentioned_team_ids: ['5ebc62a9d09245d2a7c62e86', '5ebc62a9d09245d2a7c62eb3'],
+      report_games: [
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 1,
+        },
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 2,
+        },
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 3,
+        },
+      ],
+    })
+    expect(result).toMatchObject({
+      match_id: '5ebc62b0d09245d2a7c6340c',
+    })
+    const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(team_games).toHaveLength(6)
+    expect(player_games).toHaveLength(0)
+    const manualReportGameId = team_games[0].game_id
+    expect(team_games[0]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62eb3',
+      team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+      opponent_team_name: 'Duluth Superiors',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: undefined,
+      match_type: 'REG',
+      week: 1,
+      season_name: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id: manualReportGameId,
+      game_id_win: undefined,
+      game_id_forfeit_win: undefined,
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_win_total: undefined,
+      game_id_overtime_game: undefined,
+      game_number: '1',
+      game_date: undefined,
+      map_name: undefined,
+      wins: 0,
+      games_played: 1,
+    })
+    expect(team_games[1]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
+      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season_name: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id: manualReportGameId,
+      game_id_win: manualReportGameId,
+      game_id_forfeit_win: undefined,
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_overtime_game: undefined,
+      game_number: '1',
+      game_date: undefined,
+      map_name: undefined,
+      wins: 1,
+      games_played: 1,
+    })
+  })
   it('should fail if the league current week is too far away from identified match week', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
@@ -656,7 +1031,7 @@ describe('process-match', () => {
     })
     const { player_games, team_games } = aws.s3.uploadJSON.mock.calls[0][2]
     expect(team_games).toHaveLength(6)
-    expect(team_games[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
+    expect(team_games[0].epoch_processed - Date.now()).toBeLessThan(100)
     expect(team_games[0]).toMatchObject({
       team_id: '5ebc62a9d09245d2a7c62e86',
       team_name: 'Duluth Superiors',
@@ -705,7 +1080,7 @@ describe('process-match', () => {
       games_played: undefined,
     })
     expect(player_games).toHaveLength(12)
-    expect(player_games[0].epoch_processed / 100).toBeCloseTo(Date.now() / 100, 0)
+    expect(player_games[0].epoch_processed - Date.now()).toBeLessThan(100)
     expect(player_games[0]).toMatchObject({
       player_id: '5ec04239d09245d2a7d4fa26',
       player_name: 'Calster',
@@ -755,7 +1130,7 @@ describe('process-match', () => {
     expect(uploadStaticStats[0][0]).toEqual('stats_bucket_name')
     expect(uploadStaticStats[0][1]).toEqual('match:5ebc62b0d09245d2a7c6340c.json')
     const s3Stats = uploadStaticStats[0][2]
-    expect(s3Stats.processedAt / 1000).toBeCloseTo(Date.now() / 1000, 0)
+    expect(s3Stats.processedAt - Date.now()).toBeLessThan(100)
     expect(s3Stats.team_games).toHaveLength(6)
     expect(s3Stats.matchId).toEqual('5ebc62b0d09245d2a7c6340c')
     /** @todo find out why this is 12... it should be (# players on teams) * (# games in match) */
@@ -854,10 +1229,45 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(new Error('expected a team to win the best of 5 match, but winning team has only 2'))
   })
+  it('should throw an error if the report contains too many wins', async () => {
+    players.Model.find.mockResolvedValue([])
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    ballchasing.getReplayData.mockResolvedValue([])
+    await expect(
+      processMatch({
+        league_id: '5ebc62b1d09245d2a7c63516',
+        mentioned_team_ids: ['5ebc62a9d09245d2a7c62e86', '5ebc62a9d09245d2a7c62eb3'],
+        report_games: [
+          {
+            report_type: 'MANUAL_REPORT',
+            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            game_number: 1,
+          },
+          {
+            report_type: 'MANUAL_REPORT',
+            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            game_number: 2,
+          },
+          {
+            report_type: 'MANUAL_REPORT',
+            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            game_number: 3,
+          },
+          {
+            report_type: 'MANUAL_REPORT',
+            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            game_number: 3,
+          },
+        ],
+      }),
+    ).rejects.toEqual(new Error('expected team to win 3 games in best of 5 match, but received 4 wins'))
+  })
   it('should throw an error if less than one match is returned', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     matchesFindMock.mockResolvedValue([])
+    ballchasing.getReplayData.mockResolvedValue([replays[0], replays[1], replays[3]])
     await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
