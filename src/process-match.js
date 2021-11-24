@@ -155,7 +155,7 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
 const combineGames = (replayGames, manualGames) => {
   manualGames
     .sort((a, b) => new Date(a.game_number) - new Date(b.game_number))
-    .forEach((game) => {
+    .map((game) => {
       replayGames.splice(game.game_number - 1, 0, game)
     })
 }
@@ -225,7 +225,6 @@ const handleReplays = async (filters, processedAt) => {
             ? teams.filter((t) => !t._id.equals(g.winning_team_id))[0]._id.toHexString()
             : undefined,
           report_type: 'MANUAL_REPORT',
-          game_number: g.game_number,
           /**
            * @todo remove this assignment of teams to orange/blue
            * it's just easy while still using ballchasing's format but it doesn't make sense
@@ -241,13 +240,14 @@ const handleReplays = async (filters, processedAt) => {
         })
       }
     })
-    console.log(games)
     // update match
     match.game_ids = games.map((g) => g._id)
   } else {
     match.games.forEach((g) => (g.raw_data = gamesData.find((gm) => gm.id === g.replay_origin.key)))
     games = match.games.sort((a, b) => new Date(a.raw_data.date) - new Date(b.raw_data.date))
   }
+
+  games.forEach((g, index) => (g.game_number = index + 1)) // reassign game numbers
 
   console.info('processing match stats')
   const { teamStats, playerStats, playerTeamMap } = processMatch(

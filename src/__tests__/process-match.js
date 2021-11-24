@@ -609,7 +609,7 @@ describe('process-match', () => {
     })
     expect(result.game_ids).toHaveLength(4)
   })
-  it.only('should process a new match with a game forfeit', async () => {
+  it('should process a new match with a game forfeit', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     matchesFindMock.mockResolvedValue([mockOpenMatch()])

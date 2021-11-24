@@ -17,9 +17,9 @@ const gameReport = joi.alternatives([
   }),
   joi.object().keys({
     report_type: joi.string().valid('MANUAL_REPORT'),
-    game_number: joi.number(),
-    winning_team_id: joi.string(),
-    forfeit: joi.boolean().optional(),
+    game_number: joi.number().required(),
+    winning_team_id: joi.string().required(),
+    forfeit: joi.boolean(),
   }),
 ])
 
