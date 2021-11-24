@@ -894,6 +894,92 @@ describe('process-match', () => {
       games_played: 1,
     })
   })
+  it('should process a new match with only manually reported games', async () => {
+    players.Model.find.mockResolvedValue([])
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    ballchasing.getReplayData.mockResolvedValue([])
+    const result = await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      mentioned_team_ids: ['5ebc62a9d09245d2a7c62e86', '5ebc62a9d09245d2a7c62eb3'],
+      report_games: [
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 1,
+        },
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 2,
+        },
+        {
+          report_type: 'MANUAL_REPORT',
+          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          game_number: 3,
+        },
+      ],
+    })
+    expect(result).toMatchObject({
+      match_id: '5ebc62b0d09245d2a7c6340c',
+    })
+    const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    expect(team_games).toHaveLength(6)
+    expect(player_games).toHaveLength(0)
+    const manualReportGameId = team_games[0].game_id
+    expect(team_games[0]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62eb3',
+      team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+      opponent_team_name: 'Duluth Superiors',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: undefined,
+      match_type: 'REG',
+      week: 1,
+      season_name: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id: manualReportGameId,
+      game_id_win: undefined,
+      game_id_forfeit_win: undefined,
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_win_total: undefined,
+      game_id_overtime_game: undefined,
+      game_number: '1',
+      game_date: undefined,
+      map_name: undefined,
+      wins: 0,
+      games_played: 1,
+    })
+    expect(team_games[1]).toMatchObject({
+      team_id: '5ebc62a9d09245d2a7c62e86',
+      team_name: 'Duluth Superiors',
+      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
+      opponent_team_name: 'Burnsville Inferno',
+      team_color: undefined,
+      match_id: '5ebc62b0d09245d2a7c6340c',
+      match_id_win: '5ebc62b0d09245d2a7c6340c',
+      match_type: 'REG',
+      week: 1,
+      season_name: '1',
+      season_id: '5ebc62b0d09245d2a7c63477',
+      league_name: 'mncs',
+      league_id: '5ebc62b1d09245d2a7c63516',
+      game_id: manualReportGameId,
+      game_id_win: manualReportGameId,
+      game_id_forfeit_win: undefined,
+      game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_win_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
+      game_id_overtime_game: undefined,
+      game_number: '1',
+      game_date: undefined,
+      map_name: undefined,
+      wins: 1,
+      games_played: 1,
+    })
+  })
   it('should fail if the league current week is too far away from identified match week', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)

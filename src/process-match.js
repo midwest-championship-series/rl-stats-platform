@@ -19,7 +19,8 @@ const validateFilters = ({ league_id, match_id, report_games }) => {
     throw new UnRecoverableError('INVALID_CRITERIA', 'no league id or games passed for new match')
 }
 
-const getEarliestGameDate = (games) => new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
+const getEarliestGameDate = (games) =>
+  games.length > 0 && new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
 
 const getUniqueGamePlayers = (games) => {
   return games
@@ -63,14 +64,14 @@ const buildPlayersQuery = (games) => {
   }
 }
 
-const buildTeamsQueryFromPlayers = (players, matchDate) => {
+const buildTeamsQuery = (players, matchDate, mentionedTeams) => {
   const teamIds = players.reduce((result, player) => {
     if (player.team_history && player.team_history.length > 0) {
       result.push(...getPlayerTeamsAtDate(player, matchDate).map((item) => item.team_id.toHexString()))
     }
     return result
   }, [])
-  const unique = [...new Set(teamIds)]
+  const unique = [...new Set([...teamIds, ...mentionedTeams])]
   return { $or: unique.map((id) => ({ _id: id })) }
 }
 
@@ -89,10 +90,10 @@ const getMatchInfoById = async (matchId) => {
   return { match, teams: match.teams, season: match.season, league: match.season.league }
 }
 
-const getMatchInfoByPlayers = async (leagueId, players, matchDate) => {
+const identifyMatch = async (leagueId, players, matchDate, mentionedTeams) => {
   const league = await Leagues.findById(leagueId).populate('current_season')
   const seasonTeams = league.current_season.team_ids
-  const teams = (await Teams.find(buildTeamsQueryFromPlayers(players, matchDate))).filter((team) =>
+  const teams = (await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))).filter((team) =>
     seasonTeams.some((id) => id.equals(team._id)),
   )
   if (teams.length !== 2) {
@@ -160,9 +161,10 @@ const combineGames = (replayGames, manualGames) => {
 }
 
 const handleReplays = async (filters, processedAt) => {
+  const options = { mentioned_team_ids: [] }
   console.info('validating filters')
   validateFilters(filters)
-  const { league_id, match_id, report_games } = filters
+  const { league_id, match_id, report_games, mentioned_team_ids } = { ...options, ...filters }
   // separate games which have replay data from full manual reports
   const { replayGames, manualGames } = report_games.reduce(
     (result, game) => {
@@ -175,14 +177,13 @@ const handleReplays = async (filters, processedAt) => {
     },
     { replayGames: [], manualGames: [] },
   )
-  /** @todo make sure manualGames are sorted properly */
   const game_ids = replayGames.map((g) => g.id)
   console.info('retrieving replays')
   const gamesData = (await ballchasing.getReplayData(game_ids)).sort((a, b) => new Date(a.date) - new Date(b.date))
 
   console.info('retrieving players')
   const players = await Players.find(buildPlayersQuery(gamesData))
-  if (players.length < 1) {
+  if (gamesData.length > 0 && players.length < 1) {
     const errMsg = `no players found for games: ${game_ids.join(', ')}`
     throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
   }
@@ -190,7 +191,7 @@ const handleReplays = async (filters, processedAt) => {
   console.info('retrieving league info')
   const { league, season, match, teams } = await (match_id
     ? getMatchInfoById(match_id) // this is a reprocessed match
-    : getMatchInfoByPlayers(league_id, players, getEarliestGameDate(gamesData))) // this is a new match
+    : identifyMatch(league_id, players, getEarliestGameDate(gamesData), mentioned_team_ids)) // this is a new match
 
   if (
     match.status === 'open' &&
