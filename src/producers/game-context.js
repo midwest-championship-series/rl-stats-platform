@@ -1,7 +1,7 @@
 module.exports = (game, { league, season, match }) => {
   game.raw_data.game_id = game._id.toHexString()
   game.raw_data.match_id = match._id.toHexString()
-  game.raw_data.match_type = match.season.season_type
+  game.raw_data.match_type = match.match_type
   game.raw_data.week = match.week
   game.raw_data.season_name = match.season.name
   game.raw_data.season_id = season._id.toHexString()

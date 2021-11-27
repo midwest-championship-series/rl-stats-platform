@@ -18,6 +18,7 @@ const Model = createModel(
       required: true,
     },
     week: { type: Number, required: true },
+    match_type: { type: String, required: true },
     status: { type: String, default: 'open' },
     game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
     best_of: { type: Number },
