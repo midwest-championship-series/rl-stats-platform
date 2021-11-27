@@ -155,6 +155,7 @@ const mockTeams = [
 const mockClosedMatch = mockDoc({
   _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
   week: 1,
+  match_type: 'REG',
   report_games: [
     { id: '5ebc62afd09245d2a7c6333f' },
     { id: '5ebc62afd09245d2a7c63338' },
@@ -188,7 +189,6 @@ const mockClosedMatch = mockDoc({
   season: {
     _id: ObjectId('5ebc62b0d09245d2a7c63477'),
     name: '1',
-    season_type: 'REG',
     league: {
       _id: ObjectId('5ebc62b1d09245d2a7c63516'),
       name: 'mncs',
@@ -199,6 +199,7 @@ const mockOpenMatch = () =>
   mockDoc({
     _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
     status: 'open',
+    match_type: 'REG',
     teams: mockTeams,
     week: 1,
     game_ids: [],
