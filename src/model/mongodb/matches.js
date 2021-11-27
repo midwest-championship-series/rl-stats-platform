@@ -21,7 +21,7 @@ const Model = createModel(
     match_type: { type: String, required: true },
     status: { type: String, default: 'open' },
     game_ids: [{ type: Schema.Types.ObjectId, default: [] }],
-    best_of: { type: Number },
+    best_of: { type: Number, required: true },
     forfeited_by_team: { type: Schema.Types.ObjectId },
     forfeit_datetime: { type: Date },
     winning_team_id: { type: Schema.Types.ObjectId },
