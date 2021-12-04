@@ -10,21 +10,21 @@ const keywords = [
 ]
 
 module.exports = async (query) => {
-  const { builtQuery, leagueQuery } = Object.entries(query).reduce(
-    (result, [key, value]) => {
-      const keywordMatch = keywords.find((kw) => key.includes(`${kw.key}.`))
+  const { builtQuery, leagueQuery } = query.filters.reduce(
+    (result, { property, value }) => {
+      const keywordMatch = keywords.find((kw) => property.includes(`${kw.key}.`))
       if (keywordMatch) {
         if (!result.leagueQuery[keywordMatch.key]) result.leagueQuery[keywordMatch.key] = {}
-        result.leagueQuery[keywordMatch.key][key.substr(keywordMatch.key.length + 1)] = value
+        result.leagueQuery[keywordMatch.key][property.substr(keywordMatch.key.length + 1)] = value
       } else {
-        result.builtQuery[key] = value
+        result.builtQuery[property] = value
       }
       return result
     },
     { builtQuery: {}, leagueQuery: {} },
   )
   for (let kw of keywords) {
-    if (!leagueQuery[kw.key]) return
+    if (!leagueQuery[kw.key]) continue
     const leagueDocs = await kw.model.find(leagueQuery[kw.key])
     if (leagueDocs.length > 1) {
       throw new Error(`multiple ${kw.key} found for query ${JSON.stringify(leagueQuery[kw.key])}`)

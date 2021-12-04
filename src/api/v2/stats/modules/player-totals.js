@@ -1,10 +1,12 @@
-const queryLeague = require('./query-league')
+const addLeagueFilters = require('./league-filters')
 const { search } = require('../../../../services/elastic')
 const stage = process.env.SERVERLESS_STAGE
 
 module.exports = async (req, res, next) => {
-  const query = await queryLeague(req.query)
-  const statsRequested = req.query.stats
+  // console.log('query', req.query)
+  console.log('body', req.body)
+  const query = await addLeagueFilters(req.body)
+  // console.log(query)
   req.context = await search(`${stage}_stats_player_games`, buildQuery(query))
   next()
 }
