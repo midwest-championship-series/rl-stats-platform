@@ -3,15 +3,18 @@ const { search } = require('../../../../services/elastic')
 const stage = process.env.SERVERLESS_STAGE
 
 module.exports = async (req, res, next) => {
-  // console.log('query', req.query)
-  console.log('body', req.body)
-  const query = await addLeagueFilters(req.body)
-  // console.log(query)
-  req.context = await search(`${stage}_stats_player_games`, buildQuery(query))
+  const filters = await addLeagueFilters(req.body)
+  const groupings = req.body.groupings
+  const stats = req.body.stats
+  req.context = await search(`${stage}_stats_player_games`, buildQuery(filters, groupings, stats))
   next()
 }
 
-const buildQuery = (filters) => {
+const buildQuery = (filters, groupings, stats) => {
+  const aggs = stats.reduce((result, item) => {
+    result[item] = { stats: { field: item } }
+    return result
+  }, {})
   return {
     size: 0,
     query: {
@@ -19,22 +22,6 @@ const buildQuery = (filters) => {
         filter: Object.entries(filters).map(([key, value]) => ({ term: { [key]: value } })),
       },
     },
-    aggs: {
-      goals: {
-        stats: {
-          field: 'goals',
-        },
-      },
-      assists: {
-        stats: {
-          field: 'assists',
-        },
-      },
-      saves: {
-        stats: {
-          field: 'saves',
-        },
-      },
-    },
+    aggs,
   }
 }
