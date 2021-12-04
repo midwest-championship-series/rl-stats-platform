@@ -48,6 +48,11 @@ const buildQuery = (seasonId) => {
         filter: [
           {
             term: {
+              'match_type.keyword': 'REG',
+            },
+          },
+          {
+            term: {
               'season_id.keyword': seasonId,
             },
           },
