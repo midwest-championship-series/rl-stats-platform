@@ -1,6 +1,13 @@
-const { Players } = require('../../../../model/mongodb')
+const { Players, Leagues, Seasons, Matches, Games, Teams } = require('../../../../model/mongodb')
 
-const keywords = [{ key: 'player', model: Players, filter: 'player_id' }]
+const keywords = [
+  { key: 'league', model: Leagues, filter: 'league_id' },
+  { key: 'season', model: Seasons, filter: 'season_id' },
+  { key: 'match', model: Matches, filter: 'match_id' },
+  { key: 'game', model: Games, filter: 'game_id' },
+  { key: 'team', model: Teams, filter: 'team_id' },
+  { key: 'player', model: Players, filter: 'player_id' },
+]
 
 module.exports = async (query) => {
   const { builtQuery, leagueQuery } = Object.entries(query).reduce(
