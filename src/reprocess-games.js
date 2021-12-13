@@ -63,7 +63,7 @@ module.exports = async (collection, criteria) => {
             return {
               report_type: g.report_type,
               game_number: g.game_number,
-              winning_team_id: g.winning_team_id,
+              winning_team_id: g.winning_team_id.toHexString(),
               forfeit: !!g.forfeit_team_id,
             }
           } else {

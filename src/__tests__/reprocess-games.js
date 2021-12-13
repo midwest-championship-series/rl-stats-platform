@@ -94,13 +94,13 @@ const mockManualMatch = {
     {
       report_type: 'MANUAL_REPORT',
       game_number: 1,
-      winning_team_id: '5ebc62a9d09245d2a7c62eb3',
+      winning_team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
       forfeit_team_id: '5ec9358e8c0dd900074685c3',
     },
     {
       report_type: 'MANUAL_REPORT',
       game_number: 2,
-      winning_team_id: '5ebc62a9d09245d2a7c62eb3',
+      winning_team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
     },
   ],
 }
