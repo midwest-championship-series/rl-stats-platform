@@ -155,6 +155,32 @@ describe('emit-events', () => {
           mentioned_team_ids: ['5ec9358d8c0dd900074685bd', '5ec9358e8c0dd900074685c3'],
         },
       })
+      validate({
+        type: 'MATCH_PROCESS_INIT',
+        detail: {
+          match_id: '5f2c5e4e08c88e00084b44b3',
+          report_games: [
+            {
+              report_type: 'MANUAL_REPORT',
+              game_number: 1,
+              winning_team_id: '5ec9358d8c0dd900074685bd',
+              forfeit: false,
+            },
+            {
+              report_type: 'MANUAL_REPORT',
+              game_number: 2,
+              winning_team_id: '5ec9358d8c0dd900074685bd',
+              forfeit: false,
+            },
+            {
+              report_type: 'MANUAL_REPORT',
+              game_number: 3,
+              winning_team_id: '5ec9358d8c0dd900074685bd',
+              forfeit: false,
+            },
+          ],
+        },
+      })
     })
     it('should validate a replays obtained event', () => {
       validate({

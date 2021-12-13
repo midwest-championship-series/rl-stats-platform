@@ -18,7 +18,7 @@ const gameReport = joi.alternatives([
   joi.object().keys({
     report_type: joi.string().valid('MANUAL_REPORT'),
     game_number: joi.number().required(),
-    winning_team_id: joi.string().required(),
+    winning_team_id: joi.objectId().required(),
     forfeit: joi.boolean(),
   }),
 ])
@@ -132,6 +132,10 @@ module.exports = [
           report_games: joi.array().min(1).items(gameReport).required(),
           match_id: joi.objectId().required(),
           mentioned_team_ids: joi.array().items(joi.string()),
+        }),
+        joi.object().keys({
+          report_games: joi.array().min(1).items(gameReport).required(),
+          match_id: joi.objectId().required(),
         }),
         joi.object().keys({
           match_id: joi.string().required(),
