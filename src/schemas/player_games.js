@@ -3,23 +3,26 @@ const opponent = require('./opponent')
 const gameContext = require('./contexts/game_context')
 const playerContext = require('./contexts/player_context')
 const teamContext = require('./contexts/team_context')
+const opponentStats = [
+  { name: 'goals', type: types.INT },
+  { name: 'shots', type: types.INT },
+  { name: 'saves', type: types.INT },
+  { name: 'assists', type: types.INT },
+  { name: 'score', type: types.INT },
+]
 
 module.exports = [
   ...gameContext,
   ...playerContext,
   ...opponent(teamContext),
+  ...opponent(opponentStats),
   { name: 'games_played', type: types.INT },
   { name: 'mvps', type: types.INT },
   { name: 'wins', type: types.INT },
   { name: 'ms_played', type: types.INT },
   { name: 'overtime_seconds_played', type: types.INT },
-  { name: 'shots', type: types.INT },
   { name: 'shots_against', type: types.INT },
-  { name: 'goals', type: types.INT },
   { name: 'goals_against', type: types.INT },
-  { name: 'saves', type: types.INT },
-  { name: 'assists', type: types.INT },
-  { name: 'score', type: types.INT },
   { name: 'amount_collected', type: types.INT },
   { name: 'amount_stolen', type: types.INT },
   { name: 'amount_collected_big', type: types.INT },
