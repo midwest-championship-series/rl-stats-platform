@@ -243,7 +243,7 @@ const handleReplays = async (filters, processedAt) => {
     // update match
     match.game_ids = games.map((g) => g._id)
   } else {
-    match.games.forEach((g) => (g.raw_data = gamesData.find((gm) => gm.id === g.replay_origin.key)))
+    match.games.forEach((g) => (g.raw_data = gamesData.find((gm) => gm.id && gm.id === g.replay_origin.key)))
     games = match.games.sort((a, b) => new Date(a.raw_data.date) - new Date(b.raw_data.date))
   }
 
