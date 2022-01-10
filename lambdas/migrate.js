@@ -4,10 +4,10 @@ const { Matches, Seasons } = require('../src/model/mongodb')
 
 const handler = async () => {
   const matches = await Matches.find({ match_type: { $exists: false } })
-  console.log(`updating ${matches.length} matches`)
+  console.info(`updating ${matches.length} matches`)
   for (let match of matches) {
     match.match_type = 'REG'
-    console.log(`saving ${match._id}`)
+    console.info(`saving ${match._id}`)
     await match.save()
   }
   // const seasons = await Seasons.find({ season_type: { $exists: true } })

@@ -3,7 +3,7 @@ module.exports = (stats) => {
     if (!item.skipOpponent) {
       return [...result, item, { name: `opponent_${item.name}`, type: item.type }]
     } else {
-      return result
+      return [...result, item]
     }
   }, [])
 }

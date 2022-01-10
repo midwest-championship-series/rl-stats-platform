@@ -11,12 +11,14 @@ const stats = {
       player_id: '5ec9358f8c0dd900074685c7',
       team_name: 'Hibbing Rangers',
       team_id: '5ec9358e8c0dd900074685c3',
+      game_id_total: 'match:5ec935998c0dd900074686c9:game:1',
     },
   ],
   team_games: [
     {
       team_name: 'Hibbing Rangers',
       team_id: '5ec9358e8c0dd900074685c3',
+      game_id_total: 'match:5ec935998c0dd900074686c9:game:1',
     },
   ],
   processedAt: 1618089471185,
@@ -56,6 +58,7 @@ describe('index-elastic', () => {
           player_name: 'Tero.',
           team_id: '5ec9358e8c0dd900074685c3',
           team_name: 'Hibbing Rangers',
+          game_id_total: 'match:5ec935998c0dd900074686c9:game:1',
         },
       ],
       'test_stats_player_games',

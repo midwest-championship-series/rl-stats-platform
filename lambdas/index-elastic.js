@@ -10,6 +10,7 @@ const indexes = [
 ]
 
 const handler = async (event) => {
+  console.info('event', JSON.stringify(event))
   let currentKey, currentSource
   try {
     const { key, source } = event.detail.bucket
@@ -52,7 +53,7 @@ const handler = async (event) => {
         },
       },
     })
-    console.log(`deleted ${deleted} docs`)
+    console.info(`deleted ${deleted} docs`)
     await aws.eventBridge.emitEvent({
       type: 'MATCH_ELASTIC_STATS_LOADED',
       detail: { match_id: matchId },

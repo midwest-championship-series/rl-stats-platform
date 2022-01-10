@@ -27,7 +27,7 @@ const handler = async (event) => {
           if (stage === 'prod') {
             await sendEmbedToChannel(channel, getSummary(data))
           } else {
-            console.log('stubbing embed send')
+            console.info('stubbing embed send')
           }
         }
       }

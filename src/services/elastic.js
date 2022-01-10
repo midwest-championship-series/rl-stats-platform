@@ -25,7 +25,9 @@ const indexDocs = async (documents, indexName, idKeys) => {
   const body = documents.reduce((acc, doc) => {
     const _id = idKeys
       .reduce((acc, key) => {
-        if (!doc[key]) throw new Error(`document has no key: ${key}`)
+        if (!doc[key]) {
+          throw new Error(`document has no key: ${key}`)
+        }
         return acc.concat([key, doc[key]])
       }, [])
       .join(':')
