@@ -1,0 +1,14 @@
+const { player_games } = require('..')
+
+describe('player_games context', () => {
+  const findSchemaElement = (name) => player_games.find((item) => item.name === name)
+  it('should create player game context', () => {
+    expect(findSchemaElement('game_id_total')).toMatchObject({
+      name: 'game_id_total',
+      skipOpponent: true,
+      type: {
+        default: 'string',
+      },
+    })
+  })
+})
