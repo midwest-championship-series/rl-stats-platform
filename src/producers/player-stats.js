@@ -72,6 +72,7 @@ module.exports = (game, processedAt) => {
       p.mvps = 0
     }
   })
+  // console.log(playerStats.map((s) => s.opponent_goals))
   // return only players which have ids in our system
   return playerStats
 }
