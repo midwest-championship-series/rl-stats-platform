@@ -11,7 +11,6 @@ const handler = async () => {
     await match.save()
   }
   // const seasons = await Seasons.find({ season_type: { $exists: true } })
-  // console.log(`updating ${seasons.length} seasons`)
   // for (let season of seasons) {
   //   await Seasons.updateOne({ _id: season._id }, { $unset: { season_type: '' } })
   // }

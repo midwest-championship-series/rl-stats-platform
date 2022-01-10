@@ -7,6 +7,7 @@ const stage = process.env.SERVERLESS_STAGE
 const errorChannelId = process.env.ERROR_CHANNEL_ID
 
 const handler = async (event) => {
+  console.info('event', JSON.stringify(event))
   let messages
   if (event.Records) {
     messages = event.Records.map((r) => (typeof r.body === 'string' ? JSON.parse(r.body) : r.body))

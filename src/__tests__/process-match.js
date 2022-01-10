@@ -599,6 +599,7 @@ describe('process-match', () => {
         })
       }
     })
+    expect(player_games.filter((game) => !game.opponent_goals)).toHaveLength(0)
   })
   it('should process a new match', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
