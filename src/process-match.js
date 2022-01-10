@@ -261,10 +261,6 @@ const handleReplays = async (filters, processedAt) => {
     },
     processedAt,
   )
-  console.log(
-    'playerStats',
-    playerStats.map((s) => `${s.player_name}: ${s.opponent_goals}`),
-  )
   console.info('uploading match stats')
   await uploadStats(
     match._id.toHexString(),
