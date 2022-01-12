@@ -1,21 +1,24 @@
 const fs = require('fs')
 const path = require('path')
-const { Matches, Seasons } = require('../src/model/mongodb')
+const { Matches, Games } = require('../src/model/mongodb')
 
 const handler = async () => {
-  const matches = await Matches.find({ match_type: { $exists: false } })
-  console.info(`updating ${matches.length} matches`)
+  const matches = await Matches.find({ forfeited_by_team: { $exists: true }, 'game_ids.0': { $exists: false } })
   for (let match of matches) {
-    match.match_type = 'REG'
-    console.info(`saving ${match._id}`)
+    const winningTeam = match.winning_team_id
+    const forfeitTeam = match.forfeited_by_team
+    console.log(`winning: ${winningTeam}\nlosing: ${forfeitTeam}\n\n----------------\n\n`)
+    for (let i = 1; i <= Math.ceil(match.best_of / 2); i++) {
+      const game = new Games({
+        winning_team_id: winningTeam,
+        game_number: i,
+        report_type: 'MANUAL_REPORT',
+      })
+      match.game_ids.push(game._id)
+      await game.save()
+    }
     await match.save()
   }
-  // const seasons = await Seasons.find({ season_type: { $exists: true } })
-  // for (let season of seasons) {
-  //   await Seasons.updateOne({ _id: season._id }, { $unset: { season_type: '' } })
-  // }
-  const seasonsUpdate = await Seasons.updateMany({ season_type: { $exists: true } }, { $unset: { season_type: 1 } })
-  return { matches: matches.length, seasons: seasonsUpdate }
 }
 
 module.exports = { handler }
