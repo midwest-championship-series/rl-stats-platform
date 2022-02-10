@@ -3,15 +3,12 @@ const override = require('method-override')
 
 const attachModel = require('./attach-model')
 const errorHandler = require('./errors')
-const { Model: Teams } = require('../../model/mongodb/teams')
-const { Model: Players } = require('../../model/mongodb/players')
-const { Model: Leagues } = require('../../model/mongodb/leagues')
-const { Model: Seasons } = require('../../model/mongodb/seasons')
-const { Model: Matches } = require('../../model/mongodb/matches')
-const { Model: Games } = require('../../model/mongodb/games')
+
+const { Franchises, Teams, Players, Leagues, Seasons, Matches, Games } = require('../../model/mongodb')
 
 router.use(require('./modify-request'))
 router.use('/events', require('./events'))
+router.use('/franchises', attachModel(Franchises))
 router.use('/teams', attachModel(Teams))
 router.use('/players', attachModel(Players))
 router.use('/leagues', attachModel(Leagues))
