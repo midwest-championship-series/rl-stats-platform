@@ -3,7 +3,7 @@ const { createModel } = require('../../services/mongodb')
 
 const schema = {
   name: { type: String, required: true },
-  discord_id: { type: String, required: true },
+  discord_id: { type: String, required: true, unique: true },
   urls: {
     type: [
       {
@@ -21,10 +21,9 @@ const Model = createModel('Franchise', schema, (schema) => {
     return allNames.length === uniqueNames.length
   }, 'expected `{PATH}` to contain only unique url names')
   schema.virtual('teams', {
-    ref: 'Teams',
+    ref: 'Team',
     localField: '_id',
     foreignField: 'franchise_id',
-    justOne: true,
   })
 })
 

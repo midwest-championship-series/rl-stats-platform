@@ -3,8 +3,8 @@ const { createModel } = require('../../services/mongodb')
 
 const schema = {
   name: { type: String },
-  discord_id: { type: String },
   hex_color: { type: String },
+  tier_name: { type: String },
   vars: {
     type: [
       {
