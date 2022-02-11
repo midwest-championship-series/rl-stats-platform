@@ -11,6 +11,7 @@ const formatMatches = (schedule) => {
     return new Matches({
       team_ids: [match.team_1_id, match.team_2_id],
       players_to_teams: [],
+      match_type: 'REG',
       week: match.week,
       best_of: 5,
       scheduled_datetime: new Date(`${match.scheduled_date} ${match.scheduled_time}`),
@@ -19,11 +20,13 @@ const formatMatches = (schedule) => {
 }
 
 const createSchedule = async (leagueName, seasonName, schedule) => {
+  console.log(`formatting ${leagueName} matches`)
   const matches = formatMatches(schedule)
   const league = await Leagues.findOne({ name: leagueName }).populate('seasons')
   const newSeason = league.seasons.find((s) => s.name === seasonName)
   if (newSeason.match_ids.length < 1) {
     for (let match of matches) {
+      console.log('saving match', match._id)
       await match.save()
       newSeason.match_ids.push(match._id)
     }
@@ -35,6 +38,7 @@ const createSchedule = async (leagueName, seasonName, schedule) => {
 const handler = async () => {
   const newSeasonName = '5'
   // make sure season exists
+  console.log('getting leagues')
   const leagues = await Leagues.find({
     $or: [{ name: 'mncs' }, { name: 'clmn' }, { name: 'mnrs' }],
   }).populate('seasons')
