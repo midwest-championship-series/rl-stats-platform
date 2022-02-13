@@ -8,13 +8,15 @@ const parseSchedule = (fileName) => {
 
 const formatMatches = (schedule) => {
   return schedule.map((match) => {
+    const datetime = new Date(`${match.scheduled_date} ${match.scheduled_time}`)
+    datetime.setHours(datetime.getHours() - 1)
     return new Matches({
       team_ids: [match.team_1_id, match.team_2_id],
       players_to_teams: [],
       match_type: 'REG',
       week: match.week,
       best_of: 5,
-      scheduled_datetime: new Date(`${match.scheduled_date} ${match.scheduled_time}`),
+      scheduled_datetime: datetime,
     })
   })
 }
