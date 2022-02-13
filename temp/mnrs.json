@@ -4,12 +4,12 @@
     "team_2_franchise_id": "600fac63be0bbe0008ffddca",
     "scheduled_date": "2/17/2022",
     "scheduled_time": "6:00:00 PM",
-    "team_1_id": "600c97cceedc0d0008211463",
+    "team_1_id": "600c98b3eedc0d0008211469",
     "team_2_id": "600c98b2eedc0d0008211467",
     "week": 1,
     "offstream": "",
     "team_1": "Duluth Superiors",
-    "team_2": "Bemidji Lumberjacks"
+    "team_2": "St. Cloud Flyers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
@@ -21,7 +21,7 @@
     "week": 1,
     "offstream": "",
     "team_1": "Bemidji Lumberjacks",
-    "team_2": "Minneapolis Miracles"
+    "team_2": "Minnetonka Barons"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
@@ -33,10 +33,10 @@
     "week": 1,
     "offstream": "",
     "team_1": "Minneapolis Miracles",
-    "team_2": "Mankato Atlas"
+    "team_2": "Rochester Rhythm"
   },
   {
-    "team_1_franchise_id": "620518160160ee0009244b00",
+    "team_1_franchise_id": "62046b84029e060009f2656d",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
     "scheduled_date": "2/17/2022",
     "scheduled_time": "8:15:00 PM",
@@ -45,7 +45,7 @@
     "week": 1,
     "offstream": "",
     "team_1": "Mankato Atlas",
-    "team_2": "Burnsville Inferno"
+    "team_2": "Hibbing Rangers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
@@ -57,43 +57,43 @@
     "week": 1,
     "offstream": "",
     "team_1": "Burnsville Inferno",
-    "team_2": "Bloomington Maulers"
+    "team_2": "St. Paul Senators"
   },
   {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_1_franchise_id": "620517b60160ee0009244afc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
     "scheduled_date": "2/17/2022",
     "scheduled_time": "9:45:00 PM",
-    "team_1_id": "600c97e2eedc0d0008211464",
-    "team_2_id": "600c98b2eedc0d0008211466",
+    "team_1_id": "6205a3a716904c00096af921",
+    "team_2_id": "600c98b32c38930008d9cbd9",
     "week": 1,
     "offstream": "",
-    "team_1": "Bloomington Maulers",
-    "team_2": "St. Paul Senators"
+    "team_1": "Brainerd Victory",
+    "team_2": "Bloomington Maulers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "620517b60160ee0009244afc",
     "scheduled_date": "2/24/2022",
     "scheduled_time": "6:00:00 PM",
     "team_1_id": "600c98b32c38930008d9cbd8",
-    "team_2_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "6205a3a716904c00096af921",
     "week": 2,
     "offstream": "",
     "team_1": "St. Paul Senators",
-    "team_2": "Bemidji Lumberjacks"
+    "team_2": "Brainerd Victory"
   },
   {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc5",
     "scheduled_date": "2/24/2022",
     "scheduled_time": "6:45:00 PM",
-    "team_1_id": "600c98b2eedc0d0008211466",
-    "team_2_id": "600c97cceedc0d0008211463",
+    "team_1_id": "600c98b32c38930008d9cbd9",
+    "team_2_id": "600c98b3eedc0d0008211469",
     "week": 2,
     "offstream": "",
-    "team_1": "Bemidji Lumberjacks",
-    "team_2": "Hibbing Rangers"
+    "team_1": "Bloomington Maulers",
+    "team_2": "Duluth Superiors"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
@@ -105,11 +105,11 @@
     "week": 2,
     "offstream": "",
     "team_1": "Hibbing Rangers",
-    "team_2": "Rochester Rhythm"
+    "team_2": "Burnsville Inferno"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
-    "team_2_franchise_id": "620518160160ee0009244b00",
+    "team_2_franchise_id": "62046b84029e060009f2656d",
     "scheduled_date": "2/24/2022",
     "scheduled_time": "8:15:00 PM",
     "team_1_id": "600c98b22c38930008d9cbd5",
@@ -117,7 +117,7 @@
     "week": 2,
     "offstream": "",
     "team_1": "Rochester Rhythm",
-    "team_2": "Minnetonka Barons"
+    "team_2": "Mankato Atlas"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
@@ -129,7 +129,7 @@
     "week": 2,
     "offstream": "",
     "team_1": "Minnetonka Barons",
-    "team_2": "St. Cloud Flyers"
+    "team_2": "Minneapolis Miracles"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddca",
@@ -141,10 +141,10 @@
     "week": 2,
     "offstream": "",
     "team_1": "St. Cloud Flyers",
-    "team_2": "Mankato Atlas"
+    "team_2": "Bemidji Lumberjacks"
   },
   {
-    "team_1_franchise_id": "620518160160ee0009244b00",
+    "team_1_franchise_id": "62046b84029e060009f2656d",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
     "scheduled_date": "3/3/2022",
     "scheduled_time": "6:00:00 PM",
@@ -153,7 +153,7 @@
     "week": 3,
     "offstream": "",
     "team_1": "Mankato Atlas",
-    "team_2": "Minneapolis Miracles"
+    "team_2": "Minnetonka Barons"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
@@ -165,19 +165,19 @@
     "week": 3,
     "offstream": "",
     "team_1": "Minneapolis Miracles",
-    "team_2": "Duluth Superiors"
+    "team_2": "St. Cloud Flyers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
     "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
     "scheduled_date": "3/3/2022",
     "scheduled_time": "7:30:00 PM",
-    "team_1_id": "600c97cceedc0d0008211463",
+    "team_1_id": "600c98b3eedc0d0008211469",
     "team_2_id": "600c98b2eedc0d0008211466",
     "week": 3,
     "offstream": "",
     "team_1": "Duluth Superiors",
-    "team_2": "Burnsville Inferno"
+    "team_2": "Bemidji Lumberjacks"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
@@ -189,31 +189,31 @@
     "week": 3,
     "offstream": "",
     "team_1": "Burnsville Inferno",
-    "team_2": "Bloomington Maulers"
+    "team_2": "Rochester Rhythm"
   },
   {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_1_franchise_id": "620517b60160ee0009244afc",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc9",
     "scheduled_date": "3/3/2022",
     "scheduled_time": "9:00:00 PM",
-    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_1_id": "6205a3a716904c00096af921",
     "team_2_id": "600c8fc9f87c0c000826a31e",
     "week": 3,
     "offstream": "",
-    "team_1": "Bloomington Maulers",
-    "team_2": "Bemidji Lumberjacks"
+    "team_1": "Brainerd Victory",
+    "team_2": "Hibbing Rangers"
   },
   {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc4",
     "scheduled_date": "3/3/2022",
     "scheduled_time": "9:45:00 PM",
-    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_1_id": "600c98b32c38930008d9cbd9",
     "team_2_id": "600c98b32c38930008d9cbd8",
     "week": 3,
     "offstream": "",
-    "team_1": "Bemidji Lumberjacks",
-    "team_2": "Minnetonka Barons"
+    "team_1": "Bloomington Maulers",
+    "team_2": "St. Paul Senators"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
@@ -225,31 +225,31 @@
     "week": 4,
     "offstream": "",
     "team_1": "Minnetonka Barons",
-    "team_2": "Hibbing Rangers"
+    "team_2": "Burnsville Inferno"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
     "scheduled_date": "3/10/2022",
     "scheduled_time": "6:45:00 PM",
     "team_1_id": "600c8fc9f87c0c000826a31e",
-    "team_2_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c98b32c38930008d9cbd9",
     "week": 4,
     "offstream": "",
     "team_1": "Hibbing Rangers",
-    "team_2": "Rochester Rhythm"
+    "team_2": "Bloomington Maulers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "620517b60160ee0009244afc",
     "scheduled_date": "3/10/2022",
     "scheduled_time": "7:30:00 PM",
     "team_1_id": "600c98b22c38930008d9cbd5",
-    "team_2_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "6205a3a716904c00096af921",
     "week": 4,
     "offstream": "",
     "team_1": "Rochester Rhythm",
-    "team_2": "St. Paul Senators"
+    "team_2": "Brainerd Victory"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
@@ -257,15 +257,15 @@
     "scheduled_date": "3/10/2022",
     "scheduled_time": "8:15:00 PM",
     "team_1_id": "600c98b32c38930008d9cbd8",
-    "team_2_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b3eedc0d0008211469",
     "week": 4,
     "offstream": "",
     "team_1": "St. Paul Senators",
-    "team_2": "St. Cloud Flyers"
+    "team_2": "Duluth Superiors"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddca",
-    "team_2_franchise_id": "620518160160ee0009244b00",
+    "team_2_franchise_id": "62046b84029e060009f2656d",
     "scheduled_date": "3/10/2022",
     "scheduled_time": "9:00:00 PM",
     "team_1_id": "600c98b2eedc0d0008211467",
@@ -273,7 +273,7 @@
     "week": 4,
     "offstream": "",
     "team_1": "St. Cloud Flyers",
-    "team_2": "Bemidji Lumberjacks"
+    "team_2": "Mankato Atlas"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
@@ -285,22 +285,22 @@
     "week": 4,
     "offstream": "",
     "team_1": "Bemidji Lumberjacks",
-    "team_2": "Bemidji Lumberjacks"
+    "team_2": "Minneapolis Miracles"
   },
   {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc8",
     "scheduled_date": "3/17/2022",
     "scheduled_time": "6:00:00 PM",
-    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_1_id": "600c98b32c38930008d9cbd9",
     "team_2_id": "600c98b22c38930008d9cbd5",
     "week": 5,
     "offstream": "",
-    "team_1": "Bemidji Lumberjacks",
-    "team_2": "Mankato Atlas"
+    "team_1": "Bloomington Maulers",
+    "team_2": "Rochester Rhythm"
   },
   {
-    "team_1_franchise_id": "620518160160ee0009244b00",
+    "team_1_franchise_id": "62046b84029e060009f2656d",
     "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
     "scheduled_date": "3/17/2022",
     "scheduled_time": "6:45:00 PM",
@@ -309,7 +309,7 @@
     "week": 5,
     "offstream": "",
     "team_1": "Mankato Atlas",
-    "team_2": "Burnsville Inferno"
+    "team_2": "Bemidji Lumberjacks"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
@@ -321,31 +321,31 @@
     "week": 5,
     "offstream": "",
     "team_1": "Burnsville Inferno",
-    "team_2": "Bloomington Maulers"
+    "team_2": "St. Cloud Flyers"
   },
   {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_1_franchise_id": "620517b60160ee0009244afc",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc6",
     "scheduled_date": "3/17/2022",
     "scheduled_time": "8:15:00 PM",
-    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_1_id": "6205a3a716904c00096af921",
     "team_2_id": "600c98b22c38930008d9cbd6",
     "week": 5,
     "offstream": "",
-    "team_1": "Bloomington Maulers",
-    "team_2": "Duluth Superiors"
+    "team_1": "Brainerd Victory",
+    "team_2": "Minnetonka Barons"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
     "scheduled_date": "3/17/2022",
     "scheduled_time": "9:00:00 PM",
-    "team_1_id": "600c97cceedc0d0008211463",
+    "team_1_id": "600c98b3eedc0d0008211469",
     "team_2_id": "600c98b3eedc0d0008211468",
     "week": 5,
     "offstream": "",
     "team_1": "Duluth Superiors",
-    "team_2": "St. Paul Senators"
+    "team_2": "Minneapolis Miracles"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
@@ -357,11 +357,11 @@
     "week": 5,
     "offstream": "",
     "team_1": "St. Paul Senators",
-    "team_2": "Minneapolis Miracles"
+    "team_2": "Hibbing Rangers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
-    "team_2_franchise_id": "620518160160ee0009244b00",
+    "team_2_franchise_id": "62046b84029e060009f2656d",
     "scheduled_date": "3/24/2022",
     "scheduled_time": "6:00:00 PM",
     "team_1_id": "600c98b3eedc0d0008211468",
@@ -369,7 +369,7 @@
     "week": 6,
     "offstream": "",
     "team_1": "Minneapolis Miracles",
-    "team_2": "Rochester Rhythm"
+    "team_2": "Mankato Atlas"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
@@ -381,31 +381,31 @@
     "week": 6,
     "offstream": "",
     "team_1": "Rochester Rhythm",
-    "team_2": "Minnetonka Barons"
+    "team_2": "St. Paul Senators"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
     "scheduled_date": "3/24/2022",
     "scheduled_time": "7:30:00 PM",
     "team_1_id": "600c98b22c38930008d9cbd6",
-    "team_2_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c98b32c38930008d9cbd9",
     "week": 6,
     "offstream": "",
     "team_1": "Minnetonka Barons",
-    "team_2": "St. Cloud Flyers"
+    "team_2": "Bloomington Maulers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddca",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "620517b60160ee0009244afc",
     "scheduled_date": "3/24/2022",
     "scheduled_time": "8:15:00 PM",
     "team_1_id": "600c98b2eedc0d0008211467",
-    "team_2_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "6205a3a716904c00096af921",
     "week": 6,
     "offstream": "",
     "team_1": "St. Cloud Flyers",
-    "team_2": "Bemidji Lumberjacks"
+    "team_2": "Brainerd Victory"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
@@ -417,7 +417,7 @@
     "week": 6,
     "offstream": "",
     "team_1": "Bemidji Lumberjacks",
-    "team_2": "Hibbing Rangers"
+    "team_2": "Burnsville Inferno"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
@@ -425,11 +425,11 @@
     "scheduled_date": "3/24/2022",
     "scheduled_time": "9:45:00 PM",
     "team_1_id": "600c8fc9f87c0c000826a31e",
-    "team_2_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b3eedc0d0008211469",
     "week": 6,
     "offstream": "",
     "team_1": "Hibbing Rangers",
-    "team_2": "Hibbing Rangers"
+    "team_2": "Duluth Superiors"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
@@ -441,7 +441,7 @@
     "week": 7,
     "offstream": "",
     "team_1": "Hibbing Rangers",
-    "team_2": "Burnsville Inferno"
+    "team_2": "Rochester Rhythm"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
@@ -453,31 +453,31 @@
     "week": 7,
     "offstream": "",
     "team_1": "Burnsville Inferno",
-    "team_2": "Bloomington Maulers"
+    "team_2": "Minneapolis Miracles"
   },
   {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_1_franchise_id": "620517b60160ee0009244afc",
     "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
     "scheduled_date": "3/31/2022",
     "scheduled_time": "7:30:00 PM",
-    "team_1_id": "600c97e2eedc0d0008211464",
+    "team_1_id": "6205a3a716904c00096af921",
     "team_2_id": "600c98b2eedc0d0008211466",
     "week": 7,
     "offstream": "",
-    "team_1": "Bloomington Maulers",
+    "team_1": "Brainerd Victory",
     "team_2": "Bemidji Lumberjacks"
   },
   {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
     "team_2_franchise_id": "600fac63be0bbe0008ffddca",
     "scheduled_date": "3/31/2022",
     "scheduled_time": "8:15:00 PM",
-    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_1_id": "600c98b32c38930008d9cbd9",
     "team_2_id": "600c98b2eedc0d0008211467",
     "week": 7,
     "offstream": "",
-    "team_1": "Bemidji Lumberjacks",
-    "team_2": "St. Paul Senators"
+    "team_1": "Bloomington Maulers",
+    "team_2": "St. Cloud Flyers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
@@ -489,31 +489,31 @@
     "week": 7,
     "offstream": "",
     "team_1": "St. Paul Senators",
-    "team_2": "Duluth Superiors"
+    "team_2": "Minnetonka Barons"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
-    "team_2_franchise_id": "620518160160ee0009244b00",
+    "team_2_franchise_id": "62046b84029e060009f2656d",
     "scheduled_date": "3/31/2022",
     "scheduled_time": "9:45:00 PM",
-    "team_1_id": "600c97cceedc0d0008211463",
+    "team_1_id": "600c98b3eedc0d0008211469",
     "team_2_id": "6205a37d16904c00096af920",
     "week": 7,
     "offstream": "",
     "team_1": "Duluth Superiors",
-    "team_2": "Minneapolis Miracles"
+    "team_2": "Mankato Atlas"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "620517b60160ee0009244afc",
     "scheduled_date": "4/7/2022",
     "scheduled_time": "6:00:00 PM",
     "team_1_id": "600c98b3eedc0d0008211468",
-    "team_2_id": "600c97e2eedc0d0008211464",
+    "team_2_id": "6205a3a716904c00096af921",
     "week": 8,
     "offstream": "",
     "team_1": "Minneapolis Miracles",
-    "team_2": "Minnetonka Barons"
+    "team_2": "Brainerd Victory"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
@@ -525,7 +525,7 @@
     "week": 8,
     "offstream": "",
     "team_1": "Minnetonka Barons",
-    "team_2": "St. Cloud Flyers"
+    "team_2": "Hibbing Rangers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddca",
@@ -537,19 +537,19 @@
     "week": 8,
     "offstream": "",
     "team_1": "St. Cloud Flyers",
-    "team_2": "Bemidji Lumberjacks"
+    "team_2": "St. Paul Senators"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
     "scheduled_date": "4/7/2022",
     "scheduled_time": "8:15:00 PM",
     "team_1_id": "600c98b2eedc0d0008211466",
-    "team_2_id": "600c98b2eedc0d0008211466",
+    "team_2_id": "600c98b32c38930008d9cbd9",
     "week": 8,
     "offstream": "",
     "team_1": "Bemidji Lumberjacks",
-    "team_2": "Rochester Rhythm"
+    "team_2": "Bloomington Maulers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
@@ -557,14 +557,14 @@
     "scheduled_date": "4/7/2022",
     "scheduled_time": "9:00:00 PM",
     "team_1_id": "600c98b22c38930008d9cbd5",
-    "team_2_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b3eedc0d0008211469",
     "week": 8,
     "offstream": "",
     "team_1": "Rochester Rhythm",
-    "team_2": "Mankato Atlas"
+    "team_2": "Duluth Superiors"
   },
   {
-    "team_1_franchise_id": "620518160160ee0009244b00",
+    "team_1_franchise_id": "62046b84029e060009f2656d",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
     "scheduled_date": "4/7/2022",
     "scheduled_time": "9:45:00 PM",
@@ -573,7 +573,7 @@
     "week": 8,
     "offstream": "",
     "team_1": "Mankato Atlas",
-    "team_2": "St. Paul Senators"
+    "team_2": "Burnsville Inferno"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
@@ -585,43 +585,43 @@
     "week": 9,
     "offstream": "",
     "team_1": "St. Paul Senators",
-    "team_2": "Bloomington Maulers"
-  },
-  {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
-    "team_2_franchise_id": "620518160160ee0009244b00",
-    "scheduled_date": "4/28/2022",
-    "scheduled_time": "6:45:00 PM",
-    "team_1_id": "600c97e2eedc0d0008211464",
-    "team_2_id": "6205a37d16904c00096af920",
-    "week": 9,
-    "offstream": "",
-    "team_1": "Bloomington Maulers",
     "team_2": "Bemidji Lumberjacks"
   },
   {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
+    "team_1_franchise_id": "620517b60160ee0009244afc",
+    "team_2_franchise_id": "62046b84029e060009f2656d",
+    "scheduled_date": "4/28/2022",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "6205a3a716904c00096af921",
+    "team_2_id": "6205a37d16904c00096af920",
+    "week": 9,
+    "offstream": "",
+    "team_1": "Brainerd Victory",
+    "team_2": "Mankato Atlas"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc3",
     "scheduled_date": "4/28/2022",
     "scheduled_time": "7:30:00 PM",
-    "team_1_id": "600c98b2eedc0d0008211466",
+    "team_1_id": "600c98b32c38930008d9cbd9",
     "team_2_id": "600c98b3eedc0d0008211468",
     "week": 9,
     "offstream": "",
-    "team_1": "Bemidji Lumberjacks",
-    "team_2": "Duluth Superiors"
+    "team_1": "Bloomington Maulers",
+    "team_2": "Minneapolis Miracles"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
     "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
     "scheduled_date": "4/28/2022",
     "scheduled_time": "8:15:00 PM",
-    "team_1_id": "600c97cceedc0d0008211463",
+    "team_1_id": "600c98b3eedc0d0008211469",
     "team_2_id": "600c98b32c38930008d9cbd7",
     "week": 9,
     "offstream": "",
     "team_1": "Duluth Superiors",
-    "team_2": "Hibbing Rangers"
+    "team_2": "Burnsville Inferno"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
@@ -633,7 +633,7 @@
     "week": 9,
     "offstream": "",
     "team_1": "Hibbing Rangers",
-    "team_2": "Rochester Rhythm"
+    "team_2": "St. Cloud Flyers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
@@ -645,7 +645,7 @@
     "week": 9,
     "offstream": "",
     "team_1": "Rochester Rhythm",
-    "team_2": "Bemidji Lumberjacks"
+    "team_2": "Minnetonka Barons"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
@@ -657,7 +657,7 @@
     "week": 10,
     "offstream": "",
     "team_1": "Bemidji Lumberjacks",
-    "team_2": "St. Cloud Flyers"
+    "team_2": "Hibbing Rangers"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddca",
@@ -669,7 +669,7 @@
     "week": 10,
     "offstream": "",
     "team_1": "St. Cloud Flyers",
-    "team_2": "Minnetonka Barons"
+    "team_2": "Rochester Rhythm"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
@@ -677,11 +677,11 @@
     "scheduled_date": "5/5/2022",
     "scheduled_time": "7:30:00 PM",
     "team_1_id": "600c98b22c38930008d9cbd6",
-    "team_2_id": "600c97cceedc0d0008211463",
+    "team_2_id": "600c98b3eedc0d0008211469",
     "week": 10,
     "offstream": "",
     "team_1": "Minnetonka Barons",
-    "team_2": "Minneapolis Miracles"
+    "team_2": "Duluth Superiors"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc3",
@@ -693,59 +693,59 @@
     "week": 10,
     "offstream": "",
     "team_1": "Minneapolis Miracles",
-    "team_2": "Mankato Atlas"
-  },
-  {
-    "team_1_franchise_id": "620518160160ee0009244b00",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcc",
-    "scheduled_date": "5/5/2022",
-    "scheduled_time": "9:00:00 PM",
-    "team_1_id": "6205a37d16904c00096af920",
-    "team_2_id": "600c98b2eedc0d0008211466",
-    "week": 10,
-    "offstream": "",
-    "team_1": "Mankato Atlas",
-    "team_2": "Burnsville Inferno"
-  },
-  {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
-    "scheduled_date": "5/5/2022",
-    "scheduled_time": "9:45:00 PM",
-    "team_1_id": "600c98b32c38930008d9cbd7",
-    "team_2_id": "600c97e2eedc0d0008211464",
-    "week": 10,
-    "offstream": "",
-    "team_1": "Burnsville Inferno",
-    "team_2": "Bemidji Lumberjacks"
-  },
-  {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddcc",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
-    "scheduled_date": "5/12/2022",
-    "scheduled_time": "6:00:00 PM",
-    "team_1_id": "600c98b2eedc0d0008211466",
-    "team_2_id": "600c98b32c38930008d9cbd7",
-    "week": 11,
-    "offstream": "",
-    "team_1": "Bemidji Lumberjacks",
-    "team_2": "Duluth Superiors"
-  },
-  {
-    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
-    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
-    "scheduled_date": "5/12/2022",
-    "scheduled_time": "6:45:00 PM",
-    "team_1_id": "600c97cceedc0d0008211463",
-    "team_2_id": "600c97e2eedc0d0008211464",
-    "week": 11,
-    "offstream": "",
-    "team_1": "Duluth Superiors",
     "team_2": "St. Paul Senators"
   },
   {
+    "team_1_franchise_id": "62046b84029e060009f2656d",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddcb",
+    "scheduled_date": "5/5/2022",
+    "scheduled_time": "9:00:00 PM",
+    "team_1_id": "6205a37d16904c00096af920",
+    "team_2_id": "600c98b32c38930008d9cbd9",
+    "week": 10,
+    "offstream": "",
+    "team_1": "Mankato Atlas",
+    "team_2": "Bloomington Maulers"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc7",
+    "team_2_franchise_id": "620517b60160ee0009244afc",
+    "scheduled_date": "5/5/2022",
+    "scheduled_time": "9:45:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd7",
+    "team_2_id": "6205a3a716904c00096af921",
+    "week": 10,
+    "offstream": "",
+    "team_1": "Burnsville Inferno",
+    "team_2": "Brainerd Victory"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddcb",
+    "team_2_franchise_id": "600fac63be0bbe0008ffddc7",
+    "scheduled_date": "5/12/2022",
+    "scheduled_time": "6:00:00 PM",
+    "team_1_id": "600c98b32c38930008d9cbd9",
+    "team_2_id": "600c98b32c38930008d9cbd7",
+    "week": 11,
+    "offstream": "",
+    "team_1": "Bloomington Maulers",
+    "team_2": "Burnsville Inferno"
+  },
+  {
+    "team_1_franchise_id": "600fac63be0bbe0008ffddc5",
+    "team_2_franchise_id": "620517b60160ee0009244afc",
+    "scheduled_date": "5/12/2022",
+    "scheduled_time": "6:45:00 PM",
+    "team_1_id": "600c98b3eedc0d0008211469",
+    "team_2_id": "6205a3a716904c00096af921",
+    "week": 11,
+    "offstream": "",
+    "team_1": "Duluth Superiors",
+    "team_2": "Brainerd Victory"
+  },
+  {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc4",
-    "team_2_franchise_id": "620518160160ee0009244b00",
+    "team_2_franchise_id": "62046b84029e060009f2656d",
     "scheduled_date": "5/12/2022",
     "scheduled_time": "7:30:00 PM",
     "team_1_id": "600c98b32c38930008d9cbd8",
@@ -753,7 +753,7 @@
     "week": 11,
     "offstream": "",
     "team_1": "St. Paul Senators",
-    "team_2": "Hibbing Rangers"
+    "team_2": "Mankato Atlas"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc9",
@@ -765,7 +765,7 @@
     "week": 11,
     "offstream": "",
     "team_1": "Hibbing Rangers",
-    "team_2": "Rochester Rhythm"
+    "team_2": "Minneapolis Miracles"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc8",
@@ -777,7 +777,7 @@
     "week": 11,
     "offstream": "",
     "team_1": "Rochester Rhythm",
-    "team_2": "Minnetonka Barons"
+    "team_2": "Bemidji Lumberjacks"
   },
   {
     "team_1_franchise_id": "600fac63be0bbe0008ffddc6",
@@ -789,6 +789,6 @@
     "week": 11,
     "offstream": "",
     "team_1": "Minnetonka Barons",
-    "team_2": "#N/A"
+    "team_2": "St. Cloud Flyers"
   }
  ]
