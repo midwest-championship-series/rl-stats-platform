@@ -210,6 +210,10 @@ functions:
             detail-type:
               - LIVE_GAME_EVENTS
 
+  remove-teams:
+    handler: lambdas/manual/remove-teams.handler
+    name: ${self:service}-remove-teams-${self:provider.stage}
+
 resources:
   Resources:
     GamesQueue:
