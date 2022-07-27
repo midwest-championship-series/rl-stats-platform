@@ -1,9 +1,11 @@
-const fs = require('fs')
 const path = require('path')
+const csv = require('csvtojson')
 const { Matches, Leagues, Seasons } = require('../src/model/mongodb')
 
-const parseSchedule = (fileName) => {
-  return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'temp', fileName)))
+const parseSchedule = async (fileName) => {
+  const importPath = path.join(__dirname, '..', 'temp', fileName)
+  console.log('importing', importPath)
+  return csv().fromFile(importPath)
 }
 
 const formatMatches = (schedule) => {
@@ -25,7 +27,7 @@ const createSchedule = async (leagueName, seasonName, schedule) => {
   console.log(`formatting ${leagueName} matches`)
   const matches = formatMatches(schedule)
   const league = await Leagues.findOne({ name: leagueName }).populate('seasons')
-  const newSeason = league.seasons.find((s) => s.name === seasonName)
+  const newSeason = league.seasons && league.seasons.find((s) => s.name === seasonName)
   if (newSeason.match_ids.length < 1) {
     for (let match of matches) {
       console.log('saving match', match._id)
@@ -38,11 +40,11 @@ const createSchedule = async (leagueName, seasonName, schedule) => {
 }
 
 const handler = async () => {
-  const newSeasonName = '5'
+  const newSeasonName = '6'
   // make sure season exists
   console.log('getting leagues')
   const leagues = await Leagues.find({
-    $or: [{ name: 'mncs' }, { name: 'clmn' }, { name: 'mnrs' }],
+    $or: [{ name: 'Premier' }, { name: 'Challenger' }, { name: 'RisingStar' }, { name: 'Prospect' }],
   }).populate('seasons')
   for (let league of leagues) {
     let newSeason = league.seasons.find((s) => s.name === newSeasonName)
@@ -60,9 +62,16 @@ const handler = async () => {
     await league.save()
   }
 
-  await createSchedule('mncs', newSeasonName, parseSchedule('mncs.json'))
-  await createSchedule('clmn', newSeasonName, parseSchedule('clmn.json'))
-  await createSchedule('mnrs', newSeasonName, parseSchedule('mnrs.json'))
+  const schedules = [
+    { name: 'Premier', schedule: await parseSchedule('MNCS Season 6 Schedule - Premier Schedule.csv') },
+    { name: 'Challenger', schedule: await parseSchedule('MNCS Season 6 Schedule - Challenger Schedule.csv') },
+    { name: 'RisingStar', schedule: await parseSchedule('MNCS Season 6 Schedule - Rising Star Schedule.csv') },
+    { name: 'Prospect', schedule: await parseSchedule('MNCS Season 6 Schedule - Prospect Schedule.csv') },
+  ]
+
+  for (let schedule of schedules) {
+    await createSchedule(schedule.name, newSeasonName, schedule.schedule)
+  }
 }
 
 module.exports = { handler }
