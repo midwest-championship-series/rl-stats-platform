@@ -26,6 +26,7 @@ const Model = createModel(
     forfeit_datetime: { type: Date },
     winning_team_id: { type: Schema.Types.ObjectId },
     scheduled_datetime: { type: Date },
+    stream_link: { type: String },
   },
   (schema) => {
     schema.path('team_ids').validate(function (val) {
