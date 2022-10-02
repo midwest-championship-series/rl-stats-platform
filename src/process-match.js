@@ -22,12 +22,17 @@ const validateFilters = ({ league_id, match_id, report_games }) => {
 const getEarliestGameDate = (games) =>
   games.length > 0 && new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
 
-const getUniqueGamePlayers = (games) => {
+const getUniqueMatchPlayers = (games) => {
   return games
     .reduce((result, game) => {
       return result.concat(
         ['blue', 'orange'].reduce((players, color) => {
-          return players.concat(game[color].players)
+          return players.concat(
+            game[color].players.map((p) => {
+              p.color = color
+              return p
+            }),
+          )
         }, []),
       )
     }, [])
@@ -53,7 +58,7 @@ const getUnlinkedPlayers = (linked, all) => {
  */
 const buildPlayersQuery = (games) => {
   return {
-    $or: getUniqueGamePlayers(games).map((player) => ({
+    $or: getUniqueMatchPlayers(games).map((player) => ({
       accounts: {
         $elemMatch: {
           platform: player.id.platform,
@@ -102,6 +107,7 @@ const identifyPlayers = async (gamesData, gameIds) => {
   return players
 }
 
+/** does all of the team and player mapping/validation at once */
 const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, mentionedTeams) => {
   const league = await Leagues.findById(leagueId).populate({
     path: 'current_season',
@@ -110,14 +116,36 @@ const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, menti
   const seasonTeamIds = league.current_season.team_ids
   const seasonTeams = league.current_season.teams
   const allTeams = await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))
+  const matchPlayers = getUniqueMatchPlayers(gamesData).map((matchPlayer) => {
+    return {
+      player: players.find(
+        (p) =>
+          p.accounts &&
+          p.accounts.some((acc) => acc.platform === matchPlayer.id.platform && acc.platform_id === matchPlayer.id.id),
+      ),
+      playerMatchData: matchPlayer,
+    }
+  })
 
-  const { subs, mains } = players.reduce(
-    (result, player) => {
+  const unlinkedPlayers = matchPlayers.filter((p) => !p.player).map((p) => p.playerMatchData)
+  if (unlinkedPlayers.length > 0) {
+    const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
+    console.info('created players', newPlayers)
+    throw new RecoverableError(
+      'NO_PLAYER_FOUND',
+      `created new players:\n${newPlayers.map((p) => `${p.screen_name} _id:${p._id}`).join('\n')}`,
+    )
+  }
+
+  const { subs, mains } = matchPlayers.reduce(
+    (result, item) => {
+      const { player } = item
       const playerMap = getPlayerTeamsAtDate(player, matchDate).map((team) => {
         return {
-          player,
+          ...item,
           // team gets overwritten later for subs
           team: allTeams.find((t) => t._id.equals(team.team_id)),
+          teamsAtDate: getPlayerTeamsAtDate(player, matchDate),
           sub: !seasonTeamIds.some((id) => id.equals(team.team_id)),
         }
       })
@@ -224,6 +252,19 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
   })
 }
 
+const validateMatchDate = (match, gamesData) => {
+  if (match.status === 'open' && match.hasOwnProperty('scheduled_datetime')) {
+    gamesData.forEach((game) => {
+      const gameDate = new Date(game.date)
+      const oneWeek = 1000 * 3600 * 24 * 7
+      if (Math.abs(gameDate - match.scheduled_datetime) > oneWeek) {
+        const errMsg = `expected match within 1 week of ${match.scheduled_datetime} but received game played on ${gameDate}`
+        throw new UnRecoverableError('ERR_DATE_MISMATCH', errMsg)
+      }
+    })
+  }
+}
+
 const combineGames = (replayGames, manualGames) => {
   manualGames
     .sort((a, b) => new Date(a.game_number) - new Date(b.game_number))
@@ -273,26 +314,8 @@ const handleReplays = async (filters, processedAt) => {
     ? getMatchInfoById(match_id) // this is a reprocessed match
     : identifyMatch(league_id, teams)) // this is a new match
 
-  /** @todo fix this code - it doesn't correctly throw errors in production */
-  if (match.status === 'open' && match.hasOwnProperty('scheduled_datetime')) {
-    gamesData.forEach((game) => {
-      const gameDate = new Date(game.date)
-      const oneWeek = 1000 * 3600 * 24 * 7
-      if (Math.abs(gameDate - match.scheduled_datetime) > oneWeek) {
-        const errMsg = `expected match within 1 week of ${match.scheduled_datetime} but received game played on ${gameDate}`
-        throw new UnRecoverableError('ERR_WRONG_WEEK', errMsg)
-      }
-    })
-  }
-  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(gamesData))
-  if (unlinkedPlayers.length > 0) {
-    const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
-    console.info('created players', newPlayers)
-    throw new RecoverableError(
-      'NO_PLAYER_FOUND',
-      `created new players:\n${newPlayers.map((p) => `${p.screen_name} _id:${p._id}`).join('\n')}`,
-    )
-  }
+  validateMatchDate(match, gamesData)
+
   combineGames(gamesData, manualGames)
   let games
   if (!match.games || match.games.length < 1) {
@@ -330,7 +353,7 @@ const handleReplays = async (filters, processedAt) => {
   games.forEach((g, index) => (g.game_number = index + 1)) // reassign game numbers
 
   console.info('processing match stats')
-  const { teamStats, playerStats, playerTeamMap } = processMatch(
+  const { teamStats, playerStats } = processMatch(
     {
       league,
       season,
@@ -354,7 +377,7 @@ const handleReplays = async (filters, processedAt) => {
     game.date_time_processed = Date.now()
     await game.save()
   }
-  match.players_to_teams = playerTeamMap
+  match.players_to_teams = playersToTeams.map((item) => ({ player_id: item.player._id, team_id: item.team._id }))
   await match.save()
 
   return {
@@ -368,7 +391,6 @@ const handleReplays = async (filters, processedAt) => {
     players,
     teamStats,
     playerStats,
-    playerTeamMap,
   }
 }
 
