@@ -173,37 +173,6 @@ const identifyTeams = async (playersToTeams, mentionedTeams) => {
 }
 
 const identifyMatch = async (leagueId, teams) => {
-  // const league = await Leagues.findById(leagueId).populate('current_season')
-  // const seasonTeams = league.current_season.team_ids
-  // const allTeams = await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))
-  // let teams = allTeams.filter((team) => seasonTeams.some((id) => id.equals(team._id)))
-  // if (teams.length !== 2) {
-  //   const franchises = allTeams.map((t) => t.franchise_id && t.franchise_id.toHexString())
-  //   if (franchises.length !== 2) {
-  //     let errMsg = `expected to process match between two teams but got ${teams.length}.`
-  //     if (teams.length > 0) errMsg += ` Teams:\n${teams.map((t) => `${t._id.toHexString()} ${t.name}`).join('\n')}`
-  //     throw new UnRecoverableError('MATCH_TEAM_COUNT', errMsg)
-  //   }
-  //   // set the subs and teams
-  //   teams = (await Teams.find({ franchise_id: { $in: franchises } })).filter((team) =>
-  //     seasonTeams.some((id) => id.equals(team._id)),
-  //   )
-  //   players.forEach((p) => {
-  //     const playerTeams = getPlayerTeamsAtDate(p, matchDate)
-  //     playerTeams.forEach(({ team_id }) => {
-  //       /** if they're already on a team, don't map them */
-  //       if (teams.some((t) => t._id.equals(team_id))) return
-  //       const team = allTeams.find((t) => team_id && team_id.equals(t._id))
-  //       /** @todo add message here saying we don't know what team a player is on */
-  //       if (!team) return
-  //       const franchiseMatch = team.franchise_id && franchises.find((id) => team.franchise_id.equals(id))
-  //       if (franchiseMatch) {
-  //         p.is_subbing_for_team = teams.find((t) => t.franchise_id && t.franchise_id.equals(franchiseMatch))
-  //         console.log('subbing', p.is_subbing_for_team)
-  //       }
-  //     })
-  //   })
-  // }
   const matches = (
     await Matches.find(buildMatchesQuery(teams))
       .sort({ week: 'asc' })
@@ -305,13 +274,15 @@ const handleReplays = async (filters, processedAt) => {
     : identifyMatch(league_id, teams)) // this is a new match
 
   /** @todo fix this code - it doesn't correctly throw errors in production */
-  if (
-    match.status === 'open' &&
-    match.hasOwnProperty('week') &&
-    Math.abs(match.week - parseInt(league.current_week)) > 1
-  ) {
-    const errMsg = `expected match within 1 week of ${league.current_week} but recieved ${match.week}`
-    throw new UnRecoverableError('ERR_WRONG_WEEK', errMsg)
+  if (match.status === 'open' && match.hasOwnProperty('scheduled_datetime')) {
+    gamesData.forEach((game) => {
+      const gameDate = new Date(game.date)
+      const oneWeek = 1000 * 3600 * 24 * 7
+      if (Math.abs(gameDate - match.scheduled_datetime) > oneWeek) {
+        const errMsg = `expected match within 1 week of ${match.scheduled_datetime} but received game played on ${gameDate}`
+        throw new UnRecoverableError('ERR_WRONG_WEEK', errMsg)
+      }
+    })
   }
   const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(gamesData))
   if (unlinkedPlayers.length > 0) {
@@ -431,13 +402,7 @@ const handleForfeit = async (filters, processedAt) => {
     processedAt,
   )
 
-  await uploadStats(
-    match._id.toHexString(),
-    teamStats,
-    playerStats,
-    `match:${match._id.toHexString()}.json`,
-    processedAt,
-  )
+  await uploadStats(match._id.toHexString(), teamStats, [], `match:${match._id.toHexString()}.json`, processedAt)
 
   match.forfeited_by_team = forfeit_team_id
   match.forfeit_datetime = forfeit_date

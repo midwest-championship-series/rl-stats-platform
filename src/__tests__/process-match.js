@@ -210,6 +210,7 @@ const mockOpenMatch = () =>
     week: 1,
     game_ids: [],
     best_of: 5,
+    scheduled_datetime: new Date('2020-03-19T20:00:00Z'),
     season: {
       _id: new ObjectId('5ebc62b0d09245d2a7c63477'),
       name: '1',
@@ -1252,10 +1253,7 @@ describe('process-match', () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     const testMatch = mockOpenMatch()
-    testMatch.season.league = {
-      ...testMatch.season.league,
-      current_week: '3',
-    }
+    testMatch.scheduled_datetime = new Date('2020-03-27T20:00:00Z')
     matchesFindMock.mockResolvedValue([testMatch])
     const result = await expect(
       processMatch({
@@ -1267,7 +1265,21 @@ describe('process-match', () => {
           { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
         ],
       }),
-    ).rejects.toEqual(new Error('expected match within 1 week of 3 but recieved 1'))
+    ).rejects.toEqual(
+      new Error(
+        'expected match within 1 week of Fri Mar 27 2020 15:00:00 GMT-0500 (Central Daylight Time) but received game played on Thu Mar 19 2020 16:14:32 GMT-0500 (Central Daylight Time)',
+      ),
+    )
+    testMatch.scheduled_datetime = new Date('2020-03-25T20:00:00Z')
+    await processMatch({
+      league_id: '5ebc62b1d09245d2a7c63516',
+      report_games: [
+        { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+        { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+        { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+        { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
+      ],
+    })
   })
   it('should process a match when teams are scheduled in multiple leagues', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
@@ -1290,7 +1302,9 @@ describe('process-match', () => {
       populate: jest.fn(() => ({ populate: matchesFindByIdMock })),
     }))
     players.Model.find.mockReturnValue({ onTeams: jest.fn().mockResolvedValue(mockPlayers) })
-    matchesFindByIdMock.mockResolvedValue(mockOpenMatch())
+    const testMatch = mockOpenMatch()
+    delete testMatch.scheduled_datetime
+    matchesFindByIdMock.mockResolvedValue(testMatch)
     const results = await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
       match_id: '5f2c5e4e08c88e00084b44a6',
@@ -1347,52 +1361,7 @@ describe('process-match', () => {
       wins: 1,
       games_played: undefined,
     })
-    expect(player_games).toHaveLength(12)
-    expect(player_games[0].epoch_processed - Date.now()).toBeLessThan(100)
-    expect(player_games[0]).toMatchObject({
-      player_id: '5ec04239d09245d2a7d4fa26',
-      player_name: 'Calster',
-      team_id: '5ebc62a9d09245d2a7c62e86',
-      team_name: 'Duluth Superiors',
-      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_name: 'Burnsville Inferno',
-      match_id: '5ebc62b0d09245d2a7c6340c',
-      match_type: 'REG',
-      week: 1,
-      season_name: '1',
-      season_id: '5ebc62b0d09245d2a7c63477',
-      league_id: '5ebc62b1d09245d2a7c63516',
-      league_name: 'mncs',
-      game_id_forfeit_win: undefined,
-      game_id: undefined,
-      game_id_win: undefined,
-      game_number: undefined,
-      map_name: undefined,
-      wins: 0,
-      games_played: undefined,
-    })
-    expect(player_games[2]).toMatchObject({
-      player_id: '5ec04239d09245d2a7d4fa4f',
-      player_name: 'Pace.',
-      team_id: '5ebc62a9d09245d2a7c62eb3',
-      team_name: 'Burnsville Inferno',
-      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
-      opponent_team_name: 'Duluth Superiors',
-      match_id: '5ebc62b0d09245d2a7c6340c',
-      match_type: 'REG',
-      week: 1,
-      season_name: '1',
-      season_id: '5ebc62b0d09245d2a7c63477',
-      league_id: '5ebc62b1d09245d2a7c63516',
-      league_name: 'mncs',
-      game_id_forfeit_win: 'match:5ebc62b0d09245d2a7c6340c:game:1',
-      game_id: undefined,
-      game_id_win: undefined,
-      game_number: undefined,
-      map_name: undefined,
-      wins: 1,
-      games_played: undefined,
-    })
+    expect(player_games).toHaveLength(0)
     const uploadStaticStats = aws.s3.uploadJSON.mock.calls
     expect(uploadStaticStats).toHaveLength(1)
     expect(uploadStaticStats[0][0]).toEqual('stats_bucket_name')
@@ -1401,8 +1370,7 @@ describe('process-match', () => {
     expect(s3Stats.processedAt - Date.now()).toBeLessThan(100)
     expect(s3Stats.team_games).toHaveLength(6)
     expect(s3Stats.matchId).toEqual('5ebc62b0d09245d2a7c6340c')
-    /** @todo find out why this is 12... it should be (# players on teams) * (# games in match) */
-    expect(s3Stats.player_games).toHaveLength(12)
+    expect(s3Stats.player_games).toHaveLength(0)
   })
   it('should process a forfeit with a scheduled date', async () => {
     Match.findById = jest.fn(() => ({
@@ -1421,7 +1389,7 @@ describe('process-match', () => {
     })
     const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
     expect(team_games).toHaveLength(6)
-    expect(player_games).toHaveLength(15)
+    expect(player_games).toHaveLength(0)
   })
   it('should process a forfeit with a different best_of condition', async () => {
     Match.findById = jest.fn(() => ({
@@ -1440,7 +1408,7 @@ describe('process-match', () => {
     })
     const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
     expect(team_games).toHaveLength(2)
-    expect(player_games).toHaveLength(4)
+    expect(player_games).toHaveLength(0)
   })
   it('should fail if forfeit match does not have best_of condition', async () => {
     Match.findById = jest.fn(() => ({
@@ -1497,6 +1465,10 @@ describe('process-match', () => {
         { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
       ],
     })
+    const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
+    player_games.forEach((pGame) =>
+      expect('5ebc62a9d09245d2a7c62eb3 5ebc62a9d09245d2a7c62e86').toContain(pGame.sub_for_team),
+    )
   })
   it('should not add stats for games where more than 2 franchises are identified', async () => {
     matchesFindMock.mockResolvedValue([mockOpenMatch()])
