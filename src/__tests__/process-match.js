@@ -10,7 +10,7 @@ const mockDoc = (obj) => {
 // mock data
 const mockPlayers = [
   {
-    _id: ObjectId('5ec04239d09245d2a7d4fa26'),
+    _id: new ObjectId('5ec04239d09245d2a7d4fa26'),
     accounts: [
       {
         platform: 'steam',
@@ -28,7 +28,7 @@ const mockPlayers = [
     ],
   },
   {
-    _id: ObjectId('5ec04239d09245d2a7d4fa48'),
+    _id: new ObjectId('5ec04239d09245d2a7d4fa48'),
     accounts: [
       {
         platform: 'steam',
@@ -78,7 +78,7 @@ const mockPlayers = [
     ],
   },
   {
-    _id: ObjectId('5ec04239d09245d2a7d4fa4f'),
+    _id: new ObjectId('5ec04239d09245d2a7d4fa4f'),
     accounts: [
       {
         platform: 'steam',
@@ -101,7 +101,7 @@ const mockPlayers = [
     ],
   },
   {
-    _id: ObjectId('5ec04239d09245d2a7d4fa52'),
+    _id: new ObjectId('5ec04239d09245d2a7d4fa52'),
     accounts: [
       {
         platform: 'steam',
@@ -146,20 +146,20 @@ const mockPlayers = [
 ]
 const mockTeams = [
   {
-    _id: ObjectId('5ebc62a9d09245d2a7c62e86'),
+    _id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
     discord_id: '688286287655993365',
     name: 'Duluth Superiors',
-    franchise_id: ObjectId('600fac63be0bbe0008ffddc5'),
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddc5'),
   },
   {
-    _id: ObjectId('5ebc62a9d09245d2a7c62eb3'),
+    _id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
     discord_id: '688286346783359027',
     name: 'Burnsville Inferno',
-    franchise_id: ObjectId('600fac63be0bbe0008ffddc7'),
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
   },
 ]
 const mockClosedMatch = mockDoc({
-  _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
+  _id: new ObjectId('5ebc62b0d09245d2a7c6340c'),
   week: 1,
   match_type: 'REG',
   report_games: [
@@ -172,38 +172,38 @@ const mockClosedMatch = mockDoc({
   teams: mockTeams,
   games: [
     mockDoc({
-      _id: ObjectId('5ebc62afd09245d2a7c6333f'),
+      _id: new ObjectId('5ebc62afd09245d2a7c6333f'),
       replay_origin: { key: '9aee7f5f-7d75-40b0-8116-a8e1e2c9d4c5', source: 'ballchasing' },
       game_number: 1,
     }),
     mockDoc({
-      _id: ObjectId('5ebc62afd09245d2a7c63338'),
+      _id: new ObjectId('5ebc62afd09245d2a7c63338'),
       replay_origin: { key: '6903ac8a-d480-4f41-84a0-321ffb5cd17d', source: 'ballchasing' },
       game_number: 2,
     }),
     mockDoc({
-      _id: ObjectId('5ebc62afd09245d2a7c6335e'),
+      _id: new ObjectId('5ebc62afd09245d2a7c6335e'),
       replay_origin: { key: '2493a4bd-aeb5-49ba-8cac-059cc99865c1', source: 'ballchasing' },
       game_number: 3,
     }),
     mockDoc({
-      _id: ObjectId('5ebc62afd09245d2a7c63350'),
+      _id: new ObjectId('5ebc62afd09245d2a7c63350'),
       replay_origin: { key: '111c0144-7219-426a-8263-8cff260d030d', source: 'ballchasing' },
       game_number: 4,
     }),
   ],
   season: {
-    _id: ObjectId('5ebc62b0d09245d2a7c63477'),
+    _id: new ObjectId('5ebc62b0d09245d2a7c63477'),
     name: '1',
     league: {
-      _id: ObjectId('5ebc62b1d09245d2a7c63516'),
+      _id: new ObjectId('5ebc62b1d09245d2a7c63516'),
       name: 'mncs',
     },
   },
 })
 const mockOpenMatch = () =>
   mockDoc({
-    _id: ObjectId('5ebc62b0d09245d2a7c6340c'),
+    _id: new ObjectId('5ebc62b0d09245d2a7c6340c'),
     status: 'open',
     match_type: 'REG',
     teams: mockTeams,
@@ -211,11 +211,11 @@ const mockOpenMatch = () =>
     game_ids: [],
     best_of: 5,
     season: {
-      _id: ObjectId('5ebc62b0d09245d2a7c63477'),
+      _id: new ObjectId('5ebc62b0d09245d2a7c63477'),
       name: '1',
       season_type: 'REG',
       league: {
-        _id: ObjectId('5ebc62b1d09245d2a7c63516'),
+        _id: new ObjectId('5ebc62b1d09245d2a7c63516'),
         name: 'mncs',
         current_week: '1',
       },
@@ -271,6 +271,258 @@ const teamsFindMock = jest.fn()
 teams.Model = {
   find: teamsFindMock,
 }
+const allLeagueTeams = [
+  {
+    _id: new ObjectId('5ec9358e8c0dd900074685c6'),
+    __v: 6,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286489557467243',
+    hex_color: '131846',
+    name: 'Lumberjacks Premier',
+    updated_at: '2022-02-13T20:51:03.518Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/941348546265878548/MNCS_TIER1_Marks_800px_BM_Lumberjacks-05.png',
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddcc'),
+    vars: [
+      {
+        _id: '60a31ae5f766b70008b4dc1d',
+        key: 'display_name',
+        value: 'Lumberjacks',
+      },
+      {
+        _id: '620818bcea9ec80009c178a8',
+        key: 'emoji_id',
+        value: ':LUM:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+  {
+    _id: new ObjectId('5ec9358d8c0dd900074685be'),
+    __v: 4,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286239237079155',
+    hex_color: '540809',
+    name: 'Senators Premier',
+    updated_at: '2022-02-13T20:44:59.206Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/941362036707835954/MNCS_TIER1_Marks_Social_SP_Senators-06.png',
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddc4'),
+    vars: [
+      {
+        _id: '60a31b03f766b70008b4dc22',
+        key: 'display_name',
+        value: 'Senators',
+      },
+      {
+        _id: '62081c553490fc0009399904',
+        key: 'emoji_id',
+        value: ':SEN:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+  {
+    _id: new ObjectId('5ec9358d8c0dd900074685c2'),
+    __v: 3,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286382921089056',
+    hex_color: '8014E8',
+    name: 'Rhythm Premier',
+    updated_at: '2022-02-13T20:41:51.715Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/941769141432512602/MNCS_TIER1_Marks_NoBG_RC_Rhythm-05.png',
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddc8'),
+    vars: [
+      {
+        _id: '60a31a4cf766b70008b4dc0a',
+        key: 'display_name',
+        value: 'Rhythm',
+      },
+      {
+        _id: '6206afef9c11d10009ccfacc',
+        key: 'emoji_id',
+        value: ':RHY:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+  {
+    _id: new ObjectId('5ec9358d8c0dd900074685bf'),
+    __v: 3,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286287655993365',
+    hex_color: '1C2153',
+    name: 'Superiors Premier',
+    updated_at: '2022-02-13T20:44:05.768Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/941762003008114708/MNCS_TIER1_Marks_NoBG_DT_Superiors-05.png',
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddc5'),
+    vars: [
+      {
+        _id: '60a3195cf766b70008b4dc06',
+        key: 'display_name',
+        value: 'Superiors',
+      },
+      {
+        _id: '6207f0d1cabd340009e4013f',
+        key: 'emoji_id',
+        value: ':SUP:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+  {
+    _id: new ObjectId('5ec9358d8c0dd900074685c0'),
+    __v: 3,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286317263847465',
+    hex_color: '1E0C30',
+    name: 'Barons Premier',
+    updated_at: '2022-02-13T21:00:22.932Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/942155977254400090/MNCS_TIER1_Marks_NoBG_MT_Barons_800_copy_3.png',
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddc6'),
+    vars: [
+      {
+        _id: '60a31ad0f766b70008b4dc1a',
+        key: 'display_name',
+        value: 'Barons',
+      },
+      {
+        _id: '6208197d3490fc00093998f0',
+        key: 'emoji_id',
+        value: ':BAR:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+  {
+    _id: new ObjectId('5ec9358e8c0dd900074685c3'),
+    __v: 3,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286412701040710',
+    hex_color: '999997',
+    name: 'Rangers Premier',
+    updated_at: '2022-02-13T20:40:55.186Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/941481166643531776/MNCS_TIER1_Marks_NoBG_HB_Rangers-06.png',
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddc9'),
+    vars: [
+      {
+        _id: '60a31a55f766b70008b4dc0b',
+        key: 'display_name',
+        value: 'Rangers',
+      },
+      {
+        _id: '620819df3490fc00093998f4',
+        key: 'emoji_id',
+        value: ':RAN:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+  {
+    _id: new ObjectId('5ec9358d8c0dd900074685bd'),
+    __v: 3,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286130629771274',
+    hex_color: '8015E8',
+    name: 'Miracles Premier',
+    updated_at: '2022-02-13T21:00:56.349Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/941762344898404443/MNCS_TIER1_Marks_NoBG_MN_Miracles-04.png',
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddc3'),
+    vars: [
+      {
+        _id: '60a31ad7f766b70008b4dc1b',
+        key: 'display_name',
+        value: 'Miracles',
+      },
+      {
+        _id: '62081bdd3490fc0009399902',
+        key: 'emoji_id',
+        value: ':MIR:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+  {
+    _id: new ObjectId('5ec9358d8c0dd900074685c1'),
+    __v: 3,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286346783359027',
+    hex_color: 'ED5829',
+    name: 'Inferno Premier',
+    updated_at: '2022-02-13T20:39:47.760Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/941352151337291796/MNCS_TIER1_Marks_NoBG_BV_Infreno2-07.png',
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
+    vars: [
+      {
+        _id: '60a31aebf766b70008b4dc1e',
+        key: 'display_name',
+        value: 'Inferno',
+      },
+      {
+        _id: '62081b953490fc0009399900',
+        key: 'emoji_id',
+        value: ':INF:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+  {
+    _id: new ObjectId('5ec9358e8c0dd900074685c4'),
+    __v: 3,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286435177922562',
+    hex_color: '886C63',
+    name: 'Flyers Premier',
+    updated_at: '2022-02-13T20:56:07.167Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/942158143910215690/MNCS_TIER1_Marks_NoBG_SC_Flyers-05.png',
+    franchise_id: new ObjectId('600fac63be0bbe0008ffddca'),
+    vars: [
+      {
+        _id: '60a31a20f766b70008b4dc07',
+        key: 'display_name',
+        value: 'Flyers',
+      },
+      {
+        _id: '62081b4f3490fc00093998fe',
+        key: 'emoji_id',
+        value: ':FLY:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+  {
+    _id: new ObjectId('5ec9358e8c0dd900074685c5'),
+    __v: 5,
+    created_at: '2020-05-23T14:39:09.945Z',
+    discord_id: '688286462747213846',
+    hex_color: 'B4BCF0',
+    name: 'Maulers Premier',
+    updated_at: '2022-02-13T20:46:55.535Z',
+    avatar:
+      'https://cdn.discordapp.com/attachments/819367956659044352/941349891840561172/MNCS_TIER1_Marks_NoBG_BM_Maulers-05.png',
+    franchise_id: new ObjectId('5ec9358e8c0dd900074685c5'),
+    vars: [
+      {
+        _id: '60a31adef766b70008b4dc1c',
+        key: 'display_name',
+        value: 'Maulers',
+      },
+      {
+        _id: '620819b23490fc00093998f2',
+        key: 'emoji_id',
+        value: ':MAU:',
+      },
+    ],
+    tier_name: 'premier',
+  },
+]
 const leagues = require('../model/mongodb/leagues')
 const leaguesFindByIdMock = jest.fn().mockResolvedValue({
   current_season: {
@@ -286,258 +538,7 @@ const leaguesFindByIdMock = jest.fn().mockResolvedValue({
       new ObjectId('5ebc62aad09245d2a7c62ef9'),
       new ObjectId('5ebc62aad09245d2a7c62efc'),
     ],
-    teams: [
-      {
-        _id: '5ec9358e8c0dd900074685c6',
-        __v: 6,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286489557467243',
-        hex_color: '131846',
-        name: 'Lumberjacks Premier',
-        updated_at: '2022-02-13T20:51:03.518Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/941348546265878548/MNCS_TIER1_Marks_800px_BM_Lumberjacks-05.png',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddcc'),
-        vars: [
-          {
-            _id: '60a31ae5f766b70008b4dc1d',
-            key: 'display_name',
-            value: 'Lumberjacks',
-          },
-          {
-            _id: '620818bcea9ec80009c178a8',
-            key: 'emoji_id',
-            value: ':LUM:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-      {
-        _id: '5ec9358d8c0dd900074685be',
-        __v: 4,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286239237079155',
-        hex_color: '540809',
-        name: 'Senators Premier',
-        updated_at: '2022-02-13T20:44:59.206Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/941362036707835954/MNCS_TIER1_Marks_Social_SP_Senators-06.png',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddc4'),
-        vars: [
-          {
-            _id: '60a31b03f766b70008b4dc22',
-            key: 'display_name',
-            value: 'Senators',
-          },
-          {
-            _id: '62081c553490fc0009399904',
-            key: 'emoji_id',
-            value: ':SEN:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-      {
-        _id: '5ec9358d8c0dd900074685c2',
-        __v: 3,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286382921089056',
-        hex_color: '8014E8',
-        name: 'Rhythm Premier',
-        updated_at: '2022-02-13T20:41:51.715Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/941769141432512602/MNCS_TIER1_Marks_NoBG_RC_Rhythm-05.png',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddc8'),
-        vars: [
-          {
-            _id: '60a31a4cf766b70008b4dc0a',
-            key: 'display_name',
-            value: 'Rhythm',
-          },
-          {
-            _id: '6206afef9c11d10009ccfacc',
-            key: 'emoji_id',
-            value: ':RHY:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-      {
-        _id: '5ec9358d8c0dd900074685bf',
-        __v: 3,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286287655993365',
-        hex_color: '1C2153',
-        name: 'Superiors Premier',
-        updated_at: '2022-02-13T20:44:05.768Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/941762003008114708/MNCS_TIER1_Marks_NoBG_DT_Superiors-05.png',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddc5'),
-        vars: [
-          {
-            _id: '60a3195cf766b70008b4dc06',
-            key: 'display_name',
-            value: 'Superiors',
-          },
-          {
-            _id: '6207f0d1cabd340009e4013f',
-            key: 'emoji_id',
-            value: ':SUP:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-      {
-        _id: '5ec9358d8c0dd900074685c0',
-        __v: 3,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286317263847465',
-        hex_color: '1E0C30',
-        name: 'Barons Premier',
-        updated_at: '2022-02-13T21:00:22.932Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/942155977254400090/MNCS_TIER1_Marks_NoBG_MT_Barons_800_copy_3.png',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddc6'),
-        vars: [
-          {
-            _id: '60a31ad0f766b70008b4dc1a',
-            key: 'display_name',
-            value: 'Barons',
-          },
-          {
-            _id: '6208197d3490fc00093998f0',
-            key: 'emoji_id',
-            value: ':BAR:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-      {
-        _id: '5ec9358e8c0dd900074685c3',
-        __v: 3,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286412701040710',
-        hex_color: '999997',
-        name: 'Rangers Premier',
-        updated_at: '2022-02-13T20:40:55.186Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/941481166643531776/MNCS_TIER1_Marks_NoBG_HB_Rangers-06.png',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddc9'),
-        vars: [
-          {
-            _id: '60a31a55f766b70008b4dc0b',
-            key: 'display_name',
-            value: 'Rangers',
-          },
-          {
-            _id: '620819df3490fc00093998f4',
-            key: 'emoji_id',
-            value: ':RAN:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-      {
-        _id: '5ec9358d8c0dd900074685bd',
-        __v: 3,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286130629771274',
-        hex_color: '8015E8',
-        name: 'Miracles Premier',
-        updated_at: '2022-02-13T21:00:56.349Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/941762344898404443/MNCS_TIER1_Marks_NoBG_MN_Miracles-04.png',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddc3'),
-        vars: [
-          {
-            _id: '60a31ad7f766b70008b4dc1b',
-            key: 'display_name',
-            value: 'Miracles',
-          },
-          {
-            _id: '62081bdd3490fc0009399902',
-            key: 'emoji_id',
-            value: ':MIR:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-      {
-        _id: '5ec9358d8c0dd900074685c1',
-        __v: 3,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286346783359027',
-        hex_color: 'ED5829',
-        name: 'Inferno Premier',
-        updated_at: '2022-02-13T20:39:47.760Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/941352151337291796/MNCS_TIER1_Marks_NoBG_BV_Infreno2-07.png',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddc7'),
-        vars: [
-          {
-            _id: '60a31aebf766b70008b4dc1e',
-            key: 'display_name',
-            value: 'Inferno',
-          },
-          {
-            _id: '62081b953490fc0009399900',
-            key: 'emoji_id',
-            value: ':INF:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-      {
-        _id: '5ec9358e8c0dd900074685c4',
-        __v: 3,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286435177922562',
-        hex_color: '886C63',
-        name: 'Flyers Premier',
-        updated_at: '2022-02-13T20:56:07.167Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/942158143910215690/MNCS_TIER1_Marks_NoBG_SC_Flyers-05.png',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddca'),
-        vars: [
-          {
-            _id: '60a31a20f766b70008b4dc07',
-            key: 'display_name',
-            value: 'Flyers',
-          },
-          {
-            _id: '62081b4f3490fc00093998fe',
-            key: 'emoji_id',
-            value: ':FLY:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-      {
-        _id: '5ec9358e8c0dd900074685c5',
-        __v: 5,
-        created_at: '2020-05-23T14:39:09.945Z',
-        discord_id: '688286462747213846',
-        hex_color: 'B4BCF0',
-        name: 'Maulers Premier',
-        updated_at: '2022-02-13T20:46:55.535Z',
-        avatar:
-          'https://cdn.discordapp.com/attachments/819367956659044352/941349891840561172/MNCS_TIER1_Marks_NoBG_BM_Maulers-05.png',
-        franchise_id: ObjectId('5ec9358e8c0dd900074685c5'),
-        vars: [
-          {
-            _id: '60a31adef766b70008b4dc1c',
-            key: 'display_name',
-            value: 'Maulers',
-          },
-          {
-            _id: '620819b23490fc00093998f2',
-            key: 'emoji_id',
-            value: ':MAU:',
-          },
-        ],
-        tier_name: 'premier',
-      },
-    ],
+    teams: allLeagueTeams,
   },
 })
 leagues.Model = {
@@ -1459,25 +1460,32 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(new Error('forfeited match must have best_of property'))
   })
-  it.skip('should identify subs if there is no league player in a match', async () => {
+  it('should identify subs if there is no league player in a match', async () => {
     matchesFindMock.mockResolvedValue([mockOpenMatch()])
     const testMockPlayers = mockPlayers.map((player) => {
       const newPlayer = cloneDeep(player)
       newPlayer.team_history.forEach((h) => {
         if (h.team_id.equals('5ebc62a9d09245d2a7c62eb3')) {
-          h.team_id = ObjectId('aebc62a9d09245d2a7c62eb6')
+          h.team_id = new ObjectId('aebc62a9d09245d2a7c62eb6')
+        } else {
+          h.team_id = new ObjectId('600c98b3eedc0d0008211469')
         }
       })
       return newPlayer
     })
     players.Model.find.mockResolvedValue(testMockPlayers)
     teams.Model.find.mockResolvedValue([
-      mockTeams.find((t) => t._id.equals('5ebc62a9d09245d2a7c62e86')),
       {
-        _id: ObjectId('aebc62a9d09245d2a7c62eb6'),
+        _id: new ObjectId('600c98b3eedc0d0008211469'),
+        discord_id: '688286346783359027',
+        name: 'Superiors Rising Star',
+        franchise_id: new ObjectId('600fac63be0bbe0008ffddc5'),
+      },
+      {
+        _id: new ObjectId('aebc62a9d09245d2a7c62eb6'),
         discord_id: '688286346783359027',
         name: 'Burnsville Inferno Other League like Prospect',
-        franchise_id: ObjectId('600fac63be0bbe0008ffddc7'),
+        franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
       },
     ])
     const results = await processMatch({
@@ -1490,17 +1498,35 @@ describe('process-match', () => {
       ],
     })
   })
-  it.skip('should throw an error if 2 franchises are not identified', async () => {
-    throw new Error('test not written')
-  })
-  it('should not add stats for games which are not played by league teams', async () => {
-    players.Model.find.mockResolvedValue([mockPlayers[0]])
-    const mockTeam = {
-      _id: new ObjectId('5ebc62a9d09245d2a7c62e5a'),
-      name: 'Duluth Superiors',
-      franchise_id: new ObjectId('aaaaac63be0bbe0008ffddc7'),
-    }
-    teams.Model.find.mockResolvedValue([mockTeam])
+  it('should not add stats for games where more than 2 franchises are identified', async () => {
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    const testMockPlayers = mockPlayers.map((player) => {
+      const newPlayer = cloneDeep(player)
+      newPlayer.team_history.forEach((h) => {
+        if (h.team_id.equals('5ebc62a9d09245d2a7c62eb3')) {
+          h.team_id = new ObjectId('aebc62a9d09245d2a7c62eb6')
+        }
+      })
+      return newPlayer
+    })
+    // act like cal joined rangers and superiors
+    testMockPlayers
+      .find((p) => p._id.equals('5ec04239d09245d2a7d4fa52'))
+      .team_history.push({
+        team_id: new ObjectId('5ec9358e8c0dd900074685c3'),
+        date_joined: new Date('2020-03-01T05:00:00.000Z'),
+      })
+    players.Model.find.mockResolvedValue(testMockPlayers)
+    teams.Model.find.mockResolvedValue([
+      mockTeams.find((t) => t._id.equals('5ebc62a9d09245d2a7c62e86')),
+      allLeagueTeams.find((t) => t._id.equals('5ec9358e8c0dd900074685c3')),
+      {
+        _id: new ObjectId('aebc62a9d09245d2a7c62eb6'),
+        discord_id: '688286346783359027',
+        name: 'Burnsville Inferno Other League like Prospect',
+        franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
+      },
+    ])
     await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
@@ -1513,8 +1539,41 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(
       new Error(
-        `expected to process match between two teams but got 1. Teams:\n${mockTeam._id.toHexString()} Duluth Superiors`,
+        `expected to identify match between 2 franchises, but found 3. Franchises: 600fac63be0bbe0008ffddc7, 600fac63be0bbe0008ffddc9, 600fac63be0bbe0008ffddc5`,
       ),
+    )
+  })
+  it('should not add stats for games where one franchise is identified', async () => {
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    const testMockPlayers = mockPlayers.map((player) => {
+      const newPlayer = cloneDeep(player)
+      newPlayer.team_history.forEach((h) => {
+        h.team_id = new ObjectId('aebc62a9d09245d2a7c62eb6')
+      })
+      return newPlayer
+    })
+    players.Model.find.mockResolvedValue(testMockPlayers)
+    teams.Model.find.mockResolvedValue([
+      mockTeams.find((t) => t._id.equals('5ebc62a9d09245d2a7c62e86')),
+      {
+        _id: new ObjectId('aebc62a9d09245d2a7c62eb6'),
+        discord_id: '688286346783359027',
+        name: 'Burnsville Inferno Other League like Prospect',
+        franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
+      },
+    ])
+    await expect(
+      processMatch({
+        league_id: '5ebc62b1d09245d2a7c63516',
+        report_games: [
+          { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+          { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+          { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+          { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
+        ],
+      }),
+    ).rejects.toEqual(
+      new Error(`expected to identify match between 2 franchises, but found 1. Franchises: 600fac63be0bbe0008ffddc7`),
     )
   })
   it('should throw an error if the match does not meet best_of requirements', async () => {

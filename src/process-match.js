@@ -75,8 +75,8 @@ const buildTeamsQuery = (players, matchDate, mentionedTeams) => {
   return { $or: unique.map((id) => ({ _id: id })) }
 }
 
-const buildMatchesQuery = (teams) => {
-  return { $and: teams.map((t) => ({ team_ids: t._id })), status: 'open' }
+const buildMatchesQuery = (teamIds) => {
+  return { $and: teamIds.map((id) => ({ team_ids: id })), status: 'open' }
 }
 
 const getMatchInfoById = async (matchId) => {
@@ -160,38 +160,50 @@ const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, menti
   }, [])
 }
 
-const identifyMatch = async (leagueId, players, matchDate, mentionedTeams) => {
-  const league = await Leagues.findById(leagueId).populate('current_season')
-  const seasonTeams = league.current_season.team_ids
-  const allTeams = await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))
-  let teams = allTeams.filter((team) => seasonTeams.some((id) => id.equals(team._id)))
-  if (teams.length !== 2) {
-    const franchises = allTeams.map((t) => t.franchise_id && t.franchise_id.toHexString())
-    if (franchises.length !== 2) {
-      let errMsg = `expected to process match between two teams but got ${teams.length}.`
-      if (teams.length > 0) errMsg += ` Teams:\n${teams.map((t) => `${t._id.toHexString()} ${t.name}`).join('\n')}`
-      throw new UnRecoverableError('MATCH_TEAM_COUNT', errMsg)
-    }
-    // set the subs and teams
-    teams = (await Teams.find({ franchise_id: { $in: franchises } })).filter((team) =>
-      seasonTeams.some((id) => id.equals(team._id)),
-    )
-    players.forEach((p) => {
-      const playerTeams = getPlayerTeamsAtDate(p, matchDate)
-      playerTeams.forEach(({ team_id }) => {
-        /** if they're already on a team, don't map them */
-        if (teams.some((t) => t._id.equals(team_id))) return
-        const team = allTeams.find((t) => team_id && team_id.equals(t._id))
-        /** @todo add message here saying we don't know what team a player is on */
-        if (!team) return
-        const franchiseMatch = team.franchise_id && franchises.find((id) => team.franchise_id.equals(id))
-        if (franchiseMatch) {
-          p.is_subbing_for_team = teams.find((t) => t.franchise_id && t.franchise_id.equals(franchiseMatch))
-          console.log('subbing', p.is_subbing_for_team)
-        }
-      })
-    })
-  }
+const identifyTeams = async (playersToTeams, mentionedTeams) => {
+  const teamIds = playersToTeams.reduce(
+    (result, item) => {
+      if (!result.find((id) => item.team._id.equals(id))) result.push(item.team._id)
+      return result
+    },
+    [...mentionedTeams],
+  )
+  const teams = await Teams.find({ _id: { $or: teamIds } })
+  return teams
+}
+
+const identifyMatch = async (leagueId, teams) => {
+  // const league = await Leagues.findById(leagueId).populate('current_season')
+  // const seasonTeams = league.current_season.team_ids
+  // const allTeams = await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))
+  // let teams = allTeams.filter((team) => seasonTeams.some((id) => id.equals(team._id)))
+  // if (teams.length !== 2) {
+  //   const franchises = allTeams.map((t) => t.franchise_id && t.franchise_id.toHexString())
+  //   if (franchises.length !== 2) {
+  //     let errMsg = `expected to process match between two teams but got ${teams.length}.`
+  //     if (teams.length > 0) errMsg += ` Teams:\n${teams.map((t) => `${t._id.toHexString()} ${t.name}`).join('\n')}`
+  //     throw new UnRecoverableError('MATCH_TEAM_COUNT', errMsg)
+  //   }
+  //   // set the subs and teams
+  //   teams = (await Teams.find({ franchise_id: { $in: franchises } })).filter((team) =>
+  //     seasonTeams.some((id) => id.equals(team._id)),
+  //   )
+  //   players.forEach((p) => {
+  //     const playerTeams = getPlayerTeamsAtDate(p, matchDate)
+  //     playerTeams.forEach(({ team_id }) => {
+  //       /** if they're already on a team, don't map them */
+  //       if (teams.some((t) => t._id.equals(team_id))) return
+  //       const team = allTeams.find((t) => team_id && team_id.equals(t._id))
+  //       /** @todo add message here saying we don't know what team a player is on */
+  //       if (!team) return
+  //       const franchiseMatch = team.franchise_id && franchises.find((id) => team.franchise_id.equals(id))
+  //       if (franchiseMatch) {
+  //         p.is_subbing_for_team = teams.find((t) => t.franchise_id && t.franchise_id.equals(franchiseMatch))
+  //         console.log('subbing', p.is_subbing_for_team)
+  //       }
+  //     })
+  //   })
+  // }
   const matches = (
     await Matches.find(buildMatchesQuery(teams))
       .sort({ week: 'asc' })
@@ -284,10 +296,13 @@ const handleReplays = async (filters, processedAt) => {
     mentioned_team_ids,
   )
 
+  console.info('retrieving teams')
+  const teams = await identifyTeams(playersToTeams, mentioned_team_ids)
+
   console.info('retrieving league info')
-  const { league, season, match, teams } = await (match_id
+  const { league, season, match } = await (match_id
     ? getMatchInfoById(match_id) // this is a reprocessed match
-    : identifyMatch(league_id, players, getEarliestGameDate(gamesData), mentioned_team_ids)) // this is a new match
+    : identifyMatch(league_id, teams)) // this is a new match
 
   /** @todo fix this code - it doesn't correctly throw errors in production */
   if (
