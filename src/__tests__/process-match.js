@@ -973,7 +973,7 @@ describe('process-match', () => {
       games_played: undefined,
     })
   })
-  it.only('should process a new match with multiple game forfeits', async () => {
+  it('should process a new match with multiple game forfeits', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     matchesFindMock.mockResolvedValue([mockOpenMatch()])
@@ -1692,7 +1692,23 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(new Error('NO_PLAYER_FOUND'))
     expect(players.Model.create.mock.calls).toHaveLength(2)
-    expect(players.Model.create.mock.calls[0][0]).toMatchObject({ screen_name: 'MARKsman.' })
-    expect(players.Model.create.mock.calls[1][0]).toMatchObject({ screen_name: 'Lege' })
+    expect(players.Model.create.mock.calls[0][0]).toMatchObject({
+      screen_name: 'MARKsman.',
+      accounts: [
+        {
+          platform: 'steam',
+          platform_id: '76561198118651841',
+        },
+      ],
+    })
+    expect(players.Model.create.mock.calls[1][0]).toMatchObject({
+      screen_name: 'Lege',
+      accounts: [
+        {
+          platform: 'steam',
+          platform_id: '76561198397509094',
+        },
+      ],
+    })
   })
 })
