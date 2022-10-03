@@ -282,7 +282,7 @@ const createUnlinkedPlayers = (players) => {
     players.map((p) => {
       return Players.create({
         screen_name: p.name.trim(),
-        accounts: [{ platform: p.platform, platform_id: p.platform_id }],
+        accounts: [{ platform: p.id.platform, platform_id: p.id.id }],
       })
     }),
   )
