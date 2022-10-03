@@ -22,12 +22,17 @@ const validateFilters = ({ league_id, match_id, report_games }) => {
 const getEarliestGameDate = (games) =>
   games.length > 0 && new Date(games.sort((a, b) => (a.date > b.date ? 1 : -1))[0].date)
 
-const getUniqueGamePlayers = (games) => {
+const getUniqueMatchPlayers = (games) => {
   return games
     .reduce((result, game) => {
       return result.concat(
         ['blue', 'orange'].reduce((players, color) => {
-          return players.concat(game[color].players)
+          return players.concat(
+            game[color].players.map((p) => {
+              p.color = color
+              return p
+            }),
+          )
         }, []),
       )
     }, [])
@@ -53,7 +58,7 @@ const getUnlinkedPlayers = (linked, all) => {
  */
 const buildPlayersQuery = (games) => {
   return {
-    $or: getUniqueGamePlayers(games).map((player) => ({
+    $or: getUniqueMatchPlayers(games).map((player) => ({
       accounts: {
         $elemMatch: {
           platform: player.id.platform,
@@ -75,8 +80,8 @@ const buildTeamsQuery = (players, matchDate, mentionedTeams) => {
   return { $or: unique.map((id) => ({ _id: id })) }
 }
 
-const buildMatchesQuery = (teams) => {
-  return { $and: teams.map((t) => ({ team_ids: t._id })), status: 'open' }
+const buildMatchesQuery = (teamIds) => {
+  return { $and: teamIds.map((id) => ({ team_ids: id })), status: 'open' }
 }
 
 const getMatchInfoById = async (matchId) => {
@@ -90,17 +95,168 @@ const getMatchInfoById = async (matchId) => {
   return { match, teams: match.teams, season: match.season, league: match.season.league }
 }
 
-const identifyMatch = async (leagueId, players, matchDate, mentionedTeams) => {
-  const league = await Leagues.findById(leagueId).populate('current_season')
-  const seasonTeams = league.current_season.team_ids
-  const teams = (await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))).filter((team) =>
-    seasonTeams.some((id) => id.equals(team._id)),
-  )
-  if (teams.length !== 2) {
-    let errMsg = `expected to process match between two teams but got ${teams.length}.`
-    if (teams.length > 0) errMsg += ` Teams:\n${teams.map((t) => `${t._id.toHexString()} ${t.name}`).join('\n')}`
-    throw new UnRecoverableError('MATCH_TEAM_COUNT', errMsg)
+const identifyPlayers = async (gamesData, gameIds) => {
+  const players = []
+  if (gamesData.length > 0) {
+    players.push(...(await Players.find(buildPlayersQuery(gamesData))))
+    if (players.length < 1) {
+      const errMsg = `no players found for games: ${gameIds.join(', ')}`
+      throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
+    }
   }
+  return players
+}
+
+/** make sure that the players are always on the same teams in all the game data (not color dependent) */
+const validateGameTeams = (gamesData) => {
+  const colors = ['blue', 'orange']
+  const team1Players = gamesData[0].orange.players
+  const team2Players = gamesData[0].blue.players
+  /** @todo come back and make sure that the original team being incorrect can't screw this up */
+  // const teamCombinations = gamesData.map((game) => {
+  //   return colors.map((color) => {
+  //     return {
+  //       color,
+  //       players: game[color].players.map((player) => `${player.id.platform}:${player.id.id}`),
+  //     }
+  //   })
+  // })
+  const validateTeamPlayers = (originalTeam, gameTeam) => {
+    const errors = []
+    originalTeam.forEach((player) => {
+      const playerMatch = gameTeam.find((p) => p.id.platform === player.id.platform && p.id.id === player.id.id)
+      if (!playerMatch) {
+        errors.push(`no match found for player: ${player.name}.`)
+      }
+    })
+    return errors
+  }
+  gamesData.forEach((game) => {
+    const team1Color = colors.find((color) =>
+      game[color].players.some(
+        (player) => player.id.platform === team1Players[0].id.platform && player.id.id === team1Players[0].id.id,
+      ),
+    )
+    const team2Color = colors.filter((c) => c !== team1Color)[0]
+    const errors = validateTeamPlayers(team1Players, game[team1Color].players).concat(
+      validateTeamPlayers(team2Players, game[team2Color].players),
+    )
+    if (errors.length > 0) {
+      let errMsg = `team mismatch found in game: ${game.id}. errors: ${errors.join(', ')}`
+      throw new UnRecoverableError('TEAM_MISMATCH_IN_GAME_DATA', errMsg)
+    }
+  })
+}
+
+/** does all of the team and player mapping/validation at once */
+const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, mentionedTeams) => {
+  const league = await Leagues.findById(leagueId).populate({
+    path: 'current_season',
+    populate: 'teams',
+  })
+  const seasonTeams = league.current_season.teams
+  const allTeams = await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))
+  const playerTeamMap = getUniqueMatchPlayers(gamesData).map((matchPlayer) => {
+    return {
+      player: players.find(
+        (p) =>
+          p.accounts &&
+          p.accounts.some((acc) => acc.platform === matchPlayer.id.platform && acc.platform_id === matchPlayer.id.id),
+      ),
+      playerGameData: matchPlayer,
+    }
+  })
+
+  const unlinkedPlayers = playerTeamMap.filter((p) => !p.player).map((p) => p.playerGameData)
+  if (unlinkedPlayers.length > 0) {
+    const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
+    console.info('created players', newPlayers)
+    throw new RecoverableError(
+      'NO_PLAYER_FOUND',
+      `created new players:\n${newPlayers.map((p) => `${p.screen_name} _id:${p._id}`).join('\n')}`,
+    )
+  }
+
+  playerTeamMap.forEach((item) => {
+    const { player } = item
+    item.teamsAtDate = getPlayerTeamsAtDate(player, matchDate)
+      .map(({ team_id }) => allTeams.find((team) => team._id.equals(team_id)))
+      .filter((t) => !!t) // primarily for tests, but i suppose it's possible this could defend against data errors
+
+    const leagueTeams = seasonTeams.filter((seasonTeam) =>
+      item.teamsAtDate.some((teamAtDate) => teamAtDate._id.equals(seasonTeam._id)),
+    )
+
+    if (leagueTeams.length > 1) {
+      let errMsg = `player: ${player.screen_name} mapped to ${leagueTeams.length} teams in the league: ${league.name}`
+      throw new UnRecoverableError('PLAYER_ON_MULTIPLE_LEAGUE_TEAMS', errMsg)
+    }
+    item.team = leagueTeams[0]
+    item.sub = !item.team // if main team is not found, player is a sub
+  })
+
+  // validate franchises
+  const allFranchises = [
+    ...new Set(
+      playerTeamMap.reduce(
+        (result, item) => {
+          result.push(
+            ...item.teamsAtDate.filter((t) => !!t.franchise_id).map((team) => team.franchise_id.toHexString()),
+          )
+          return result
+        },
+        mentionedTeams.map((id) => allTeams.find((t) => t._id.equals(id)).franchise_id).filter((id) => !!id),
+      ),
+    ),
+  ]
+  if (allFranchises.length !== 2) {
+    let errMsg = `expected to identify match between 2 franchises, but found ${
+      allFranchises.length
+    }. Franchises: ${allFranchises.join(', ')}`
+    throw new UnRecoverableError('FRANCHISES_NOT_IDENTIFIED', errMsg)
+  }
+  // set sub teams
+  const franchiseTeams = allFranchises.map((f) => seasonTeams.find((t) => t.franchise_id.equals(f)))
+  playerTeamMap
+    .filter((item) => item.sub)
+    .forEach((item) => {
+      item.team = franchiseTeams.find((ft) => item.teamsAtDate.find((t) => t.franchise_id.equals(ft.franchise_id)))
+    })
+  gamesData.forEach((game) => {
+    const colors = ['blue', 'orange']
+    colors.forEach((color) => {
+      const team = playerTeamMap.find((item) => {
+        const player = item.playerGameData
+        return (
+          item.team && game[color].players.some((p) => p.id.platform === player.id.platform && p.id.id === player.id.id)
+        )
+      }).team
+      if (!team) {
+        let errMsg = `no team identified for ${color} in game: ${game.id}.`
+        throw new UnRecoverableError('NO_TEAM_IDENTIFIED', errMsg)
+      }
+      game[color].team = team
+    })
+  })
+  playerTeamMap.forEach((item) => {
+    // if we didn't find them to be on a team that matched a league franchise at the date of the game, find one of the other players with an identified team that played with them
+    if (!item.team) {
+      const game1color = ['blue', 'orange'].find((color) =>
+        gamesData[0][color].players.some(
+          (p) => p.id.platform === item.playerGameData.id.platform && p.id.id === item.playerGameData.id.id,
+        ),
+      )
+      item.team = gamesData[0][game1color].team
+    }
+  })
+
+  return {
+    playersToTeams: playerTeamMap,
+    teams: gamesData[0] ? [gamesData[0].orange.team, gamesData[0].blue.team] : allTeams,
+  }
+}
+
+const identifyMatch = async (leagueId, teams) => {
   const matches = (
     await Matches.find(buildMatchesQuery(teams))
       .sort({ week: 'asc' })
@@ -152,6 +308,19 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
   })
 }
 
+const validateMatchDate = (match, gamesData) => {
+  if (match.status === 'open' && match.hasOwnProperty('scheduled_datetime')) {
+    gamesData.forEach((game) => {
+      const gameDate = new Date(game.date)
+      const oneWeek = 1000 * 3600 * 24 * 7
+      if (Math.abs(gameDate - match.scheduled_datetime) > oneWeek) {
+        const errMsg = `expected match within 1 week of ${match.scheduled_datetime} but received game played on ${gameDate}`
+        throw new UnRecoverableError('ERR_DATE_MISMATCH', errMsg)
+      }
+    })
+  }
+}
+
 const combineGames = (replayGames, manualGames) => {
   manualGames
     .sort((a, b) => new Date(a.game_number) - new Date(b.game_number))
@@ -180,39 +349,29 @@ const handleReplays = async (filters, processedAt) => {
   const game_ids = replayGames.map((g) => g.id)
   console.info('retrieving replays')
   const gamesData = (await ballchasing.getReplayData(game_ids)).sort((a, b) => new Date(a.date) - new Date(b.date))
+  if (gamesData.length > 0) {
+    validateGameTeams(gamesData)
+  }
 
   console.info('retrieving players')
-  const players = []
-  if (gamesData.length > 0) {
-    players.push(...(await Players.find(buildPlayersQuery(gamesData))))
-    if (players.length < 1) {
-      const errMsg = `no players found for games: ${game_ids.join(', ')}`
-      throw new UnRecoverableError('NO_IDENTIFIED_PLAYERS', errMsg)
-    }
-  }
+  const players = await identifyPlayers(gamesData, game_ids)
+
+  console.info('building player map')
+  const { playersToTeams, teams } = await buildPlayerTeamMap(
+    league_id,
+    players,
+    gamesData,
+    getEarliestGameDate(gamesData),
+    mentioned_team_ids,
+  )
 
   console.info('retrieving league info')
-  const { league, season, match, teams } = await (match_id
+  const { league, season, match } = await (match_id
     ? getMatchInfoById(match_id) // this is a reprocessed match
-    : identifyMatch(league_id, players, getEarliestGameDate(gamesData), mentioned_team_ids)) // this is a new match
+    : identifyMatch(league_id, teams)) // this is a new match
 
-  if (
-    match.status === 'open' &&
-    match.hasOwnProperty('week') &&
-    Math.abs(match.week - parseInt(league.current_week)) > 1
-  ) {
-    const errMsg = `expected match within 1 week of ${league.current_week} but recieved ${match.week}`
-    throw new UnRecoverableError('ERR_WRONG_WEEK', errMsg)
-  }
-  const unlinkedPlayers = getUnlinkedPlayers(players, getUniqueGamePlayers(gamesData))
-  if (unlinkedPlayers.length > 0) {
-    const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
-    console.info('created players', newPlayers)
-    throw new RecoverableError(
-      'NO_PLAYER_FOUND',
-      `created new players:\n${newPlayers.map((p) => `${p.screen_name} _id:${p._id}`).join('\n')}`,
-    )
-  }
+  validateMatchDate(match, gamesData)
+
   combineGames(gamesData, manualGames)
   let games
   if (!match.games || match.games.length < 1) {
@@ -250,7 +409,7 @@ const handleReplays = async (filters, processedAt) => {
   games.forEach((g, index) => (g.game_number = index + 1)) // reassign game numbers
 
   console.info('processing match stats')
-  const { teamStats, playerStats, playerTeamMap } = processMatch(
+  const { teamStats, playerStats } = processMatch(
     {
       league,
       season,
@@ -259,6 +418,7 @@ const handleReplays = async (filters, processedAt) => {
       teams,
       players,
     },
+    playersToTeams,
     processedAt,
   )
   console.info('uploading match stats')
@@ -274,7 +434,7 @@ const handleReplays = async (filters, processedAt) => {
     game.date_time_processed = Date.now()
     await game.save()
   }
-  match.players_to_teams = playerTeamMap
+  match.players_to_teams = playersToTeams.map((item) => ({ player_id: item.player._id, team_id: item.team._id }))
   await match.save()
 
   return {
@@ -288,7 +448,6 @@ const handleReplays = async (filters, processedAt) => {
     players,
     teamStats,
     playerStats,
-    playerTeamMap,
   }
 }
 
@@ -322,13 +481,7 @@ const handleForfeit = async (filters, processedAt) => {
     processedAt,
   )
 
-  await uploadStats(
-    match._id.toHexString(),
-    teamStats,
-    playerStats,
-    `match:${match._id.toHexString()}.json`,
-    processedAt,
-  )
+  await uploadStats(match._id.toHexString(), teamStats, [], `match:${match._id.toHexString()}.json`, processedAt)
 
   match.forfeited_by_team = forfeit_team_id
   match.forfeit_datetime = forfeit_date

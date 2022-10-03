@@ -6,7 +6,7 @@ const utc = require('dayjs/plugin/utc')
 dayjs.extend(utc)
 
 const handler = async () => {
-  console.log('adding stream links')
+  console.info('adding stream links')
   const leagues = await Leagues.find().populate({
     path: 'current_season',
     populate: 'matches',
