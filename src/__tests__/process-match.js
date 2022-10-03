@@ -7,6 +7,8 @@ const mockDoc = (obj) => {
   return obj
 }
 
+const getReplayData = () => JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
+
 // mock data
 const mockPlayers = [
   {
@@ -22,7 +24,7 @@ const mockPlayers = [
     screen_name: 'Calster',
     team_history: [
       {
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685bf'),
         date_joined: new Date('2020-03-01T05:00:00.000Z'),
       },
     ],
@@ -40,7 +42,7 @@ const mockPlayers = [
     screen_name: 'Cheezy',
     team_history: [
       {
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685bf'),
         date_joined: new Date('2020-03-01T05:00:00.000Z'),
       },
       {
@@ -67,7 +69,7 @@ const mockPlayers = [
     screen_name: 'Delephant',
     team_history: [
       {
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685bf'),
         date_joined: new Date('2020-03-01T05:00:00.000Z'),
         date_left: new Date('2020-08-10T05:00:00.000Z'),
       },
@@ -95,7 +97,7 @@ const mockPlayers = [
     screen_name: 'Pace.',
     team_history: [
       {
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685c1'),
         date_joined: new Date('2020-03-01T05:00:00.000Z'),
       },
     ],
@@ -113,7 +115,7 @@ const mockPlayers = [
     screen_name: 'Lege',
     team_history: [
       {
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685c1'),
         date_joined: new Date('2020-03-01T05:00:00.000Z'),
       },
     ],
@@ -146,15 +148,15 @@ const mockPlayers = [
 ]
 const mockTeams = [
   {
-    _id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
+    _id: new ObjectId('5ec9358d8c0dd900074685bf'),
     discord_id: '688286287655993365',
-    name: 'Duluth Superiors',
+    name: 'Superiors Premier',
     franchise_id: new ObjectId('600fac63be0bbe0008ffddc5'),
   },
   {
-    _id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+    _id: new ObjectId('5ec9358d8c0dd900074685c1'),
     discord_id: '688286346783359027',
-    name: 'Burnsville Inferno',
+    name: 'Inferno Premier',
     franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
   },
 ]
@@ -530,9 +532,9 @@ const leaguesFindByIdMock = jest.fn().mockResolvedValue({
     team_ids: [
       new ObjectId('5ebc62a9d09245d2a7c62e5a'),
       new ObjectId('5ebc62a9d09245d2a7c62e82'),
-      new ObjectId('5ebc62a9d09245d2a7c62e86'),
+      new ObjectId('5ec9358d8c0dd900074685bf'),
       new ObjectId('5ebc62a9d09245d2a7c62eba'),
-      new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+      new ObjectId('5ec9358d8c0dd900074685c1'),
       new ObjectId('5ebc62a9d09245d2a7c62eae'),
       new ObjectId('5ebc62aad09245d2a7c62eed'),
       new ObjectId('5ebc62aad09245d2a7c62ef8'),
@@ -552,7 +554,7 @@ const { cloneDeep } = require('lodash')
 describe('process-match', () => {
   let replays
   beforeEach(() => {
-    replays = JSON.parse(fs.readFileSync(path.join(__dirname, 'replays.json')))
+    replays = getReplayData()
     ballchasing.getReplayData.mockResolvedValue(replays)
     aws.s3.uploadJSON = jest.fn(() => ({
       Location: 'some url',
@@ -584,7 +586,7 @@ describe('process-match', () => {
       ],
     })
     expect(result.games).toHaveLength(4)
-    expect(result.games[0].winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62eb3'))
+    expect(result.games[0].winning_team_id).toEqual(new ObjectId('5ec9358d8c0dd900074685c1'))
     expect(players.Model.find).toHaveBeenCalledWith({
       $or: [
         {
@@ -639,32 +641,32 @@ describe('process-match', () => {
     })
     expect(matches.Model.findById).toHaveBeenCalledWith('5ebc62b0d09245d2a7c6340c')
     expect(mockClosedMatch).toHaveProperty('winning_team_id')
-    expect(mockClosedMatch.winning_team_id).toEqual(new ObjectId('5ebc62a9d09245d2a7c62e86'))
+    expect(mockClosedMatch.winning_team_id).toEqual(new ObjectId('5ec9358d8c0dd900074685bf'))
     expect(mockClosedMatch).toHaveProperty('players_to_teams')
     expect(mockClosedMatch.players_to_teams).toEqual([
       {
         player_id: new ObjectId('5ec04239d09245d2a7d4fa26'),
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685bf'),
       },
       {
         player_id: new ObjectId('5ec04239d09245d2a7d4fa48'),
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685bf'),
       },
       {
         player_id: new ObjectId('5ec04239d09245d2a7d4fa69'),
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62e86'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685bf'),
       },
       {
         player_id: new ObjectId('5ec04239d09245d2a7d4fa4f'),
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685c1'),
       },
       {
         player_id: new ObjectId('5ec9358f8c0dd900074685cd'),
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685c1'),
       },
       {
         player_id: new ObjectId('5ec04239d09245d2a7d4fa52'),
-        team_id: new ObjectId('5ebc62a9d09245d2a7c62eb3'),
+        team_id: new ObjectId('5ec9358d8c0dd900074685c1'),
       },
     ])
     const uploadStaticStats = aws.s3.uploadJSON.mock.calls
@@ -704,15 +706,15 @@ describe('process-match', () => {
     const { team_games } = aws.s3.uploadJSON.mock.calls[0][2]
     expect(team_games).toHaveLength(8)
     const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
-    expect(findStats({ game_id: '5ebc62afd09245d2a7c6333f', team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
+    expect(findStats({ game_id: '5ebc62afd09245d2a7c6333f', team_id: '5ec9358d8c0dd900074685bf' })[0]).toMatchObject({
       game_id_overtime_game: '5ebc62afd09245d2a7c6333f',
       overtime_seconds_played: 124,
     })
-    expect(findStats({ game_id: '5ebc62afd09245d2a7c63338', team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62e86',
-      team_name: 'Duluth Superiors',
-      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_name: 'Burnsville Inferno',
+    expect(findStats({ game_id: '5ebc62afd09245d2a7c63338', team_id: '5ec9358d8c0dd900074685bf' })[0]).toMatchObject({
+      team_id: '5ec9358d8c0dd900074685bf',
+      team_name: 'Superiors Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685c1',
+      opponent_team_name: 'Inferno Premier',
       team_color: 'blue',
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
@@ -750,9 +752,9 @@ describe('process-match', () => {
       ms_zero_boost: 162580,
       ms_full_boost: 79400,
     })
-    expect(findStats({ game_id: '5ebc62afd09245d2a7c63338', team_id: '5ebc62a9d09245d2a7c62eb3' })[0]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
+    expect(findStats({ game_id: '5ebc62afd09245d2a7c63338', team_id: '5ec9358d8c0dd900074685c1' })[0]).toMatchObject({
+      team_id: '5ec9358d8c0dd900074685c1',
+      opponent_team_id: '5ec9358d8c0dd900074685bf',
       game_id_win: undefined,
       match_id_win: undefined,
       game_id_win_total: undefined,
@@ -789,11 +791,11 @@ describe('process-match', () => {
       player_name: 'Calster',
       player_platform: 'steam',
       player_platform_id: '76561198059743159',
-      team_id: '5ebc62a9d09245d2a7c62e86',
-      team_name: 'Duluth Superiors',
+      team_id: '5ec9358d8c0dd900074685bf',
+      team_name: 'Superiors Premier',
       team_color: 'blue',
-      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_name: 'Burnsville Inferno',
+      opponent_team_id: '5ec9358d8c0dd900074685c1',
+      opponent_team_name: 'Inferno Premier',
       opponent_team_color: 'orange',
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
@@ -852,7 +854,7 @@ describe('process-match', () => {
         expect(stat).toMatchObject({ mvps: 0 })
       })
     findPlayerStats({ game_id: '5ebc62afd09245d2a7c63338' }).forEach((stat) => {
-      if (stat.team_id === '5ebc62a9d09245d2a7c62eb3') {
+      if (stat.team_id === '5ec9358d8c0dd900074685c1') {
         expect(stat).toMatchObject({ game_id_win: undefined, match_id_win: undefined })
       } else {
         expect(stat).toMatchObject({
@@ -893,7 +895,7 @@ describe('process-match', () => {
         },
         {
           report_type: 'MANUAL_REPORT',
-          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          winning_team_id: '5ec9358d8c0dd900074685bf',
           game_number: 3,
           forfeit: true,
         },
@@ -916,13 +918,13 @@ describe('process-match', () => {
     expect(team_games).toHaveLength(8)
     expect(player_games).toHaveLength(18)
     const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
-    const burnsville = findStats({ games_played: undefined, team_id: '5ebc62a9d09245d2a7c62eb3' })[0]
+    const burnsville = findStats({ games_played: undefined, team_id: '5ec9358d8c0dd900074685c1' })[0]
     const forfeitGameId = burnsville.game_id
     expect(burnsville).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62eb3',
-      team_name: 'Burnsville Inferno',
-      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
-      opponent_team_name: 'Duluth Superiors',
+      team_id: '5ec9358d8c0dd900074685c1',
+      team_name: 'Inferno Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685bf',
+      opponent_team_name: 'Superiors Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: undefined,
@@ -944,11 +946,11 @@ describe('process-match', () => {
       wins: 0,
       games_played: undefined,
     })
-    expect(findStats({ game_id: forfeitGameId, team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62e86',
-      team_name: 'Duluth Superiors',
-      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_name: 'Burnsville Inferno',
+    expect(findStats({ game_id: forfeitGameId, team_id: '5ec9358d8c0dd900074685bf' })[0]).toMatchObject({
+      team_id: '5ec9358d8c0dd900074685bf',
+      team_name: 'Superiors Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685c1',
+      opponent_team_name: 'Inferno Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
@@ -971,7 +973,7 @@ describe('process-match', () => {
       games_played: undefined,
     })
   })
-  it('should process a new match with multiple game forfeits', async () => {
+  it.only('should process a new match with multiple game forfeits', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
     matchesFindMock.mockResolvedValue([mockOpenMatch()])
@@ -986,13 +988,13 @@ describe('process-match', () => {
         },
         {
           report_type: 'MANUAL_REPORT',
-          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          winning_team_id: '5ec9358d8c0dd900074685bf',
           game_number: 3,
           forfeit: true,
         },
         {
           report_type: 'MANUAL_REPORT',
-          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          winning_team_id: '5ec9358d8c0dd900074685bf',
           game_number: 1,
           forfeit: true,
         },
@@ -1010,11 +1012,11 @@ describe('process-match', () => {
     expect(team_games).toHaveLength(8)
     expect(player_games).toHaveLength(12)
     const game1ForfeitId = team_games[0].game_id
-    expect(team_games[0]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62eb3',
-      team_name: 'Burnsville Inferno',
-      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
-      opponent_team_name: 'Duluth Superiors',
+    expect(team_games.find((g) => g.team_id === '5ec9358d8c0dd900074685c1' && g.game_number === '1')).toMatchObject({
+      team_id: '5ec9358d8c0dd900074685c1',
+      team_name: 'Inferno Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685bf',
+      opponent_team_name: 'Superiors Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: undefined,
@@ -1024,11 +1026,11 @@ describe('process-match', () => {
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:1',
       game_number: '1',
     })
-    expect(team_games[1]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62e86',
-      team_name: 'Duluth Superiors',
-      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_name: 'Burnsville Inferno',
+    expect(team_games.find((g) => g.team_id === '5ec9358d8c0dd900074685bf' && g.game_number === '1')).toMatchObject({
+      team_id: '5ec9358d8c0dd900074685bf',
+      team_name: 'Superiors Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685c1',
+      opponent_team_name: 'Inferno Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
@@ -1039,13 +1041,13 @@ describe('process-match', () => {
       game_number: '1',
     })
     const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
-    const burnsville = findStats({ games_played: undefined, team_id: '5ebc62a9d09245d2a7c62eb3', game_number: '3' })[0]
+    const burnsville = findStats({ games_played: undefined, team_id: '5ec9358d8c0dd900074685c1', game_number: '3' })[0]
     const forfeitGameId = burnsville.game_id
     expect(burnsville).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62eb3',
-      team_name: 'Burnsville Inferno',
-      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
-      opponent_team_name: 'Duluth Superiors',
+      team_id: '5ec9358d8c0dd900074685c1',
+      team_name: 'Inferno Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685bf',
+      opponent_team_name: 'Superiors Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: undefined,
@@ -1055,11 +1057,11 @@ describe('process-match', () => {
       game_id_total: 'match:5ebc62b0d09245d2a7c6340c:game:3',
       game_number: '3',
     })
-    expect(findStats({ game_id: forfeitGameId, team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62e86',
-      team_name: 'Duluth Superiors',
-      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_name: 'Burnsville Inferno',
+    expect(findStats({ game_id: forfeitGameId, team_id: '5ec9358d8c0dd900074685bf' })[0]).toMatchObject({
+      team_id: '5ec9358d8c0dd900074685bf',
+      team_name: 'Superiors Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685c1',
+      opponent_team_name: 'Inferno Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
@@ -1086,7 +1088,7 @@ describe('process-match', () => {
         },
         {
           report_type: 'MANUAL_REPORT',
-          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          winning_team_id: '5ec9358d8c0dd900074685bf',
           game_number: 3,
         },
         {
@@ -1108,13 +1110,13 @@ describe('process-match', () => {
     expect(team_games).toHaveLength(8)
     expect(player_games).toHaveLength(18)
     const findStats = (filters) => team_games.filter((s) => Object.keys(filters).every((key) => s[key] == filters[key]))
-    const burnsville = findStats({ ms_played: undefined, team_id: '5ebc62a9d09245d2a7c62eb3' })[0]
+    const burnsville = findStats({ ms_played: undefined, team_id: '5ec9358d8c0dd900074685c1' })[0]
     const manualReportGameId = burnsville.game_id
     expect(burnsville).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62eb3',
-      team_name: 'Burnsville Inferno',
-      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
-      opponent_team_name: 'Duluth Superiors',
+      team_id: '5ec9358d8c0dd900074685c1',
+      team_name: 'Inferno Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685bf',
+      opponent_team_name: 'Superiors Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: undefined,
@@ -1136,11 +1138,11 @@ describe('process-match', () => {
       wins: 0,
       games_played: 1,
     })
-    expect(findStats({ game_id: manualReportGameId, team_id: '5ebc62a9d09245d2a7c62e86' })[0]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62e86',
-      team_name: 'Duluth Superiors',
-      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_name: 'Burnsville Inferno',
+    expect(findStats({ game_id: manualReportGameId, team_id: '5ec9358d8c0dd900074685bf' })[0]).toMatchObject({
+      team_id: '5ec9358d8c0dd900074685bf',
+      team_name: 'Superiors Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685c1',
+      opponent_team_name: 'Inferno Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
@@ -1170,21 +1172,21 @@ describe('process-match', () => {
     ballchasing.getReplayData.mockResolvedValue([])
     const result = await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
-      mentioned_team_ids: ['5ebc62a9d09245d2a7c62e86', '5ebc62a9d09245d2a7c62eb3'],
+      mentioned_team_ids: ['5ec9358d8c0dd900074685bf', '5ec9358d8c0dd900074685c1'],
       report_games: [
         {
           report_type: 'MANUAL_REPORT',
-          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          winning_team_id: '5ec9358d8c0dd900074685bf',
           game_number: 1,
         },
         {
           report_type: 'MANUAL_REPORT',
-          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          winning_team_id: '5ec9358d8c0dd900074685bf',
           game_number: 2,
         },
         {
           report_type: 'MANUAL_REPORT',
-          winning_team_id: '5ebc62a9d09245d2a7c62e86',
+          winning_team_id: '5ec9358d8c0dd900074685bf',
           game_number: 3,
         },
       ],
@@ -1197,10 +1199,10 @@ describe('process-match', () => {
     expect(player_games).toHaveLength(0)
     const manualReportGameId = team_games[0].game_id
     expect(team_games[0]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62eb3',
-      team_name: 'Burnsville Inferno',
-      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
-      opponent_team_name: 'Duluth Superiors',
+      team_id: '5ec9358d8c0dd900074685c1',
+      team_name: 'Inferno Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685bf',
+      opponent_team_name: 'Superiors Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: undefined,
@@ -1223,10 +1225,10 @@ describe('process-match', () => {
       games_played: 1,
     })
     expect(team_games[1]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62e86',
-      team_name: 'Duluth Superiors',
-      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_name: 'Burnsville Inferno',
+      team_id: '5ec9358d8c0dd900074685bf',
+      team_name: 'Superiors Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685c1',
+      opponent_team_name: 'Inferno Premier',
       team_color: undefined,
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
@@ -1249,6 +1251,52 @@ describe('process-match', () => {
       games_played: 1,
     })
   })
+  it('should fail if players are on different teams throughout the match', async () => {
+    players.Model.find.mockResolvedValue(mockPlayers)
+    teams.Model.find.mockResolvedValue(mockTeams)
+    matchesFindMock.mockResolvedValue([mockOpenMatch()])
+    const alteredReplays = getReplayData()
+    const orangeSwap = alteredReplays[0].orange.players.pop()
+    const blueSwap = alteredReplays[0].blue.players.pop()
+    alteredReplays[0].orange.players.push(blueSwap)
+    alteredReplays[0].blue.players.pop(orangeSwap)
+    ballchasing.getReplayData.mockResolvedValue(alteredReplays)
+    await expect(
+      processMatch({
+        league_id: '5ebc62b1d09245d2a7c63516',
+        report_games: [
+          { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+          { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+          { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+          { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
+        ],
+      }),
+    ).rejects.toEqual(
+      new Error(
+        'team mismatch found in game: 9aee7f5f-7d75-40b0-8116-a8e1e2c9d4c5. errors: no match found for player: Lege., no match found for player: peppajack., no match found for player: Delephant.',
+      ),
+    )
+  })
+  /** @todo fix this test, it passes for some reason */
+  // it('should fail if no team is identified for any game in a match', async () => {
+  //   players.Model.find.mockResolvedValue(mockPlayers)
+  //   teams.Model.find.mockResolvedValue(mockTeams)
+  //   matchesFindMock.mockResolvedValue([mockOpenMatch()])
+  //   const alteredReplays = getReplayData()
+  //   alteredReplays[1].orange.players.forEach((p) => p.id.id === p.id.id + '1')
+  //   ballchasing.getReplayData.mockResolvedValue(alteredReplays)
+  //   await expect(
+  //     processMatch({
+  //       league_id: '5ebc62b1d09245d2a7c63516',
+  //       report_games: [
+  //         { id: 'd2d31639-1e42-4f0b-9537-545d8d19f63b' },
+  //         { id: '1c76f735-5d28-4dcd-a0f2-bd9a5b129772' },
+  //         { id: '2bfd1be8-b29e-4ce8-8d75-49499354d8e0' },
+  //         { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
+  //       ],
+  //     }),
+  //   ).rejects.toEqual(new Error(''))
+  // })
   it('should fail if the league current week is too far away from identified match week', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
     teams.Model.find.mockResolvedValue(mockTeams)
@@ -1308,17 +1356,17 @@ describe('process-match', () => {
     const results = await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
       match_id: '5f2c5e4e08c88e00084b44a6',
-      forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+      forfeit_team_id: '5ec9358d8c0dd900074685bf',
       reply_to_channel: '692994579305332806',
     })
     const { player_games, team_games } = aws.s3.uploadJSON.mock.calls[0][2]
     expect(team_games).toHaveLength(6)
     expect(team_games[0].epoch_processed - Date.now()).toBeLessThan(100)
     expect(team_games[0]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62e86',
-      team_name: 'Duluth Superiors',
-      opponent_team_id: '5ebc62a9d09245d2a7c62eb3',
-      opponent_team_name: 'Burnsville Inferno',
+      team_id: '5ec9358d8c0dd900074685bf',
+      team_name: 'Superiors Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685c1',
+      opponent_team_name: 'Inferno Premier',
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: undefined,
       match_type: 'REG',
@@ -1340,10 +1388,10 @@ describe('process-match', () => {
     const dateDiff = Math.abs(new Date(team_games[0].game_date) - Date.now())
     expect(dateDiff).toBeLessThan(1000)
     expect(team_games[1]).toMatchObject({
-      team_id: '5ebc62a9d09245d2a7c62eb3',
-      team_name: 'Burnsville Inferno',
-      opponent_team_id: '5ebc62a9d09245d2a7c62e86',
-      opponent_team_name: 'Duluth Superiors',
+      team_id: '5ec9358d8c0dd900074685c1',
+      team_name: 'Inferno Premier',
+      opponent_team_id: '5ec9358d8c0dd900074685bf',
+      opponent_team_name: 'Superiors Premier',
       match_id: '5ebc62b0d09245d2a7c6340c',
       match_id_win: '5ebc62b0d09245d2a7c6340c',
       match_type: 'REG',
@@ -1384,7 +1432,7 @@ describe('process-match', () => {
     const results = await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
       match_id: '5f2c5e4e08c88e00084b44a6',
-      forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+      forfeit_team_id: '5ec9358d8c0dd900074685bf',
       reply_to_channel: '692994579305332806',
     })
     const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
@@ -1403,7 +1451,7 @@ describe('process-match', () => {
     const results = await processMatch({
       league_id: '5ebc62b1d09245d2a7c63516',
       match_id: '5f2c5e4e08c88e00084b44a6',
-      forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+      forfeit_team_id: '5ec9358d8c0dd900074685bf',
       reply_to_channel: '692994579305332806',
     })
     const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
@@ -1423,7 +1471,7 @@ describe('process-match', () => {
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
         match_id: '5f2c5e4e08c88e00084b44a6',
-        forfeit_team_id: '5ebc62a9d09245d2a7c62e86',
+        forfeit_team_id: '5ec9358d8c0dd900074685bf',
         reply_to_channel: '692994579305332806',
       }),
     ).rejects.toEqual(new Error('forfeited match must have best_of property'))
@@ -1433,7 +1481,7 @@ describe('process-match', () => {
     const testMockPlayers = mockPlayers.map((player) => {
       const newPlayer = cloneDeep(player)
       newPlayer.team_history.forEach((h) => {
-        if (h.team_id.equals('5ebc62a9d09245d2a7c62eb3')) {
+        if (h.team_id.equals('5ec9358d8c0dd900074685c1')) {
           h.team_id = new ObjectId('aebc62a9d09245d2a7c62eb6')
         } else {
           h.team_id = new ObjectId('600c98b3eedc0d0008211469')
@@ -1452,7 +1500,7 @@ describe('process-match', () => {
       {
         _id: new ObjectId('aebc62a9d09245d2a7c62eb6'),
         discord_id: '688286346783359027',
-        name: 'Burnsville Inferno Other League like Prospect',
+        name: 'Inferno Premier Other League like Prospect',
         franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
       },
     ])
@@ -1467,7 +1515,7 @@ describe('process-match', () => {
     })
     const { team_games, player_games } = aws.s3.uploadJSON.mock.calls[0][2]
     player_games.forEach((pGame) =>
-      expect('5ebc62a9d09245d2a7c62eb3 5ebc62a9d09245d2a7c62e86').toContain(pGame.sub_for_team),
+      expect('5ec9358d8c0dd900074685c1 5ec9358d8c0dd900074685bf').toContain(pGame.is_sub_for_team),
     )
   })
   it('should not add stats for games where more than 2 franchises are identified', async () => {
@@ -1475,7 +1523,7 @@ describe('process-match', () => {
     const testMockPlayers = mockPlayers.map((player) => {
       const newPlayer = cloneDeep(player)
       newPlayer.team_history.forEach((h) => {
-        if (h.team_id.equals('5ebc62a9d09245d2a7c62eb3')) {
+        if (h.team_id.equals('5ec9358d8c0dd900074685c1')) {
           h.team_id = new ObjectId('aebc62a9d09245d2a7c62eb6')
         }
       })
@@ -1490,12 +1538,12 @@ describe('process-match', () => {
       })
     players.Model.find.mockResolvedValue(testMockPlayers)
     teams.Model.find.mockResolvedValue([
-      mockTeams.find((t) => t._id.equals('5ebc62a9d09245d2a7c62e86')),
+      mockTeams.find((t) => t._id.equals('5ec9358d8c0dd900074685bf')),
       allLeagueTeams.find((t) => t._id.equals('5ec9358e8c0dd900074685c3')),
       {
         _id: new ObjectId('aebc62a9d09245d2a7c62eb6'),
         discord_id: '688286346783359027',
-        name: 'Burnsville Inferno Other League like Prospect',
+        name: 'Inferno Premier Other League like Prospect',
         franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
       },
     ])
@@ -1511,7 +1559,7 @@ describe('process-match', () => {
       }),
     ).rejects.toEqual(
       new Error(
-        `expected to identify match between 2 franchises, but found 3. Franchises: 600fac63be0bbe0008ffddc7, 600fac63be0bbe0008ffddc9, 600fac63be0bbe0008ffddc5`,
+        `expected to identify match between 2 franchises, but found 3. Franchises: 600fac63be0bbe0008ffddc5, 600fac63be0bbe0008ffddc7, 600fac63be0bbe0008ffddc9`,
       ),
     )
   })
@@ -1526,11 +1574,11 @@ describe('process-match', () => {
     })
     players.Model.find.mockResolvedValue(testMockPlayers)
     teams.Model.find.mockResolvedValue([
-      mockTeams.find((t) => t._id.equals('5ebc62a9d09245d2a7c62e86')),
+      mockTeams.find((t) => t._id.equals('5ec9358d8c0dd900074685bf')),
       {
         _id: new ObjectId('aebc62a9d09245d2a7c62eb6'),
         discord_id: '688286346783359027',
-        name: 'Burnsville Inferno Other League like Prospect',
+        name: 'Inferno Premier Other League like Prospect',
         franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
       },
     ])
@@ -1572,26 +1620,26 @@ describe('process-match', () => {
     await expect(
       processMatch({
         league_id: '5ebc62b1d09245d2a7c63516',
-        mentioned_team_ids: ['5ebc62a9d09245d2a7c62e86', '5ebc62a9d09245d2a7c62eb3'],
+        mentioned_team_ids: ['5ec9358d8c0dd900074685bf', '5ec9358d8c0dd900074685c1'],
         report_games: [
           {
             report_type: 'MANUAL_REPORT',
-            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            winning_team_id: '5ec9358d8c0dd900074685bf',
             game_number: 1,
           },
           {
             report_type: 'MANUAL_REPORT',
-            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            winning_team_id: '5ec9358d8c0dd900074685bf',
             game_number: 2,
           },
           {
             report_type: 'MANUAL_REPORT',
-            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            winning_team_id: '5ec9358d8c0dd900074685bf',
             game_number: 3,
           },
           {
             report_type: 'MANUAL_REPORT',
-            winning_team_id: '5ebc62a9d09245d2a7c62e86',
+            winning_team_id: '5ec9358d8c0dd900074685bf',
             game_number: 3,
           },
         ],
@@ -1613,7 +1661,7 @@ describe('process-match', () => {
           { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
         ],
       }),
-    ).rejects.toEqual(new Error('found 0 matches between teams: Duluth Superiors, Burnsville Inferno'))
+    ).rejects.toEqual(new Error('found 0 matches between teams: Inferno Premier, Superiors Premier'))
   })
   it('should throw an error if no league id is passed', async () => {
     await expect(

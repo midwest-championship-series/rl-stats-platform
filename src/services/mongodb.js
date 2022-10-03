@@ -11,7 +11,7 @@ mongoose.connecting = false
 const setup = () => {
   mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
   mongoose.connection.once('open', () => {
-    console.log('Connected to Mongo!')
+    console.info('Connected to Mongo!')
     mongoose.connecting = false
   })
 }
@@ -20,7 +20,7 @@ const connect = (hardRefresh, cb) => {
   if (hardRefresh === true || (!mongoose.connecting && mongoose.connection.readyState !== 1)) {
     if (hardRefresh === true) {
       mongoose.connection.once('open', cb)
-      console.log('hard refreshing connection')
+      console.info('hard refreshing connection')
     }
     if (!mongoose.connectionConfigured) {
       console.info('configuring mongodb connection')

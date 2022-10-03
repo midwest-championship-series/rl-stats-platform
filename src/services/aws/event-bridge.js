@@ -12,7 +12,7 @@ const emitEvent = (event) => {
 }
 
 const emitEvents = (events) => {
-  console.log(
+  console.info(
     'making eventbridge call',
     events.map((e) => createEvent(e)),
   )

@@ -107,27 +107,67 @@ const identifyPlayers = async (gamesData, gameIds) => {
   return players
 }
 
+/** make sure that the players are always on the same teams in all the game data (not color dependent) */
+const validateGameTeams = (gamesData) => {
+  const colors = ['blue', 'orange']
+  const team1Players = gamesData[0].orange.players
+  const team2Players = gamesData[0].blue.players
+  /** @todo come back and make sure that the original team being incorrect can't screw this up */
+  // const teamCombinations = gamesData.map((game) => {
+  //   return colors.map((color) => {
+  //     return {
+  //       color,
+  //       players: game[color].players.map((player) => `${player.id.platform}:${player.id.id}`),
+  //     }
+  //   })
+  // })
+  const validateTeamPlayers = (originalTeam, gameTeam) => {
+    const errors = []
+    originalTeam.forEach((player) => {
+      const playerMatch = gameTeam.find((p) => p.id.platform === player.id.platform && p.id.id === player.id.id)
+      if (!playerMatch) {
+        errors.push(`no match found for player: ${player.name}.`)
+      }
+    })
+    return errors
+  }
+  gamesData.forEach((game) => {
+    const team1Color = colors.find((color) =>
+      game[color].players.some(
+        (player) => player.id.platform === team1Players[0].id.platform && player.id.id === team1Players[0].id.id,
+      ),
+    )
+    const team2Color = colors.filter((c) => c !== team1Color)[0]
+    const errors = validateTeamPlayers(team1Players, game[team1Color].players).concat(
+      validateTeamPlayers(team2Players, game[team2Color].players),
+    )
+    if (errors.length > 0) {
+      let errMsg = `team mismatch found in game: ${game.id}. errors: ${errors.join(', ')}`
+      throw new UnRecoverableError('TEAM_MISMATCH_IN_GAME_DATA', errMsg)
+    }
+  })
+}
+
 /** does all of the team and player mapping/validation at once */
 const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, mentionedTeams) => {
   const league = await Leagues.findById(leagueId).populate({
     path: 'current_season',
     populate: 'teams',
   })
-  const seasonTeamIds = league.current_season.team_ids
   const seasonTeams = league.current_season.teams
   const allTeams = await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))
-  const matchPlayers = getUniqueMatchPlayers(gamesData).map((matchPlayer) => {
+  const playerTeamMap = getUniqueMatchPlayers(gamesData).map((matchPlayer) => {
     return {
       player: players.find(
         (p) =>
           p.accounts &&
           p.accounts.some((acc) => acc.platform === matchPlayer.id.platform && acc.platform_id === matchPlayer.id.id),
       ),
-      playerMatchData: matchPlayer,
+      playerGameData: matchPlayer,
     }
   })
 
-  const unlinkedPlayers = matchPlayers.filter((p) => !p.player).map((p) => p.playerMatchData)
+  const unlinkedPlayers = playerTeamMap.filter((p) => !p.player).map((p) => p.playerGameData)
   if (unlinkedPlayers.length > 0) {
     const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
     console.info('created players', newPlayers)
@@ -137,67 +177,83 @@ const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, menti
     )
   }
 
-  const { subs, mains } = matchPlayers.reduce(
-    (result, item) => {
-      const { player } = item
-      const playerMap = getPlayerTeamsAtDate(player, matchDate).map((team) => {
-        return {
-          ...item,
-          // team gets overwritten later for subs
-          team: allTeams.find((t) => t._id.equals(team.team_id)),
-          teamsAtDate: getPlayerTeamsAtDate(player, matchDate),
-          sub: !seasonTeamIds.some((id) => id.equals(team.team_id)),
-        }
-      })
-      const mainTeam = playerMap.find((t) => !t.sub)
-      if (mainTeam) {
-        result.mains.push(mainTeam)
-      } else {
-        // this should currently fail if the player is subbing for multiple franchises, even if in different leagues
-        result.subs.push(...playerMap)
-      }
-      return result
-    },
-    {
-      mains: [],
-      subs: [],
-    },
-  )
-  // everything else deals with identifying teams using subs
-  const mainFranchises = [
-    ...new Set(mains.map((m) => m.team && m.team.franchise_id && m.team.franchise_id.toHexString())),
+  playerTeamMap.forEach((item) => {
+    const { player } = item
+    item.teamsAtDate = getPlayerTeamsAtDate(player, matchDate)
+      .map(({ team_id }) => allTeams.find((team) => team._id.equals(team_id)))
+      .filter((t) => !!t) // primarily for tests, but i suppose it's possible this could defend against data errors
+
+    const leagueTeams = seasonTeams.filter((seasonTeam) =>
+      item.teamsAtDate.some((teamAtDate) => teamAtDate._id.equals(seasonTeam._id)),
+    )
+
+    if (leagueTeams.length > 1) {
+      let errMsg = `player: ${player.screen_name} mapped to ${leagueTeams.length} teams in the league: ${league.name}`
+      throw new UnRecoverableError('PLAYER_ON_MULTIPLE_LEAGUE_TEAMS', errMsg)
+    }
+    item.team = leagueTeams[0]
+    item.sub = !item.team // if main team is not found, player is a sub
+  })
+
+  // validate franchises
+  const allFranchises = [
+    ...new Set(
+      playerTeamMap.reduce(
+        (result, item) => {
+          result.push(
+            ...item.teamsAtDate.filter((t) => !!t.franchise_id).map((team) => team.franchise_id.toHexString()),
+          )
+          return result
+        },
+        mentionedTeams.map((id) => allTeams.find((t) => t._id.equals(id)).franchise_id).filter((id) => !!id),
+      ),
+    ),
   ]
-  if (subs.length < 1) return mains.concat(subs)
-  // remember there can still be multiple sub records for a single player at this point
-  const subFranchises = [...new Set(subs.map((s) => s.team.franchise_id && s.team.franchise_id.toHexString()))]
-  const allFranchises = [...new Set([...subFranchises, ...mainFranchises])]
   if (allFranchises.length !== 2) {
     let errMsg = `expected to identify match between 2 franchises, but found ${
       allFranchises.length
     }. Franchises: ${allFranchises.join(', ')}`
     throw new UnRecoverableError('FRANCHISES_NOT_IDENTIFIED', errMsg)
   }
+  // set sub teams
   const franchiseTeams = allFranchises.map((f) => seasonTeams.find((t) => t.franchise_id.equals(f)))
-  subs.forEach((s) => {
-    s.team = franchiseTeams.find((t) => t.franchise_id.equals(s.team.franchise_id))
+  playerTeamMap
+    .filter((item) => item.sub)
+    .forEach((item) => {
+      item.team = franchiseTeams.find((ft) => item.teamsAtDate.find((t) => t.franchise_id.equals(ft.franchise_id)))
+    })
+  gamesData.forEach((game) => {
+    const colors = ['blue', 'orange']
+    colors.forEach((color) => {
+      const team = playerTeamMap.find((item) => {
+        const player = item.playerGameData
+        return (
+          item.team && game[color].players.some((p) => p.id.platform === player.id.platform && p.id.id === player.id.id)
+        )
+      }).team
+      if (!team) {
+        let errMsg = `no team identified for ${color} in game: ${game.id}.`
+        throw new UnRecoverableError('NO_TEAM_IDENTIFIED', errMsg)
+      }
+      game[color].team = team
+    })
   })
-  /** @todo remove this ugly reduce step once I figure out how to week out the non-league franchises */
-  return [...mains, ...subs].reduce((result, item) => {
-    if (!result.find((r) => r.player._id.equals(item.player._id))) result.push(item)
-    return result
-  }, [])
-}
+  playerTeamMap.forEach((item) => {
+    // if we didn't find them to be on a team that matched a league franchise at the date of the game, find one of the other players with an identified team that played with them
+    if (!item.team) {
+      const game1color = ['blue', 'orange'].find((color) =>
+        gamesData[0][color].players.some(
+          (p) => p.id.platform === item.playerGameData.id.platform && p.id.id === item.playerGameData.id.id,
+        ),
+      )
+      item.team = gamesData[0][game1color].team
+    }
+  })
 
-const identifyTeams = async (playersToTeams, mentionedTeams) => {
-  const teamIds = playersToTeams.reduce(
-    (result, item) => {
-      if (!result.find((id) => item.team._id.equals(id))) result.push(item.team._id)
-      return result
-    },
-    [...mentionedTeams],
-  )
-  const teams = await Teams.find({ _id: { $or: teamIds } })
-  return teams
+  return {
+    playersToTeams: playerTeamMap,
+    teams: gamesData[0] ? [gamesData[0].orange.team, gamesData[0].blue.team] : allTeams,
+  }
 }
 
 const identifyMatch = async (leagueId, teams) => {
@@ -293,21 +349,21 @@ const handleReplays = async (filters, processedAt) => {
   const game_ids = replayGames.map((g) => g.id)
   console.info('retrieving replays')
   const gamesData = (await ballchasing.getReplayData(game_ids)).sort((a, b) => new Date(a.date) - new Date(b.date))
+  if (gamesData.length > 0) {
+    validateGameTeams(gamesData)
+  }
 
   console.info('retrieving players')
   const players = await identifyPlayers(gamesData, game_ids)
 
   console.info('building player map')
-  const playersToTeams = await buildPlayerTeamMap(
+  const { playersToTeams, teams } = await buildPlayerTeamMap(
     league_id,
     players,
     gamesData,
     getEarliestGameDate(gamesData),
     mentioned_team_ids,
   )
-
-  console.info('retrieving teams')
-  const teams = await identifyTeams(playersToTeams, mentioned_team_ids)
 
   console.info('retrieving league info')
   const { league, season, match } = await (match_id
@@ -362,6 +418,7 @@ const handleReplays = async (filters, processedAt) => {
       teams,
       players,
     },
+    playersToTeams,
     processedAt,
   )
   console.info('uploading match stats')

@@ -15,7 +15,7 @@ const handler = async (event, context) => {
   const warmerIntercept = require('../src/util/warmer-intercept')
   if (warmerIntercept(event)) {
     connect(true, () => {
-      console.log('connected after refresh')
+      console.info('connected after refresh')
       return
     })
   } else {

@@ -19,6 +19,7 @@ const processPlayer = (game, player, processedAt) => {
     team_id: player.team_id,
     team_name: player.team_name,
     team_color: player.team_color,
+    is_sub_for_team: player.is_sub_for_team,
     opponent_team_id: player.opponent_team_id,
     opponent_team_name: player.opponent_team_name,
     opponent_team_color: player.opponent_team_color,

@@ -4,50 +4,16 @@ const { UnRecoverableError } = require('../util/errors')
 const colors = ['blue', 'orange']
 const getOpponentColor = (color) => colors.filter((c) => c !== color)[0]
 
-module.exports = (dbGame, { players, teams }) => {
+module.exports = (dbGame, { players }, playersToTeams) => {
   const game = dbGame.raw_data
-  const playerTeamMap = []
 
+  /** @todo move this validation to a match variable */
   colors.forEach((color) => {
     if (game[color].players.length !== 3) {
       const errMsg = `invalid teams for game: ${game.id}. Expected 3 players but got ${game[color].players.length}.`
       throw new UnRecoverableError('BAD_PLAYER_COUNT', errMsg)
     }
-    const teamPlayers = players.filter((player) => {
-      return game[color].players.some(({ id }) => {
-        return player.accounts.some(({ platform, platform_id }) => {
-          return id.platform === platform && id.id === platform_id
-        })
-      })
-    })
-    if (!teamPlayers) {
-      const errMsg = `no players found for team: ${color}`
-      throw new UnRecoverableError('NO_PLAYERS_IDENTIFIED', errMsg)
-    }
-    // get all team ids that players have at match date
-    const playerTeams = [
-      ...new Set(
-        teamPlayers
-          .reduce((result, player) => {
-            result.push(...getPlayerTeamsAtDate(player, new Date(game.date)))
-            return result
-          }, [])
-          .map((team) => team.team_id),
-      ),
-    ]
-    const team = teams.find((t) => playerTeams.some((team_id) => t._id.equals(team_id)))
-    game[color].team = team
-    if (!game[color].team) {
-      const errMsg = `no team found for ${color} in match ${game.match_id}. Teams identified are: ${playerTeams.join(
-        ', ',
-      )}`
-      throw new UnRecoverableError('NO_TEAM_IDENTIFIED', errMsg)
-    }
   })
-  if (game.orange.team._id.equals(game.blue.team._id)) {
-    const errMsg = `same team id assigned to both teams for game: ${game.id}. team: ${game.orange.team.name}`
-    throw new UnRecoverableError('DUPLICATE_TEAMS', errMsg)
-  }
   // assign team_id and player_id to players
   colors.forEach((color) => {
     game[color].players.forEach((player) => {
@@ -55,18 +21,14 @@ module.exports = (dbGame, { players, teams }) => {
       player.team_name = game[color].team.name
       player.opponent_team_id = game[getOpponentColor(color)].team._id.toHexString()
       player.opponent_team_name = game[getOpponentColor(color)].team.name
-      const leaguePlayer = players.find((p) => {
-        return p.accounts.some(({ platform, platform_id }) => {
+      const { player: leaguePlayer, sub, team } = playersToTeams.find((p) => {
+        return p.player.accounts.some(({ platform, platform_id }) => {
           return platform === player.id.platform && platform_id === player.id.id
         })
       })
-      if (leaguePlayer) {
-        player.league_id = leaguePlayer._id.toHexString()
-        player.name = leaguePlayer.screen_name
-        playerTeamMap.push({ player_id: leaguePlayer._id, team_id: game[color].team._id })
-      }
+      player.league_id = leaguePlayer._id.toHexString()
+      player.name = leaguePlayer.screen_name
+      player.is_sub_for_team = sub ? team._id.toHexString() : undefined
     })
   })
-
-  return { playerTeamMap }
 }

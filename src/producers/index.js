@@ -1,7 +1,7 @@
 const teamStats = require('./team-stats')
 const playerStats = require('./player-stats')
 const gameContext = require('./game-context')
-const playerContext = require('./player-context')
+const addPlayerContext = require('./player-context')
 const { UnRecoverableError } = require('../util/errors')
 
 const colors = ['blue', 'orange']
@@ -51,9 +51,8 @@ const assignWins = (games, match, leagueGames, teams) => {
   })
 }
 
-module.exports = (leagueInfo, processedAt) => {
+module.exports = (leagueInfo, playersToTeams, processedAt) => {
   const games = leagueInfo.games.map((g) => g.raw_data)
-  let playersToTeams = []
   let gameNumber = 1
   for (let game of leagueInfo.games) {
     game.raw_data.game_number = gameNumber
@@ -61,8 +60,7 @@ module.exports = (leagueInfo, processedAt) => {
     // skip player and team assignment for manually reported games (for now)
     if (game.report_type !== 'MANUAL_REPORT') {
       // teams also get assigned to the colors here
-      const { playerTeamMap } = playerContext(game, leagueInfo)
-      playersToTeams = playersToTeams.concat(playerTeamMap)
+      addPlayerContext(game, leagueInfo, playersToTeams)
     }
     gameNumber++
   }
@@ -70,11 +68,5 @@ module.exports = (leagueInfo, processedAt) => {
   return {
     teamStats: leagueInfo.games.reduce((result, game) => result.concat(teamStats(game, processedAt)), []),
     playerStats: leagueInfo.games.reduce((result, game) => result.concat(playerStats(game, processedAt)), []),
-    playerTeamMap: playersToTeams.reduce((result, item) => {
-      if (!result.find((i) => i.player_id === item.player_id)) {
-        result.push(item)
-      }
-      return result
-    }, []),
   }
 }
