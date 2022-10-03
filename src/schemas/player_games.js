@@ -69,4 +69,5 @@ module.exports = [
   { name: 'ms_farthest_from_ball', type: types.INT },
   { name: 'demos_inflicted', type: types.INT },
   { name: 'demos_taken', type: types.INT },
+  { name: 'is_sub_for_team', type: types.STR },
 ]
