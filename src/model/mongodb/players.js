@@ -18,8 +18,8 @@ const schema = {
   accounts: {
     type: [
       {
-        platform: { type: String },
-        platform_id: { type: String },
+        platform: { type: String, required: true },
+        platform_id: { type: String, required: true },
       },
     ],
     default: [],
@@ -32,7 +32,6 @@ const Model = createModel('Player', schema, (schema) => {
     const query = {
       $or: [],
     }
-    // return this.find(query)
     teamIds.forEach((teamId) => {
       query.$or.push({
         team_history: {

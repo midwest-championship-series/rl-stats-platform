@@ -309,7 +309,7 @@ const uploadStats = async (matchId, team_games, player_games, fileName, processe
 }
 
 const validateMatchDate = (match, gamesData) => {
-  if (match.status === 'open' && match.hasOwnProperty('scheduled_datetime')) {
+  if (match.status === 'open' && !!match.scheduled_datetime) {
     gamesData.forEach((game) => {
       const gameDate = new Date(game.date)
       const oneWeek = 1000 * 3600 * 24 * 7
@@ -370,6 +370,7 @@ const handleReplays = async (filters, processedAt) => {
     ? getMatchInfoById(match_id) // this is a reprocessed match
     : identifyMatch(league_id, teams)) // this is a new match
 
+  console.info('validating date')
   validateMatchDate(match, gamesData)
 
   combineGames(gamesData, manualGames)
