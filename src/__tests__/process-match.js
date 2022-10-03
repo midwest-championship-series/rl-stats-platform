@@ -1500,7 +1500,7 @@ describe('process-match', () => {
       {
         _id: new ObjectId('aebc62a9d09245d2a7c62eb6'),
         discord_id: '688286346783359027',
-        name: 'Inferno Premier Other League like Prospect',
+        name: 'Inferno Prospect',
         franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
       },
     ])
@@ -1519,6 +1519,14 @@ describe('process-match', () => {
     )
   })
   it('should not add stats for games where more than 2 franchises are identified', async () => {
+    let expectedError = `expected to identify match between 2 franchises, but found 3. Franchises: 600fac63be0bbe0008ffddc5, 600fac63be0bbe0008ffddc7, 600fac63be0bbe0008ffddc9.\n`
+    expectedError += `Players:\n`
+    expectedError += `Calster: Superiors Premier\n`
+    expectedError += `Cheezy: Superiors Premier\n`
+    expectedError += `Delephant: Superiors Premier\n`
+    expectedError += `Pace.: Inferno Prospect\n`
+    expectedError += `MARKsmanRL: \n`
+    expectedError += `Lege: Inferno Prospect, Rangers Premier\n`
     matchesFindMock.mockResolvedValue([mockOpenMatch()])
     const testMockPlayers = mockPlayers.map((player) => {
       const newPlayer = cloneDeep(player)
@@ -1529,7 +1537,7 @@ describe('process-match', () => {
       })
       return newPlayer
     })
-    // act like cal joined rangers and superiors
+    // act like lege joined rangers and superiors
     testMockPlayers
       .find((p) => p._id.equals('5ec04239d09245d2a7d4fa52'))
       .team_history.push({
@@ -1543,7 +1551,7 @@ describe('process-match', () => {
       {
         _id: new ObjectId('aebc62a9d09245d2a7c62eb6'),
         discord_id: '688286346783359027',
-        name: 'Inferno Premier Other League like Prospect',
+        name: 'Inferno Prospect',
         franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
       },
     ])
@@ -1557,13 +1565,17 @@ describe('process-match', () => {
           { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
         ],
       }),
-    ).rejects.toEqual(
-      new Error(
-        `expected to identify match between 2 franchises, but found 3. Franchises: 600fac63be0bbe0008ffddc5, 600fac63be0bbe0008ffddc7, 600fac63be0bbe0008ffddc9`,
-      ),
-    )
+    ).rejects.toEqual(new Error(expectedError))
   })
   it('should not add stats for games where one franchise is identified', async () => {
+    let expectedError = `expected to identify match between 2 franchises, but found 1. Franchises: 600fac63be0bbe0008ffddc7.\n`
+    expectedError += `Players:\n`
+    expectedError += `Calster: Inferno Prospect\n`
+    expectedError += `Cheezy: Inferno Prospect, Inferno Prospect\n`
+    expectedError += `Delephant: Inferno Prospect\n`
+    expectedError += `Pace.: Inferno Prospect\n`
+    expectedError += `MARKsmanRL: \n`
+    expectedError += `Lege: Inferno Prospect\n`
     matchesFindMock.mockResolvedValue([mockOpenMatch()])
     const testMockPlayers = mockPlayers.map((player) => {
       const newPlayer = cloneDeep(player)
@@ -1578,7 +1590,7 @@ describe('process-match', () => {
       {
         _id: new ObjectId('aebc62a9d09245d2a7c62eb6'),
         discord_id: '688286346783359027',
-        name: 'Inferno Premier Other League like Prospect',
+        name: 'Inferno Prospect',
         franchise_id: new ObjectId('600fac63be0bbe0008ffddc7'),
       },
     ])
@@ -1592,9 +1604,7 @@ describe('process-match', () => {
           { id: '4ed12225-7251-4d63-8bb6-15338c60bcf2' },
         ],
       }),
-    ).rejects.toEqual(
-      new Error(`expected to identify match between 2 franchises, but found 1. Franchises: 600fac63be0bbe0008ffddc7`),
-    )
+    ).rejects.toEqual(new Error(expectedError))
   })
   it('should throw an error if the match does not meet best_of requirements', async () => {
     players.Model.find.mockResolvedValue(mockPlayers)
