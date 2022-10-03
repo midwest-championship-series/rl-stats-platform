@@ -212,7 +212,13 @@ const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, menti
   if (allFranchises.length !== 2) {
     let errMsg = `expected to identify match between 2 franchises, but found ${
       allFranchises.length
-    }. Franchises: ${allFranchises.join(', ')}`
+    }. Franchises: ${allFranchises.join(', ')}.\nPlayers:\n`
+    for (let { player, teamsAtDate } of playerTeamMap) {
+      errMsg += `${player.screen_name}: `
+      errMsg += teamsAtDate.map(({ name }) => name).join(', ')
+      errMsg += `\n`
+    }
+    console.log(errMsg)
     throw new UnRecoverableError('FRANCHISES_NOT_IDENTIFIED', errMsg)
   }
   // set sub teams
