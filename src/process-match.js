@@ -198,15 +198,16 @@ const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, menti
   // validate franchises
   const allFranchises = [
     ...new Set(
-      playerTeamMap.reduce(
-        (result, item) => {
-          result.push(
-            ...item.teamsAtDate.filter((t) => !!t.franchise_id).map((team) => team.franchise_id.toHexString()),
-          )
-          return result
-        },
-        mentionedTeams.map((id) => allTeams.find((t) => t._id.equals(id)).franchise_id).filter((id) => !!id),
-      ),
+      playerTeamMap
+        .reduce(
+          (result, item) => {
+            result.push(...item.teamsAtDate.map((team) => team.franchise_id))
+            return result
+          },
+          mentionedTeams.map((id) => allTeams.find((t) => t._id.equals(id)).franchise_id),
+        )
+        .filter((id) => !!id)
+        .map((id) => id.toHexString()),
     ),
   ]
   if (allFranchises.length !== 2) {
