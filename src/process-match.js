@@ -107,46 +107,47 @@ const identifyPlayers = async (gamesData, gameIds) => {
   return players
 }
 
-/** make sure that the players are always on the same teams in all the game data (not color dependent) */
-const validateGameTeams = (gamesData) => {
-  const colors = ['blue', 'orange']
-  const team1Players = gamesData[0].orange.players
-  const team2Players = gamesData[0].blue.players
-  /** @todo come back and make sure that the original team being incorrect can't screw this up */
-  // const teamCombinations = gamesData.map((game) => {
-  //   return colors.map((color) => {
-  //     return {
-  //       color,
-  //       players: game[color].players.map((player) => `${player.id.platform}:${player.id.id}`),
-  //     }
-  //   })
-  // })
-  const validateTeamPlayers = (originalTeam, gameTeam) => {
-    const errors = []
-    originalTeam.forEach((player) => {
-      const playerMatch = gameTeam.find((p) => p.id.platform === player.id.platform && p.id.id === player.id.id)
-      if (!playerMatch) {
-        errors.push(`no match found for player: ${player.name}.`)
-      }
-    })
-    return errors
-  }
-  gamesData.forEach((game) => {
-    const team1Color = colors.find((color) =>
-      game[color].players.some(
-        (player) => player.id.platform === team1Players[0].id.platform && player.id.id === team1Players[0].id.id,
-      ),
-    )
-    const team2Color = colors.filter((c) => c !== team1Color)[0]
-    const errors = validateTeamPlayers(team1Players, game[team1Color].players).concat(
-      validateTeamPlayers(team2Players, game[team2Color].players),
-    )
-    if (errors.length > 0) {
-      let errMsg = `team mismatch found in game: ${game.id}. errors: ${errors.join(', ')}`
-      throw new UnRecoverableError('TEAM_MISMATCH_IN_GAME_DATA', errMsg)
-    }
-  })
-}
+// /** make sure that the players are always on the same teams in all the game data (not color dependent) */
+// const validateGameTeams = (gamesData) => {
+//   const colors = ['blue', 'orange']
+//   const team1Players = gamesData[0].orange.players
+//   const team2Players = gamesData[0].blue.players
+//   /** @todo come back and make sure that the original team being incorrect can't screw this up */
+//   // const teamCombinations = gamesData.map((game) => {
+//   //   return colors.map((color) => {
+//   //     return {
+//   //       color,
+//   //       players: game[color].players.map((player) => `${player.id.platform}:${player.id.id}`),
+//   //     }
+//   //   })
+//   // })
+//   const validateTeamPlayers = (originalTeam, gameTeam) => {
+//     const errors = []
+//     originalTeam.forEach((player) => {
+//       const playerMatch = gameTeam.find((p) => p.id.platform === player.id.platform && p.id.id === player.id.id)
+//       if (!playerMatch) {
+//         console.log(player)
+//         errors.push(`no match found for player: ${player.name}.`)
+//       }
+//     })
+//     return errors
+//   }
+//   gamesData.forEach((game) => {
+//     const team1Color = colors.find((color) =>
+//       game[color].players.some(
+//         (player) => player.id.platform === team1Players[0].id.platform && player.id.id === team1Players[0].id.id,
+//       ),
+//     )
+//     const team2Color = colors.filter((c) => c !== team1Color)[0]
+//     const errors = validateTeamPlayers(team1Players, game[team1Color].players).concat(
+//       validateTeamPlayers(team2Players, game[team2Color].players),
+//     )
+//     if (errors.length > 0) {
+//       let errMsg = `team mismatch found in game: ${game.id}. errors: ${errors.join(', ')}`
+//       throw new UnRecoverableError('TEAM_MISMATCH_IN_GAME_DATA', errMsg)
+//     }
+//   })
+// }
 
 /** does all of the team and player mapping/validation at once */
 const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, mentionedTeams) => {
@@ -356,9 +357,10 @@ const handleReplays = async (filters, processedAt) => {
   const game_ids = replayGames.map((g) => g.id)
   console.info('retrieving replays')
   const gamesData = (await ballchasing.getReplayData(game_ids)).sort((a, b) => new Date(a.date) - new Date(b.date))
-  if (gamesData.length > 0) {
-    validateGameTeams(gamesData)
-  }
+  /** @todo validate that players play on the correct teams */
+  // if (gamesData.length > 0) {
+  //   validateGameTeams(gamesData)
+  // }
 
   console.info('retrieving players')
   const players = await identifyPlayers(gamesData, game_ids)
