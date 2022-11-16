@@ -7,6 +7,7 @@ const errorHandler = require('./errors')
 const { Franchises, Teams, Players, Leagues, Seasons, Matches, Games } = require('../../model/mongodb')
 
 router.use(require('./modify-request'))
+router.use('/modules', require('./modules'))
 router.use('/events', require('./events'))
 router.use('/franchises', attachModel(Franchises))
 router.use('/teams', attachModel(Teams))
