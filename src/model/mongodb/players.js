@@ -13,6 +13,7 @@ const schema = {
     ],
     default: [],
   },
+  email: { type: String, select: false },
   avatar: { type: String }, // url with discord avatar url, to which a ?size=128 parameter can be added with desired size
   screen_name: { type: String },
   accounts: {
@@ -25,6 +26,7 @@ const schema = {
     default: [],
   },
   permissions: [{ type: String }],
+  discord_linked: { type: Date },
 }
 
 const Model = createModel('Player', schema, (schema) => {
