@@ -45,10 +45,9 @@ provider:
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_SERVICE: ${self:service}
     BALLCHASING_KEY: ${ssm:BALLCHASING_KEY}
-    MNCS_STAT_SHEET_ID: ${ssm:${self:provider.stage}-MNCS_STAT_SHEET_ID}
-    MNRL_SHEET_ID: ${ssm:${self:provider.stage}-MNRL_SHEET_ID}
     MONGODB_PASSWORD: ${ssm:${self:provider.stage}-mnrl-db-pass~true}
     MONGODB_HOST: ${self:custom.dbHost.${self:provider.stage}, self:custom.dbHost.notprod}
+    STRIPE_API_KEY: ${ssm:${self:provider.stage}-rl-stripe-key~true}
     MNRL_BOT_URL: https://rl-rank-bot.herokuapp.com
     ERROR_CHANNEL_ID: '692994579305332806'
     ELASTIC_HOST: ${ssm:${self:provider.stage}-mnrl-elastic-host~true}
