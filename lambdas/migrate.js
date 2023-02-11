@@ -18,13 +18,13 @@ const handler = async () => {
         if (!match.stream_link) {
           match.stream_link = streamLink
           await match.save()
-          console.log(`saved match: ${match._id}`)
+          console.info(`saved match: ${match._id}`)
         }
       }
     }
   }
 
-  console.log('adjusting times')
+  console.info('adjusting times')
   const minDate = new Date('2022-06-15T22:22:17.938+00:00')
   const matches = await Matches.find({
     scheduled_datetime: { $gte: minDate },
@@ -38,12 +38,10 @@ const handler = async () => {
       day.utc().format('hh:mm:ss') === '01:45:00'
     ) {
       const newTime = new Date(match.scheduled_datetime).setHours(match.scheduled_datetime.getHours() - 3)
-      // const newDateString = dayjs(newTime).utc().format('hh:mm:ss')
-      // console.log(match.scheduled_datetime, day.utc().format('hh:mm:ss'), dayjs(newTime).utc().format('hh:mm:ss'))
       match.scheduled_datetime = newTime
       match.stream_link = undefined
       await match.save()
-      console.log(`updated time for match: ${match._id}`)
+      console.info(`updated time for match: ${match._id}`)
     }
   }
 }

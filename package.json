@@ -8,8 +8,8 @@
     "test": "jest"
   },
   "engines": {
-    "node": "^12.13",
-    "yarn": "^1.19"
+    "node": "^16.14",
+    "yarn": "^1.22"
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",

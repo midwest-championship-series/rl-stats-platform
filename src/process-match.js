@@ -149,12 +149,24 @@ const validateGameTeams = (gamesData) => {
 }
 
 /** does all of the team and player mapping/validation at once */
-const buildPlayerTeamMap = async (leagueId, players, gamesData, matchDate, mentionedTeams) => {
-  const league = await Leagues.findById(leagueId).populate({
-    path: 'current_season',
-    populate: 'teams',
-  })
-  const seasonTeams = league.current_season.teams
+const buildPlayerTeamMap = async (leagueId, matchId, players, gamesData, matchDate, mentionedTeams) => {
+  let seasonTeams
+  /** @todo for newly reported matches, determine the active seasons by the match date rather than the league */
+  if (leagueId) {
+    const league = await Leagues.findById(leagueId).populate({
+      path: 'current_season',
+      populate: 'teams',
+    })
+    seasonTeams = league.current_season.teams
+  } else if (matchId) {
+    const matchInfo = await Matches.findById(matchId).populate({
+      path: 'season',
+      populate: { path: 'teams' }
+    })
+    seasonTeams = matchInfo.season.teams
+  } else {
+    throw new UnRecoverableError('ERR_NO_TEAM_IDENTITY_STRATEGY', 'player team map identification failed')
+  }
   const allTeams = await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))
   const playerTeamMap = getUniqueMatchPlayers(gamesData).map((matchPlayer) => {
     return {
@@ -366,6 +378,7 @@ const handleReplays = async (filters, processedAt) => {
   console.info('building player map')
   const { playersToTeams, teams } = await buildPlayerTeamMap(
     league_id,
+    match_id,
     players,
     gamesData,
     getEarliestGameDate(gamesData),
