@@ -12,7 +12,7 @@ const handler = async () => {
         history.date_left = new Date()
       }
     })
-    console.log('saving', player.screen_name)
+    console.info('saving', player.screen_name)
     await player.save()
   }
 }
