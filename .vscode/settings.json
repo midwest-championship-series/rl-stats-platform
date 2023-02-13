@@ -1,5 +1,4 @@
 {
-  "python.pythonPath": "/Users/corbin/.local/share/virtualenvs/rl-stats-7OrMqUNC/bin/python",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   }
