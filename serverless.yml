@@ -51,7 +51,7 @@ provider:
     MONGODB_HOST: ${self:custom.dbHost.${self:provider.stage}, self:custom.dbHost.notprod}
     MNRL_BOT_URL: https://rl-rank-bot.herokuapp.com
     ERROR_CHANNEL_ID: '692994579305332806'
-    ELASTIC_HOST: ${ssm:${self:provider.stage}-mnrl-elastic-host~true}
+    ELASTIC_HOST: ${ssm:${self:provider.stage}-mncs-elastic-host~true}
     PRODUCED_STATS_BUCKET: ${self:resources.Outputs.ProducedStatsBucketName.Value}
     LIVE_STATS_BUCKET: ${self:resources.Outputs.LiveStatsBucketName.Value}
     LIVE_STATS_CHANNEL_ID: ${self:custom.playByPlayChannelId.${self:provider.stage}, self:custom.playByPlayChannelId.notprod}
