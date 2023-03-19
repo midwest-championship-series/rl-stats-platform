@@ -14,10 +14,12 @@ const handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false
   const warmerIntercept = require('../src/util/warmer-intercept')
   if (warmerIntercept(event)) {
-    connect(true, () => {
-      console.info('connected after refresh')
-      return
-    })
+    console.info('warmer intercept')
+    return
+    // connect(true, () => {
+    //   console.info('connected after refresh')
+    //   return
+    // })
   } else {
     const result = await api(event, context)
     return result
