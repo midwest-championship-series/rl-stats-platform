@@ -1,9 +1,9 @@
 const path = require('path')
 const csv = require('csvtojson')
-const { Matches, Leagues, Seasons } = require('../src/model/mongodb')
+const { Matches, Leagues, Seasons } = require('../../src/model/mongodb')
 
 const parseSchedule = async (fileName) => {
-  const importPath = path.join(__dirname, '..', 'temp', fileName)
+  const importPath = path.join(__dirname, '..', '..', 'temp', fileName)
   console.log('importing', importPath)
   return csv().fromFile(importPath)
 }
@@ -36,11 +36,13 @@ const createSchedule = async (leagueName, seasonName, schedule) => {
     }
     await newSeason.save()
     console.log(`${league.name} season ${seasonName} updated`)
+  } else {
+    console.log('season already has', newSeason.match_ids.length, 'matches')
   }
 }
 
 const handler = async () => {
-  const newSeasonName = '6'
+  const newSeasonName = '7'
   // make sure season exists
   console.log('getting leagues')
   const leagues = await Leagues.find({

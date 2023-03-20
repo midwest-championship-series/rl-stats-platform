@@ -1,0 +1,67 @@
+team_1_franchise_id,team_2_franchise_id,scheduled_date,scheduled_time,team_1_id,team_2_id,week,offstream,team_1,team_2
+600fac63be0bbe0008ffddc7,600fac63be0bbe0008ffddc8,3/12/2023,6:00:00 PM,62e098ccc7baef27afe0bbc0,62e098b3c7baef27afe0bbbe,1,,Burnsville Inferno,Rochester Rhythm
+600fac63be0bbe0008ffddca,600fac63be0bbe0008ffddc3,3/12/2023,6:45:00 PM,62e09993c7baef27afe0bbc4,62e099e0c7baef27afe0bbca,1,,St. Cloud Flyers,Minneapolis Miracles
+600fac63be0bbe0008ffddc5,600fac63be0bbe0008ffddc9,3/12/2023,7:30:00 PM,62e09884c7baef27afe0bbbc,62e098ebc7baef27afe0bbc2,1,,Duluth Superiors,Hibbing Rangers
+620518160160ee0009244b00,620517b60160ee0009244afc,3/12/2023,8:15:00 PM,62e09a16c7baef27afe0bbcc,62e09a2ec7baef27afe0bbce,1,,Mankato Atlas,Brainerd Victory
+5ec9358e8c0dd900074685c5,600fac63be0bbe0008ffddc6,3/12/2023,9:00:00 PM,62e09869c7baef27afe0bbba,62e099b8c7baef27afe0bbc6,1,,Bloomington Maulers,Minnetonka Barons
+600fac63be0bbe0008ffddcc,600fac63be0bbe0008ffddc4,3/12/2023,9:45:00 PM,62e09846c7baef27afe0bbb8,62e099cdc7baef27afe0bbc8,1,,Bemidji Lumberjacks,St. Paul Senators
+600fac63be0bbe0008ffddca,600fac63be0bbe0008ffddc5,3/19/2023,6:00:00 PM,62e09993c7baef27afe0bbc4,62e09884c7baef27afe0bbbc,2,,St. Cloud Flyers,Duluth Superiors
+600fac63be0bbe0008ffddc6,600fac63be0bbe0008ffddc4,3/19/2023,6:45:00 PM,62e099b8c7baef27afe0bbc6,62e099cdc7baef27afe0bbc8,2,,Minnetonka Barons,St. Paul Senators
+600fac63be0bbe0008ffddc9,600fac63be0bbe0008ffddcc,3/19/2023,7:30:00 PM,62e098ebc7baef27afe0bbc2,62e09846c7baef27afe0bbb8,2,,Hibbing Rangers,Bemidji Lumberjacks
+600fac63be0bbe0008ffddc8,5ec9358e8c0dd900074685c5,3/19/2023,8:15:00 PM,62e098b3c7baef27afe0bbbe,62e09869c7baef27afe0bbba,2,,Rochester Rhythm,Bloomington Maulers
+600fac63be0bbe0008ffddc3,620518160160ee0009244b00,3/19/2023,9:00:00 PM,62e099e0c7baef27afe0bbca,62e09a16c7baef27afe0bbcc,2,,Minneapolis Miracles,Mankato Atlas
+600fac63be0bbe0008ffddc7,620517b60160ee0009244afc,3/19/2023,9:45:00 PM,62e098ccc7baef27afe0bbc0,62e09a2ec7baef27afe0bbce,2,,Burnsville Inferno,Brainerd Victory
+5ec9358e8c0dd900074685c5,600fac63be0bbe0008ffddc5,3/26/2023,6:00:00 PM,62e09869c7baef27afe0bbba,62e09884c7baef27afe0bbbc,3,,Bloomington Maulers,Duluth Superiors
+620517b60160ee0009244afc,600fac63be0bbe0008ffddc9,3/26/2023,6:45:00 PM,62e09a2ec7baef27afe0bbce,62e098ebc7baef27afe0bbc2,3,,Brainerd Victory,Hibbing Rangers
+600fac63be0bbe0008ffddc6,600fac63be0bbe0008ffddc7,3/26/2023,7:30:00 PM,62e099b8c7baef27afe0bbc6,62e098ccc7baef27afe0bbc0,3,,Minnetonka Barons,Burnsville Inferno
+600fac63be0bbe0008ffddc4,600fac63be0bbe0008ffddc3,3/26/2023,8:15:00 PM,62e099cdc7baef27afe0bbc8,62e099e0c7baef27afe0bbca,3,,St. Paul Senators,Minneapolis Miracles
+620518160160ee0009244b00,600fac63be0bbe0008ffddca,3/26/2023,9:00:00 PM,62e09a16c7baef27afe0bbcc,62e09993c7baef27afe0bbc4,3,,Mankato Atlas,St. Cloud Flyers
+600fac63be0bbe0008ffddcc,600fac63be0bbe0008ffddc8,3/26/2023,9:45:00 PM,62e09846c7baef27afe0bbb8,62e098b3c7baef27afe0bbbe,3,,Bemidji Lumberjacks,Rochester Rhythm
+5ec9358e8c0dd900074685c5,620518160160ee0009244b00,4/2/2023,6:00:00 PM,62e09869c7baef27afe0bbba,62e09a16c7baef27afe0bbcc,4,,Bloomington Maulers,Mankato Atlas
+600fac63be0bbe0008ffddc3,600fac63be0bbe0008ffddc6,4/2/2023,6:45:00 PM,62e099e0c7baef27afe0bbca,62e099b8c7baef27afe0bbc6,4,,Minneapolis Miracles,Minnetonka Barons
+600fac63be0bbe0008ffddc8,620517b60160ee0009244afc,4/2/2023,7:30:00 PM,62e098b3c7baef27afe0bbbe,62e09a2ec7baef27afe0bbce,4,,Rochester Rhythm,Brainerd Victory
+600fac63be0bbe0008ffddca,600fac63be0bbe0008ffddc4,4/2/2023,8:15:00 PM,62e09993c7baef27afe0bbc4,62e099cdc7baef27afe0bbc8,4,,St. Cloud Flyers,St. Paul Senators
+600fac63be0bbe0008ffddc5,600fac63be0bbe0008ffddcc,4/2/2023,9:00:00 PM,62e09884c7baef27afe0bbbc,62e09846c7baef27afe0bbb8,4,,Duluth Superiors,Bemidji Lumberjacks
+600fac63be0bbe0008ffddc7,600fac63be0bbe0008ffddc9,4/2/2023,9:45:00 PM,62e098ccc7baef27afe0bbc0,62e098ebc7baef27afe0bbc2,4,,Burnsville Inferno,Hibbing Rangers
+600fac63be0bbe0008ffddc9,600fac63be0bbe0008ffddc8,4/16/2023,6:00:00 PM,62e098ebc7baef27afe0bbc2,62e098b3c7baef27afe0bbbe,5,,Hibbing Rangers,Rochester Rhythm
+600fac63be0bbe0008ffddc3,600fac63be0bbe0008ffddc7,4/16/2023,6:45:00 PM,62e099e0c7baef27afe0bbca,62e098ccc7baef27afe0bbc0,5,,Minneapolis Miracles,Burnsville Inferno
+620517b60160ee0009244afc,600fac63be0bbe0008ffddc5,4/16/2023,7:30:00 PM,62e09a2ec7baef27afe0bbce,62e09884c7baef27afe0bbbc,5,,Brainerd Victory,Duluth Superiors
+600fac63be0bbe0008ffddcc,620518160160ee0009244b00,4/16/2023,8:15:00 PM,62e09846c7baef27afe0bbb8,62e09a16c7baef27afe0bbcc,5,,Bemidji Lumberjacks,Mankato Atlas
+600fac63be0bbe0008ffddc4,5ec9358e8c0dd900074685c5,4/16/2023,9:00:00 PM,62e099cdc7baef27afe0bbc8,62e09869c7baef27afe0bbba,5,,St. Paul Senators,Bloomington Maulers
+600fac63be0bbe0008ffddc6,600fac63be0bbe0008ffddca,4/16/2023,9:45:00 PM,62e099b8c7baef27afe0bbc6,62e09993c7baef27afe0bbc4,5,,Minnetonka Barons,St. Cloud Flyers
+600fac63be0bbe0008ffddc6,600fac63be0bbe0008ffddcc,5/21/2023,6:00:00 PM,62e099b8c7baef27afe0bbc6,62e09846c7baef27afe0bbb8,6,,Minnetonka Barons,Bemidji Lumberjacks
+620517b60160ee0009244afc,600fac63be0bbe0008ffddc4,5/21/2023,6:45:00 PM,62e09a2ec7baef27afe0bbce,62e099cdc7baef27afe0bbc8,6,,Brainerd Victory,St. Paul Senators
+600fac63be0bbe0008ffddc3,5ec9358e8c0dd900074685c5,5/21/2023,7:30:00 PM,62e099e0c7baef27afe0bbca,62e09869c7baef27afe0bbba,6,,Minneapolis Miracles,Bloomington Maulers
+600fac63be0bbe0008ffddc7,600fac63be0bbe0008ffddca,5/21/2023,8:15:00 PM,62e098ccc7baef27afe0bbc0,62e09993c7baef27afe0bbc4,6,,Burnsville Inferno,St. Cloud Flyers
+600fac63be0bbe0008ffddc9,620518160160ee0009244b00,5/21/2023,9:00:00 PM,62e098ebc7baef27afe0bbc2,62e09a16c7baef27afe0bbcc,6,,Hibbing Rangers,Mankato Atlas
+600fac63be0bbe0008ffddc8,600fac63be0bbe0008ffddc5,5/21/2023,9:45:00 PM,62e098b3c7baef27afe0bbbe,62e09884c7baef27afe0bbbc,6,,Rochester Rhythm,Duluth Superiors
+5ec9358e8c0dd900074685c5,600fac63be0bbe0008ffddca,5/28/2023,6:00:00 PM,62e09869c7baef27afe0bbba,62e09993c7baef27afe0bbc4,7,,Bloomington Maulers,St. Cloud Flyers
+600fac63be0bbe0008ffddc7,600fac63be0bbe0008ffddc5,5/28/2023,6:45:00 PM,62e098ccc7baef27afe0bbc0,62e09884c7baef27afe0bbbc,7,,Burnsville Inferno,Duluth Superiors
+620518160160ee0009244b00,600fac63be0bbe0008ffddc8,5/28/2023,7:30:00 PM,62e09a16c7baef27afe0bbcc,62e098b3c7baef27afe0bbbe,7,,Mankato Atlas,Rochester Rhythm
+600fac63be0bbe0008ffddc4,600fac63be0bbe0008ffddc9,5/28/2023,8:15:00 PM,62e099cdc7baef27afe0bbc8,62e098ebc7baef27afe0bbc2,7,,St. Paul Senators,Hibbing Rangers
+600fac63be0bbe0008ffddcc,600fac63be0bbe0008ffddc3,5/28/2023,9:00:00 PM,62e09846c7baef27afe0bbb8,62e099e0c7baef27afe0bbca,7,,Bemidji Lumberjacks,Minneapolis Miracles
+620517b60160ee0009244afc,600fac63be0bbe0008ffddc6,5/28/2023,9:45:00 PM,62e09a2ec7baef27afe0bbce,62e099b8c7baef27afe0bbc6,7,,Brainerd Victory,Minnetonka Barons
+5ec9358e8c0dd900074685c5,600fac63be0bbe0008ffddc7,6/4/2023,6:00:00 PM,62e09869c7baef27afe0bbba,62e098ccc7baef27afe0bbc0,8,,Bloomington Maulers,Burnsville Inferno
+600fac63be0bbe0008ffddc5,620518160160ee0009244b00,6/4/2023,6:45:00 PM,62e09884c7baef27afe0bbbc,62e09a16c7baef27afe0bbcc,8,,Duluth Superiors,Mankato Atlas
+600fac63be0bbe0008ffddca,600fac63be0bbe0008ffddcc,6/4/2023,7:30:00 PM,62e09993c7baef27afe0bbc4,62e09846c7baef27afe0bbb8,8,,St. Cloud Flyers,Bemidji Lumberjacks
+600fac63be0bbe0008ffddc8,600fac63be0bbe0008ffddc4,6/4/2023,8:15:00 PM,62e098b3c7baef27afe0bbbe,62e099cdc7baef27afe0bbc8,8,,Rochester Rhythm,St. Paul Senators
+600fac63be0bbe0008ffddc3,620517b60160ee0009244afc,6/4/2023,9:00:00 PM,62e099e0c7baef27afe0bbca,62e09a2ec7baef27afe0bbce,8,,Minneapolis Miracles,Brainerd Victory
+600fac63be0bbe0008ffddc9,600fac63be0bbe0008ffddc6,6/4/2023,9:45:00 PM,62e098ebc7baef27afe0bbc2,62e099b8c7baef27afe0bbc6,8,,Hibbing Rangers,Minnetonka Barons
+600fac63be0bbe0008ffddc9,600fac63be0bbe0008ffddc3,6/11/2023,6:00:00 PM,62e098ebc7baef27afe0bbc2,62e099e0c7baef27afe0bbca,9,,Hibbing Rangers,Minneapolis Miracles
+600fac63be0bbe0008ffddc7,620518160160ee0009244b00,6/11/2023,6:45:00 PM,62e098ccc7baef27afe0bbc0,62e09a16c7baef27afe0bbcc,9,,Burnsville Inferno,Mankato Atlas
+600fac63be0bbe0008ffddc6,600fac63be0bbe0008ffddc8,6/11/2023,7:30:00 PM,62e099b8c7baef27afe0bbc6,62e098b3c7baef27afe0bbbe,9,,Minnetonka Barons,Rochester Rhythm
+600fac63be0bbe0008ffddcc,5ec9358e8c0dd900074685c5,6/11/2023,8:15:00 PM,62e09846c7baef27afe0bbb8,62e09869c7baef27afe0bbba,9,,Bemidji Lumberjacks,Bloomington Maulers
+620517b60160ee0009244afc,600fac63be0bbe0008ffddca,6/11/2023,9:00:00 PM,62e09a2ec7baef27afe0bbce,62e09993c7baef27afe0bbc4,9,,Brainerd Victory,St. Cloud Flyers
+600fac63be0bbe0008ffddc4,600fac63be0bbe0008ffddc5,6/11/2023,9:45:00 PM,62e099cdc7baef27afe0bbc8,62e09884c7baef27afe0bbbc,9,,St. Paul Senators,Duluth Superiors
+600fac63be0bbe0008ffddc5,600fac63be0bbe0008ffddc6,6/18/2023,6:00:00 PM,62e09884c7baef27afe0bbbc,62e099b8c7baef27afe0bbc6,10,,Duluth Superiors,Minnetonka Barons
+600fac63be0bbe0008ffddca,600fac63be0bbe0008ffddc9,6/18/2023,6:45:00 PM,62e09993c7baef27afe0bbc4,62e098ebc7baef27afe0bbc2,10,,St. Cloud Flyers,Hibbing Rangers
+620518160160ee0009244b00,600fac63be0bbe0008ffddc4,6/18/2023,7:30:00 PM,62e09a16c7baef27afe0bbcc,62e099cdc7baef27afe0bbc8,10,,Mankato Atlas,St. Paul Senators
+600fac63be0bbe0008ffddcc,600fac63be0bbe0008ffddc7,6/18/2023,8:15:00 PM,62e09846c7baef27afe0bbb8,62e098ccc7baef27afe0bbc0,10,,Bemidji Lumberjacks,Burnsville Inferno
+600fac63be0bbe0008ffddc8,600fac63be0bbe0008ffddc3,6/18/2023,9:00:00 PM,62e098b3c7baef27afe0bbbe,62e099e0c7baef27afe0bbca,10,,Rochester Rhythm,Minneapolis Miracles
+5ec9358e8c0dd900074685c5,620517b60160ee0009244afc,6/18/2023,9:45:00 PM,62e09869c7baef27afe0bbba,62e09a2ec7baef27afe0bbce,10,,Bloomington Maulers,Brainerd Victory
+620517b60160ee0009244afc,600fac63be0bbe0008ffddcc,6/25/2023,6:00:00 PM,62e09a2ec7baef27afe0bbce,62e09846c7baef27afe0bbb8,11,,Brainerd Victory,Bemidji Lumberjacks
+600fac63be0bbe0008ffddc6,620518160160ee0009244b00,6/25/2023,6:45:00 PM,62e099b8c7baef27afe0bbc6,62e09a16c7baef27afe0bbcc,11,,Minnetonka Barons,Mankato Atlas
+600fac63be0bbe0008ffddc9,5ec9358e8c0dd900074685c5,6/25/2023,7:30:00 PM,62e098ebc7baef27afe0bbc2,62e09869c7baef27afe0bbba,11,,Hibbing Rangers,Bloomington Maulers
+600fac63be0bbe0008ffddc3,600fac63be0bbe0008ffddc5,6/25/2023,8:15:00 PM,62e099e0c7baef27afe0bbca,62e09884c7baef27afe0bbbc,11,,Minneapolis Miracles,Duluth Superiors
+600fac63be0bbe0008ffddc8,600fac63be0bbe0008ffddca,6/25/2023,9:00:00 PM,62e098b3c7baef27afe0bbbe,62e09993c7baef27afe0bbc4,11,,Rochester Rhythm,St. Cloud Flyers
+600fac63be0bbe0008ffddc7,600fac63be0bbe0008ffddc4,6/25/2023,9:45:00 PM,62e098ccc7baef27afe0bbc0,62e099cdc7baef27afe0bbc8,11,,Burnsville Inferno,St. Paul Senators

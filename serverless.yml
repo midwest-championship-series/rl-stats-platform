@@ -214,6 +214,11 @@ functions:
     handler: lambdas/manual/remove-teams.handler
     name: ${self:service}-remove-teams-${self:provider.stage}
 
+  season-migration:
+    handler: lambdas/manual/season-migration.handler
+    name: ${self:service}-season-migration-${self:provider.stage}
+    timeout: 300
+
 resources:
   Resources:
     GamesQueue:
