@@ -201,7 +201,7 @@ const buildPlayerTeamMap = async (leagueId, matchId, players, gamesData, matchDa
     )
 
     if (leagueTeams.length > 1) {
-      let errMsg = `player: ${player.screen_name} mapped to ${leagueTeams.length} teams in the league: ${league.name}`
+      let errMsg = `player: ${player.screen_name} mapped to ${leagueTeams.length} teams`
       throw new UnRecoverableError('PLAYER_ON_MULTIPLE_LEAGUE_TEAMS', errMsg)
     }
     item.team = leagueTeams[0]
