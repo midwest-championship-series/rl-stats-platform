@@ -138,6 +138,7 @@ module.exports = [
           match_id: joi.objectId().required(),
         }),
         joi.object().keys({
+          report_games: joi.array().min(1).items(gameReport).required(),
           match_id: joi.string().required(),
           forfeit_team_id: joi.object().required(), // it's an actual objectid for some reason
         }),
