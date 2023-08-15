@@ -70,4 +70,12 @@ module.exports = [
   { name: 'demos_inflicted', type: types.INT },
   { name: 'demos_taken', type: types.INT },
   { name: 'is_sub_for_team', type: types.STR },
+  { name: 'car_name', type: types.STR },
+  { name: 'camera_fov', type: types.INT },
+  { name: 'camera_height', type: types.INT },
+  { name: 'camera_pitch', type: types.INT },
+  { name: 'camera_distance', type: types.INT },
+  { name: 'camera_stiffness', type: types.INT },
+  { name: 'camera_swivel_speed', type: types.INT },
+  { name: 'camera_transition_speed', type: types.INT },
 ]

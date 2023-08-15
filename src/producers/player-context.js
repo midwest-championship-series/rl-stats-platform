@@ -29,6 +29,11 @@ module.exports = (dbGame, { players }, playersToTeams) => {
       player.league_id = leaguePlayer._id.toHexString()
       player.name = leaguePlayer.screen_name
       player.is_sub_for_team = sub ? team._id.toHexString() : undefined
+      // camera settings
+      for (const [key, value] of Object.entries(player.camera)) {
+        player[`camera_${key}`] = value
+      }
+      player.car_name = player.car_name
     })
   })
 }

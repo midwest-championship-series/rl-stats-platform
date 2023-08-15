@@ -11,6 +11,7 @@ const v1Handler = async (req, res, next) => {
   res.status(200).send(body)
 }
 
+router.use('/auth', require('./auth'))
 router.get('/v1/:table', v1Handler)
 router.put('/v1/:table', v1Handler)
 router.use('/v2', require('./v2'))
