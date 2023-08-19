@@ -1,6 +1,7 @@
 const express = require('express')
 
 const docsHandler = require('./docs')
+const stripFunctionParameters = require('../../util/strip-function-parameters')
 
 class InvalidQueryError extends Error {
   constructor(msg) {
@@ -9,7 +10,36 @@ class InvalidQueryError extends Error {
   }
 }
 
-const buildQuery = (query, params) => {
+const buildQuery = (model, params) => {
+  let query = model.find()
+  for (let key in model.schema.query) {
+    const functionParameters = stripFunctionParameters(model.schema.query[key])
+    const queryHelper = []
+    for (let param in params) {
+      if (param.startsWith(key)) {
+        /** identify all parameters starting with that key and log their values */
+        queryHelper.push([`${param.substring(key.length + 1)}`, params[param]])
+        /** delete the key from params so they don't pollute the query later */
+        delete params[param]
+      }
+    }
+    if (queryHelper.length === 0) continue
+    if (queryHelper.length < functionParameters.length) {
+      let msg = `Received ${queryHelper.length} parameters for query helper ${key} but expected ${functionParameters.length}. `
+      msg += `Parameters received: ${queryHelper
+        .map(([helperName]) => {
+          return helperName
+        })
+        .join(', ')}`
+      throw new Error(msg)
+    }
+    query = model.schema.query[key].apply(
+      query,
+      functionParameters.map((name) => {
+        return queryHelper.find((h) => h[0] === name)[1]
+      }),
+    )
+  }
   if (params.populate) {
     delete params.populate
   }
@@ -61,12 +91,13 @@ module.exports = (Model) => {
   router.get('/_docs', docsHandler(Model))
 
   router.get('/', async (req, res, next) => {
-    req.context = await populateQuery(buildQuery(Model.find(), req.query), req.populate).exec()
+    // req.context = await populateQuery(buildQuery(Model.find(), req.query), req.populate).exec()
+    req.context = await populateQuery(buildQuery(Model, req.query), req.populate).exec()
     next()
   })
 
   router.get('/:id', async (req, res, next) => {
-    req.context = await populateQuery(Model.findById(req.params.id), req.populate).exec()
+    req.context = await populateQuery(buildQuery(Model, { _id: req.params.id }), req.populate).exec()
     next()
   })
 

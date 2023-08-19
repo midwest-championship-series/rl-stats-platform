@@ -162,7 +162,7 @@ const buildPlayerTeamMap = async (leagueId, matchId, players, gamesData, matchDa
   } else if (matchId) {
     const matchInfo = await Matches.findById(matchId).populate({
       path: 'season',
-      populate: { path: 'teams' }
+      populate: { path: 'teams' },
     })
     seasonTeams = matchInfo.season.teams
   } else {

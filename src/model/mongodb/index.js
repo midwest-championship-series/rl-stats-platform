@@ -6,5 +6,5 @@ module.exports = {
   Players: require('./players').Model,
   Teams: require('./teams').Model,
   Franchises: require('./franchise').Model,
-  Auth: require('./auth').Model
+  Auth: require('./auth').Model,
 }
