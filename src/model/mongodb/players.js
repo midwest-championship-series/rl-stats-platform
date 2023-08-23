@@ -32,7 +32,7 @@ const schema = {
 const Model = createModel('Player', schema, (schema) => {
   schema.query.on_teams = function (team_ids, date) {
     // @description Finds players that were on a team at a particular date
-    // @example GET /players?on_teams_date=8-18-2023&on_teams_team_ids=5ec9358e8c0dd900074685c3
+    // @example GET /players?on_teams_date=8-18-2023&on_teams_team_ids=5ec9358e8c0dd900074685c3,5ec9358e8c0dd900074685c4
     if (!team_ids) throw new Error('missing teamIds')
     if (!date) throw new Error('missing date')
     const teamIds = team_ids.split(',')
