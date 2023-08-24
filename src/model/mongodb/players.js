@@ -60,7 +60,6 @@ const Model = createModel('Player', schema, (schema) => {
         },
       })
     })
-    console.log(this)
     return this.where(query)
   }
   schema.virtual('teams', {

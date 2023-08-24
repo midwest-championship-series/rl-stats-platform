@@ -2941,6 +2941,11 @@ ee-first@1.1.1:
   resolved "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
+ejson@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/ejson/-/ejson-2.2.3.tgz#2b18c2d8f5d61a5cfc6e3eab72c3343909e7afd2"
+  integrity sha512-hsFvJp6OpGxFRQfBR3PSxFpaPALdHDY+SB3TRbMpLWNhvu8GzLiZutof5+/DFd2QekZo3KyXau75ngdJqQUSrw==
+
 elasticsearch@^16.7.2:
   version "16.7.2"
   resolved "https://registry.npmjs.org/elasticsearch/-/elasticsearch-16.7.2.tgz"

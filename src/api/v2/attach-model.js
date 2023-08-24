@@ -1,6 +1,7 @@
 const express = require('express')
 
 const docsHandler = require('./docs')
+const buildSchema = require('./build-schema')
 const stripFunctionParameters = require('../../util/strip-function-parameters')
 
 class InvalidQueryError extends Error {
@@ -10,8 +11,17 @@ class InvalidQueryError extends Error {
   }
 }
 
-const buildQuery = (model, params) => {
+const buildQuery = (model, params, { limit, skip, sort }) => {
   let query = model.find()
+  if (limit) {
+    query = query.limit(limit)
+  }
+  if (skip) {
+    query = query.skip(skip)
+  }
+  if (sort) {
+    query = query.sort(sort)
+  }
   for (let key in model.schema.query) {
     const functionParameters = stripFunctionParameters(model.schema.query[key])
     const queryHelper = []
@@ -42,6 +52,15 @@ const buildQuery = (model, params) => {
   }
   if (params.populate) {
     delete params.populate
+  }
+  if (params.limit) {
+    delete params.limit
+  }
+  if (params.skip) {
+    delete params.skip
+  }
+  if (params.sort) {
+    delete params.sort
   }
   if (params.or) {
     if (typeof params.or === 'string') {
@@ -90,14 +109,31 @@ module.exports = (Model) => {
 
   router.get('/_docs', docsHandler(Model))
 
+  router.get('/_schema', (req, res, next) => {
+    try {
+      req.context = buildSchema(Model.schema.obj)
+      next()
+    } catch (err) {
+      console.error(err)
+      next(err)
+    }
+  })
+
+  router.post('/_aggregate', require('./aggregate')(Model))
+
   router.get('/', async (req, res, next) => {
-    // req.context = await populateQuery(buildQuery(Model.find(), req.query), req.populate).exec()
-    req.context = await populateQuery(buildQuery(Model, req.query), req.populate).exec()
+    req.context = await populateQuery(
+      buildQuery(Model, req.query, { limit: req.limit, skip: req.skip, sort: req.sort }),
+      req.populate,
+    ).exec()
     next()
   })
 
   router.get('/:id', async (req, res, next) => {
-    req.context = await populateQuery(buildQuery(Model, { _id: req.params.id }), req.populate).exec()
+    req.context = await populateQuery(
+      buildQuery(Model, { _id: req.params.id }, { limit: req.limit, skip: req.skip, sort: req.sort }),
+      req.populate,
+    ).exec()
     next()
   })
 

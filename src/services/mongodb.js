@@ -38,14 +38,32 @@ const connect = (hardRefresh, cb) => {
   }
 }
 
+const transform = (doc, ret) => {
+  delete ret.__v
+}
+
 const createModel = (modelName, schemaJson, decorator) => {
   connect()
   if (mongoose.models[modelName]) return mongoose.models[modelName]
   const schema = new mongoose.Schema(schemaJson, {
     id: false,
-    toObject: { virtuals: true },
-    toJSON: { virtuals: true },
+    toObject: {
+      transform,
+      virtuals: true,
+    },
+    toJSON: {
+      transform,
+      virtuals: true,
+    },
   })
+  /** add indexes https://stackoverflow.com/questions/24714166/full-text-search-with-weight-in-mongoose */
+  const indexes = Object.entries(schema.obj).reduce((result, [key, value]) => {
+    if (value.index) {
+      result[key] = value.index
+    }
+    return result
+  }, {})
+  schema.index(indexes)
   schema.plugin(timestamps, {
     createdAt: 'created_at',
     updatedAt: 'updated_at',

@@ -1,11 +1,26 @@
 const stripFunctionArgs = require('../../util/strip-function-parameters')
+const buildSchema = require('./build-schema')
 
 const basics = (Model) => {
-  let description = `This API offers GET endpoints that allow deep exploration of each of the models in the API. Each in the database is accessible at the root of /api/v2/{model name}. `
+  let description = `This API offers GET endpoints that allow deep exploration of each of the models in the API. Each in the database is accessible at the root of /v2/{model name}. `
   description += `The model names are: leagues, seasons, matches, games, franchises, players, and teams. `
-  description += `You can retrieve each model in 2 ways: either in a list through a GET /api/v2/{model name} request (which can include query params, discussed later), `
-  description += `or by getting the exact document via an id, like: GET /api/v2/{model name}/{document id}. `
-  description += `The API offers retrieval through querying, special query-building helpers, population of linked documents. Read the other objects here to find more. `
+  description += `You can retrieve each model in 2 ways: either in a list through a GET /v2/{model name} request (which can include query params, discussed later), `
+  description += `or by getting the exact document via an id, like: GET /v2/{model name}/{document id}. `
+  description += `The API offers retrieval through querying, pagination, sorting, special query-building helpers, population of linked documents. Read the other descriptions here to find more. `
+  return description
+}
+
+const pagination = (Model) => {
+  let description = `Pagination can be achieved through the 'limit' and 'skip' parameters. E.g. GET /v2/${Model.collection.collectionName}?limit=10&skip=1 would return the first 10 items in the collection, but skip the first one. `
+  description += `For now, the default is to return all of the documents available.`
+  return description
+}
+
+const sorting = (Model) => {
+  let description = `You can multiple-sort any model. Sorting is done with a simple string query schema. `
+  description += `Use the 'sort' parameter to list the sort fields separated by spaces, and use the "-" symbol to indicate if you want the sort to be descending (remember to url encode the query). `
+  description += `For example, GET /v2/matches?sort=week would sort by weeks, ascending. GET /v2/matches?sort=-updated_at would sort by updated_at, descending. `
+  description += `GET /v2/matches?sort=week%20-updated_at would sort first by week, ascending, then by updated_at, descending.`
   return description
 }
 
@@ -29,7 +44,7 @@ const core = (Model) => {
   description += `for the Hibbing Rangers is as easy as GET /v2/matches?players_to_teams.player_id=5ec9358f8c0dd900074685c7&players_to_teams.team_id=5ec9358e8c0dd900074685c3`
   return {
     description,
-    model: Model.schema.obj,
+    model: buildSchema(Model.schema.obj),
   }
 }
 
@@ -102,14 +117,23 @@ const query = (Model) => {
   return queryDocs
 }
 
+const schema = (Model) => {
+  let description = `Each model also has an endpoint for retrieving its schema. The endpoint is accessable at GET /v2/${Model.collection.collectionName}/_schema. `
+  description += `The endpoint is meant for documentation and for developers to understand the use of each model, so do not use it in excess or in production. `
+  description += ``
+}
+
 module.exports = (Model) => {
   return async (req, res, next) => {
     const docs = {
       basics: basics(Model),
+      pagination: pagination(Model),
+      sorting: sorting(Model),
       heirarchy: heirarchy(Model),
       core: core(Model),
       populations: populations(Model),
       query: query(Model),
+      schema: schema(Model),
     }
     return res.status(200).send(docs)
   }
