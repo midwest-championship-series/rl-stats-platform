@@ -4,7 +4,7 @@ const { createModel } = require('../../services/mongodb')
 const Model = createModel(
   'Season',
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, index: 'text' },
     match_ids: [{ type: Schema.Types.ObjectId, required: true }],
     /**
      * these are denormalized fields which adjusted periodically based on what teams/players have played

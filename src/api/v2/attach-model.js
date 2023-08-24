@@ -51,6 +51,10 @@ const buildQuery = (model, params, { limit, skip, sort }) => {
       }),
     )
   }
+  if (params.text_search) {
+    params.$text = { $search: params.text_search }
+    delete params.text_search
+  }
   if (params.populate) {
     delete params.populate
   }

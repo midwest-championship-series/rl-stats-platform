@@ -6,7 +6,7 @@ const basics = (Model) => {
   description += `The model names are: leagues, seasons, matches, games, franchises, players, and teams. `
   description += `You can retrieve each model in 2 ways: either in a list through a GET /v2/{model name} request (which can include query params, discussed later), `
   description += `or by getting the exact document via an id, like: GET /v2/{model name}/{document id}. `
-  description += `The API offers retrieval through querying, pagination, sorting, special query-building helpers, population of linked documents. Read the other descriptions here to find more. `
+  description += `The API offers retrieval through querying, pagination, sorting, special query-building helpers, text search, and population of linked documents. Read the other descriptions here to find more. `
   return description
 }
 
@@ -21,6 +21,11 @@ const sorting = (Model) => {
   description += `Use the 'sort' parameter to list the sort fields separated by spaces, and use the "-" symbol to indicate if you want the sort to be descending (remember to url encode the query). `
   description += `For example, GET /v2/matches?sort=week would sort by weeks, ascending. GET /v2/matches?sort=-updated_at would sort by updated_at, descending. `
   description += `GET /v2/matches?sort=week%20-updated_at would sort first by week, ascending, then by updated_at, descending.`
+  return description
+}
+
+const search = (Model) => {
+  let description = `If the model contains a text-searchable index, you can search it with the url parameter "text_search" which will apply a non-case-sensitive text search against all of the documents with "index": "text" in the model's schema.`
   return description
 }
 
@@ -129,6 +134,7 @@ module.exports = (Model) => {
       basics: basics(Model),
       pagination: pagination(Model),
       sorting: sorting(Model),
+      search: search(Model),
       heirarchy: heirarchy(Model),
       core: core(Model),
       populations: populations(Model),

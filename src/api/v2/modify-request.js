@@ -22,6 +22,10 @@ module.exports = (req, res, next) => {
       req.sort = query.sort
       delete req.query.sort
     }
+    if (query.text_search) {
+      req.text_search = query.text_search
+      delete req.query.text_search
+    }
     next()
   } catch (err) {
     next(err)

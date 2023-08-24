@@ -16,7 +16,7 @@ const schema = {
   },
   email: { type: String, select: false },
   avatar: { type: String }, // url with discord avatar url, to which a ?size=128 parameter can be added with desired size
-  screen_name: { type: String },
+  screen_name: { type: String, index: 'text' },
   accounts: {
     type: [
       {

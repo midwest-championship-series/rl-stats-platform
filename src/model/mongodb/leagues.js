@@ -2,7 +2,7 @@ const { Schema } = require('mongoose')
 const { createModel } = require('../../services/mongodb')
 
 const schema = {
-  name: { type: String, required: true },
+  name: { type: String, required: true, index: 'text' },
   current_season_id: { type: Schema.Types.ObjectId },
   current_week: { type: String },
   season_ids: [{ type: Schema.Types.ObjectId }],
