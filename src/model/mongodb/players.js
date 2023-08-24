@@ -1,3 +1,4 @@
+const dayjs = require('dayjs')
 const { Schema } = require('mongoose')
 const { createModel } = require('../../services/mongodb')
 
@@ -36,6 +37,7 @@ const Model = createModel('Player', schema, (schema) => {
     if (!team_ids) throw new Error('missing teamIds')
     if (!date) throw new Error('missing date')
     const teamIds = team_ids.split(',')
+    const queryDate = dayjs(date)
 
     const query = {
       $or: [],
@@ -45,8 +47,8 @@ const Model = createModel('Player', schema, (schema) => {
         team_history: {
           $elemMatch: {
             team_id: teamId,
-            date_joined: { $lte: date },
-            date_left: { $gte: date },
+            date_joined: { $lte: queryDate },
+            date_left: { $gte: queryDate },
           },
         },
       })
@@ -54,7 +56,7 @@ const Model = createModel('Player', schema, (schema) => {
         team_history: {
           $elemMatch: {
             team_id: teamId,
-            date_joined: { $lte: date },
+            date_joined: { $lte: queryDate },
             date_left: { $exists: false },
           },
         },

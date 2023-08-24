@@ -46,6 +46,7 @@ const buildQuery = (model, params, { limit, skip, sort }) => {
     query = model.schema.query[key].apply(
       query,
       functionParameters.map((name) => {
+        console.log('name', name)
         return queryHelper.find((h) => h[0] === name)[1]
       }),
     )
