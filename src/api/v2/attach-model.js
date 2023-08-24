@@ -116,8 +116,7 @@ module.exports = (Model) => {
 
   router.get('/_schema', (req, res, next) => {
     try {
-      req.context = buildSchema(Model.schema.obj)
-      next()
+      res.status(200).send(buildSchema(Model.schema.obj))
     } catch (err) {
       console.error(err)
       next(err)

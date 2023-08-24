@@ -4,7 +4,7 @@
   "description": "stats management for rocket league games",
   "private": true,
   "scripts": {
-    "start": "nodemon -L --exec serverless offline start --port 4200 --noAuth",
+    "start": "nodemon -L --exec serverless offline start --httpPort 4200 --noAuth",
     "test": "jest",
     "deploy": "sls deploy"
   },
