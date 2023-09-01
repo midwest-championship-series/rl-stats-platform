@@ -134,10 +134,11 @@ module.exports = (Model) => {
   })
 
   router.get('/:id', async (req, res, next) => {
-    req.context = await populateQuery(
+    const data = await populateQuery(
       buildQuery(Model, { _id: req.params.id }, { limit: req.limit, skip: req.skip, sort: req.sort }),
       req.populate,
     ).exec()
+    req.context = data && data.length > 0 ? data[0] : {}
     next()
   })
 

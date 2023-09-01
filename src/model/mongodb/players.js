@@ -7,7 +7,7 @@ const schema = {
   team_history: {
     type: [
       {
-        team_id: { type: Schema.Types.ObjectId, required: true },
+        team_id: { type: Schema.Types.ObjectId, required: true, populate: 'teams' },
         date_joined: { type: Date, required: true, default: Date.now },
         date_left: Date,
       },
@@ -15,8 +15,8 @@ const schema = {
     default: [],
   },
   email: { type: String, select: false },
-  avatar: { type: String }, // url with discord avatar url, to which a ?size=128 parameter can be added with desired size
-  screen_name: { type: String, index: 'text' },
+  avatar: { type: String, default_display_image: true }, // url with discord avatar url, to which a ?size=128 parameter can be added with desired size
+  screen_name: { type: String, index: 'text', default_display_text: true },
   accounts: {
     type: [
       {

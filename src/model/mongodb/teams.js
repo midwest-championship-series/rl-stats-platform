@@ -2,7 +2,7 @@ const { Schema } = require('mongoose')
 const { createModel } = require('../../services/mongodb')
 
 const schema = {
-  name: { type: String, index: 'text' },
+  name: { type: String, index: 'text', default_display_text: true },
   hex_color: { type: String },
   tier_name: { type: String },
   vars: {
@@ -14,7 +14,7 @@ const schema = {
     ],
     default: [],
   },
-  avatar: { type: String },
+  avatar: { type: String, default_display_image: true },
   franchise_id: { type: Schema.Types.ObjectId },
 }
 
