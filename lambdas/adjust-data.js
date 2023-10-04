@@ -12,6 +12,7 @@ const handler = async () => {
     const currentSeason = league.seasons.find((s) => s._id.equals(league.current_season_id))
     if (!currentSeason) throw new Error(`no current season found for league: ${league.name}`)
     const sortedMatches = currentSeason.matches.sort((a, b) => a.week - b.week)
+    /** @todo use dates if available */
     const lastPlayedMatch = sortedMatches.find((m) => m.status !== 'closed')
     league.current_week = (lastPlayedMatch && lastPlayedMatch.week) || sortedMatches.reverse()[0].week
     await league.save()
