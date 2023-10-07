@@ -6,6 +6,9 @@ const Model = createModel(
   {
     name: { type: String, required: true, index: 'text' },
     match_ids: [{ type: Schema.Types.ObjectId, required: true }],
+    start_date: { type: Date },
+    end_date: { type: Date },
+    regular_season_weeks: { type: Number },
     /**
      * these are denormalized fields which adjusted periodically based on what teams/players have played
      * or are scheduled to play in this season's matches
