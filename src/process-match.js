@@ -77,6 +77,11 @@ const buildTeamsQuery = (players, matchDate, mentionedTeams) => {
     return result
   }, [])
   const unique = [...new Set([...teamIds, ...mentionedTeams])]
+  if (unique.length < 1) {
+    let msg = `Error: Known players not linked to teams at game date.\n`
+    msg += `Known Players:\n${players.map((p) => `Name: ${p.screen_name}\n`)}`
+    throw new UnRecoverableError('ERR_NO_TEAMS', msg)
+  }
   return { $or: unique.map((id) => ({ _id: id })) }
 }
 
@@ -168,7 +173,9 @@ const buildPlayerTeamMap = async (leagueId, matchId, players, gamesData, matchDa
   } else {
     throw new UnRecoverableError('ERR_NO_TEAM_IDENTITY_STRATEGY', 'player team map identification failed')
   }
+  console.info('building teams query', players)
   const allTeams = await Teams.find(buildTeamsQuery(players, matchDate, mentionedTeams))
+  console.info('building players query')
   const playerTeamMap = getUniqueMatchPlayers(gamesData).map((matchPlayer) => {
     return {
       player: players.find(
