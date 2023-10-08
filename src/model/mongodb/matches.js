@@ -5,7 +5,7 @@ const Model = createModel(
   'Match',
   {
     team_ids: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'Team' }],
+      type: [{ type: Schema.Types.ObjectId }],
       required: true,
     },
     players_to_teams: {
