@@ -22,6 +22,7 @@ const buildQuery = (model, params, { limit, skip, sort }) => {
   if (sort) {
     query = query.sort(sort)
   }
+  // add query helpers
   for (let key in model.schema.query) {
     const functionParameters = stripFunctionParameters(model.schema.query[key])
     const queryHelper = []
@@ -52,7 +53,11 @@ const buildQuery = (model, params, { limit, skip, sort }) => {
     )
   }
   if (params.text_search) {
-    params.$text = { $search: params.text_search }
+    if (params.text_search instanceof Array) {
+      params.$text = { $search: params.text_search.join(' ') }
+    } else {
+      params.$text = { $search: params.text_search }
+    }
     delete params.text_search
   }
   if (params.populate) {
