@@ -12,13 +12,10 @@ app.use('/', require('../src/api'))
 const api = serverless(app)
 const handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false
+  await connect()
   const warmerIntercept = require('../src/util/warmer-intercept')
   if (warmerIntercept(event)) {
     console.info('warmer intercept')
-    connect(true, () => {
-      console.info('connected after refresh')
-      return
-    })
   } else {
     const result = await api(event, context)
     return result

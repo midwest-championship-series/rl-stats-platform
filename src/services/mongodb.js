@@ -1,41 +1,33 @@
 const mongoose = require('mongoose')
-const timestamps = require('mongoose-timestamp')
-
-const connStr = `mongodb+srv://mnrl_stats:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/mnrl`
-
+const MONGO_URI = `mongodb+srv://mnrl_stats:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/mnrl`
 mongoose.Promise = Promise
 
-mongoose.connectionConfigured = false
-mongoose.connecting = false
+let mongooseConnection
 
-const setup = () => {
-  mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
-  mongoose.connection.once('open', () => {
-    console.info('Connected to Mongo!')
-    mongoose.connecting = false
-  })
-}
-
-const connect = (hardRefresh, cb) => {
-  if (hardRefresh === true || (!mongoose.connecting && mongoose.connection.readyState !== 1)) {
-    if (hardRefresh === true) {
-      mongoose.connection.once('open', cb)
-      console.info('hard refreshing connection')
-    }
-    if (!mongoose.connectionConfigured) {
-      console.info('configuring mongodb connection')
-      setup()
-      mongoose.connectionConfigured = true
-    }
-    mongoose.connecting = true
-    console.info('wiring up the database for ' + process.env.SERVERLESS_STAGE)
-    mongoose.connect(connStr, {
-      socketTimeoutMS: 120000,
-      useNewUrlParser: true,
-      retryWrites: true,
-      useUnifiedTopology: true,
-    })
+const connect = async () => {
+  // If mongooseConnection is defined and we're connected or connecting, return it
+  if (mongooseConnection && (mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2)) {
+    return mongooseConnection
   }
+
+  // Set up connection events only once
+  if (!mongoose.connectionConfigured) {
+    mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
+    mongoose.connection.on('disconnected', () => {
+      console.warn('Mongoose default connection disconnected')
+      mongooseConnection = null // Clear the reference to force a reconnect on next invocation
+    })
+    mongoose.connectionConfigured = true
+  }
+
+  // Connect to MongoDB
+  mongooseConnection = await mongoose.connect(MONGO_URI, {
+    socketTimeoutMS: 20000,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+
+  return mongooseConnection
 }
 
 const transform = (doc, ret) => {
@@ -43,7 +35,6 @@ const transform = (doc, ret) => {
 }
 
 const createModel = (modelName, schemaJson, decorator) => {
-  connect()
   if (mongoose.models[modelName]) return mongoose.models[modelName]
   const schema = new mongoose.Schema(schemaJson, {
     id: false,
