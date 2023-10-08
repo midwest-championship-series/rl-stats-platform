@@ -25,7 +25,8 @@ const sorting = (Model) => {
 }
 
 const search = (Model) => {
-  let description = `If the model contains a text-searchable index, you can search it with the url parameter "text_search" which will apply a non-case-sensitive text search against all of the documents with "index": "text" in the model's schema.`
+  let description = `If the model contains a text-searchable index, you can search it with the url parameter "text_search" which will apply a non-case-sensitive text search against all of the documents with "index": "text" in the model's schema.\n`
+  description += `Searching by multiple values can be done either by space-separating the values or by adding multiple "text_search" parameters with different values.`
   return description
 }
 
