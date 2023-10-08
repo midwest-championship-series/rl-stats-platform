@@ -44,9 +44,7 @@ const getReplayStream = async (id) => {
 
 const getReplayIdsFromGroup = async (groupId) => {
   const MAX_GAMES = 9
-  const {
-    data: { list, count },
-  } = await axios.get(`${BASE_URL}/replays?group=${groupId}`, { headers: { Authorization: API_KEY } })
+  const { list, count } = await getReplaysFromGroup(groupId)
   if (count > MAX_GAMES) {
     throw new UnRecoverableError(
       'BALLCHASING_MAX_GAMES_REPORT',
@@ -56,8 +54,14 @@ const getReplayIdsFromGroup = async (groupId) => {
   return list.map((g) => g.id)
 }
 
+const getReplaysFromGroup = async (groupId) => {
+  const { data } = await axios.get(`${BASE_URL}/replays?group=${groupId}`, { headers: { Authorization: API_KEY } })
+  return data
+}
+
 module.exports = {
   getReplayData,
+  getReplaysFromGroup,
   getReplayIdsFromGroup,
   getReplayStream,
 }

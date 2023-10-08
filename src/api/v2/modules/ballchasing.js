@@ -1,14 +1,14 @@
 const router = require('express').Router()
 const ballchasing = require('../../../services/ballchasing')
 
-router.get('/:gameId', async (req, res, next) => {
+router.get('/gameinfo/:gameId', async (req, res, next) => {
   const { gameId } = req.params
   const [ballchasingData] = await ballchasing.getReplayData([gameId])
   req.context = ballchasingData
   next()
 })
 
-router.get('/:gameId/player-info', async (req, res, next) => {
+router.get('/gameinfo/:gameId/player-info', async (req, res, next) => {
   const { gameId } = req.params
   const [ballchasingData] = await ballchasing.getReplayData([gameId])
   const players = ['orange', 'blue'].reduce((result, color) => {
@@ -16,6 +16,12 @@ router.get('/:gameId/player-info', async (req, res, next) => {
     return result
   }, [])
   req.context = players
+  next()
+})
+
+router.get('/matchinfo/:groupId', async (req, res, next) => {
+  const { groupId } = req.params
+  req.context = await ballchasing.getReplaysFromGroup(groupId)
   next()
 })
 
