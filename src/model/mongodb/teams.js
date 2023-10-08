@@ -18,6 +18,17 @@ const schema = {
   franchise_id: { type: Schema.Types.ObjectId },
 }
 
-const Model = createModel('Team', schema)
+const Model = createModel('Team', schema, (schema) => {
+  schema.virtual('seasons', {
+    ref: 'Season',
+    localField: '_id',
+    foreignField: 'team_ids',
+  })
+  schema.virtual('players', {
+    ref: 'Player',
+    localField: '_id',
+    foreignField: 'team_history.team_id',
+  })
+})
 
 module.exports = { Model }

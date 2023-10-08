@@ -69,6 +69,16 @@ const Model = createModel('Player', schema, (schema) => {
     localField: 'team_history.team_id',
     foreignField: '_id',
   })
+  schema.virtual('seasons', {
+    ref: 'Season',
+    localField: '_id',
+    foreignField: 'player_ids',
+  })
+  schema.virtual('matches', {
+    ref: 'Match',
+    localField: '_id',
+    foreignField: 'players_to_teams.player_id',
+  })
 })
 
 module.exports = { Model }
