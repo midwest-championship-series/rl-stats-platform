@@ -79,7 +79,7 @@ const buildTeamsQuery = (players, matchDate, mentionedTeams) => {
   const unique = [...new Set([...teamIds, ...mentionedTeams])]
   if (unique.length < 1) {
     let msg = `Error: Known players not linked to teams at game date.\n`
-    msg += `Known Players:\n${players.map((p) => `Name: ${p.screen_name}\n`)}`
+    msg += `Known Players:\n${players.map((p) => `Name: ${p.screen_name}`).join('\n')}`
     throw new UnRecoverableError('ERR_NO_TEAMS', msg)
   }
   return { $or: unique.map((id) => ({ _id: id })) }
