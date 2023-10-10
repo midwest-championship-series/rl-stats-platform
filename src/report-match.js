@@ -63,9 +63,11 @@ module.exports = async (params) => {
         'replay_origin.source': 'ballchasing',
         'replay_origin.key': id,
       })),
-    })
+    }).populate('match')
     if (games.length > 0) {
-      throw new Error('games have already been reported - please use the !reprocess command')
+      throw new Error(
+        `games have already been reported as match ${games[0].match._id} - please use the !reprocess command`,
+      )
     }
   }
   await eventBridge.emitEvent({
