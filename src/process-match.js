@@ -187,10 +187,10 @@ const buildPlayerTeamMap = async (leagueId, matchId, players, gamesData, matchDa
     }
   })
 
-  const unlinkedPlayers = playerTeamMap.filter((p) => !p.player).map((p) => p.playerGameData)
+  const unlinkedPlayers = playerTeamMap.filter((p) => !p.player && p.playerGameData.id.id).map((p) => p.playerGameData)
   if (unlinkedPlayers.length > 0) {
+    console.info('creating players', unlinkedPlayers)
     const newPlayers = await createUnlinkedPlayers(unlinkedPlayers)
-    console.info('created players', newPlayers)
     throw new RecoverableError(
       'NO_PLAYER_FOUND',
       `created new players:\n${newPlayers.map((p) => `${p.screen_name} _id:${p._id}`).join('\n')}`,
@@ -306,12 +306,15 @@ const identifyMatch = async (leagueId, teams) => {
 
 const createUnlinkedPlayers = (players) => {
   return Promise.all(
-    players.map((p) => {
-      return Players.create({
-        screen_name: p.name.trim(),
-        accounts: [{ platform: p.id.platform, platform_id: p.id.id }],
+    players
+      .map((p) => {
+        return Players.create({
+          screen_name: p && p.name && p.name.trim(),
+          accounts: [{ platform: p.id.platform, platform_id: p.id.id }],
+        })
       })
-    }),
+      // filter out players without names (happens when players are removed from replay files)
+      .filter((p) => !!p.screen_name),
   )
 }
 
