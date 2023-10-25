@@ -284,19 +284,23 @@ const buildPlayerTeamMap = async (leagueId, matchId, players, gamesData, matchDa
 }
 
 const identifyMatch = async (leagueId, teams, gameDate) => {
-  const matches = (
-    await Matches.find(buildMatchesQuery(teams))
-      .sort({ week: 'asc' })
-      .populate('games')
-      .populate({
-        path: 'season',
-        populate: { path: 'league' },
-      })
-  )
-    .filter((m) => m.season && m.season.league && m.season.league._id.equals(leagueId))
-    .sort((m) => Math.abs(gameDate.getTime() - m.scheduled_datetime.getTime()))
+  const matches = await Matches.find(buildMatchesQuery(teams))
+    .populate('games')
+    .populate({
+      path: 'season',
+      populate: { path: 'league' },
+    })
 
-  const match = matches[0]
+  const sortedMatches = matches
+    .filter((m) => m.season && m.season.league && m.season.league._id.equals(leagueId))
+    .sort((a, b) => {
+      let diffA = Math.abs(a.scheduled_datetime.getTime() - gameDate.getTime())
+      let diffB = Math.abs(b.scheduled_datetime.getTime() - gameDate.getTime())
+
+      return diffA - diffB
+    })
+
+  const match = sortedMatches[0]
   if (!match) {
     throw new UnRecoverableError(
       'NO_MATCH_FOUND',
