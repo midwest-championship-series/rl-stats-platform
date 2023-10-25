@@ -283,7 +283,7 @@ const buildPlayerTeamMap = async (leagueId, matchId, players, gamesData, matchDa
   }
 }
 
-const identifyMatch = async (leagueId, teams) => {
+const identifyMatch = async (leagueId, teams, gameDate) => {
   const matches = (
     await Matches.find(buildMatchesQuery(teams))
       .sort({ week: 'asc' })
@@ -292,7 +292,9 @@ const identifyMatch = async (leagueId, teams) => {
         path: 'season',
         populate: { path: 'league' },
       })
-  ).filter((m) => m.season && m.season.league && m.season.league._id.equals(leagueId))
+  )
+    .filter((m) => m.season && m.season.league && m.season.league._id.equals(leagueId))
+    .sort((m) => Math.abs(gameDate.getTime() - m.scheduled_datetime.getTime()))
 
   const match = matches[0]
   if (!match) {
@@ -400,7 +402,7 @@ const handleReplays = async (filters, processedAt) => {
   console.info('retrieving league info')
   const { league, season, match } = await (match_id
     ? getMatchInfoById(match_id) // this is a reprocessed match
-    : identifyMatch(league_id, teams)) // this is a new match
+    : identifyMatch(league_id, teams, getEarliestGameDate(gamesData))) // this is a new match
 
   console.info('validating date')
   validateMatchDate(match, gamesData)
