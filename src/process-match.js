@@ -344,9 +344,10 @@ const validateMatchDate = (match, gamesData) => {
   if (match.status === 'open' && !!match.scheduled_datetime) {
     gamesData.forEach((game) => {
       const gameDate = new Date(game.date)
-      const oneWeek = 1000 * 3600 * 24 * 7
-      if (Math.abs(gameDate - match.scheduled_datetime) > oneWeek) {
-        const errMsg = `expected match within 1 week of ${match.scheduled_datetime} but received game played on ${gameDate}`
+      const rescheduleDays = 14
+      const rescheduleLimit = 1000 * 3600 * 24 * rescheduleDays
+      if (Math.abs(gameDate - match.scheduled_datetime) > rescheduleLimit) {
+        const errMsg = `expected match within ${rescheduleDays} days of ${match.scheduled_datetime} but received game played on ${gameDate}`
         throw new UnRecoverableError('ERR_DATE_MISMATCH', errMsg)
       }
     })
