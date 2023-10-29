@@ -53,6 +53,7 @@ provider:
     MNRL_BOT_URL: https://rl-rank-bot.herokuapp.com
     ERROR_CHANNEL_ID: '692994579305332806'
     ELASTIC_HOST: ${ssm:${self:provider.stage}-mncs-elastic-host~true}
+    OPENAI_KEY: ${ssm:OPENAI_KEY~true}
     PRODUCED_STATS_BUCKET: ${self:resources.Outputs.ProducedStatsBucketName.Value}
     LIVE_STATS_BUCKET: ${self:resources.Outputs.LiveStatsBucketName.Value}
     LIVE_STATS_CHANNEL_ID: ${self:custom.playByPlayChannelId.${self:provider.stage}, self:custom.playByPlayChannelId.notprod}

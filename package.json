@@ -9,7 +9,7 @@
     "deploy": "sls deploy"
   },
   "engines": {
-    "node": "^16.19",
+    "node": "^14.20",
     "yarn": "^1.22"
   },
   "devDependencies": {

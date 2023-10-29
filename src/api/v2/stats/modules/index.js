@@ -1,6 +1,7 @@
 const router = require('express').Router()
 
-router.use('/standings', require('./standings'))
+router.get('/standings', require('./standings'))
 router.post('/player-totals', require('./player-totals'))
+router.post('/natural-query', require('./natural-query'))
 
 module.exports = router
